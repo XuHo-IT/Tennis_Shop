@@ -1,0 +1,509 @@
+﻿@model IEnumerable<DataAccessLayer.Models.Product>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<section id="billboard" class="bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <h1 class="section-title text-center mt-4" data-aos="fade-up">Tennis Equipment Collection</h1>
+            <div class="col-md-6 text-center" data-aos="fade-up" data-aos-delay="300">
+                <p>Discover premium tennis equipment and accessories for players of all levels. From professional rackets to comfortable tennis shoes, we have everything you need to elevate your game.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="swiper main-swiper py-4" data-aos="fade-up" data-aos-delay="600">
+                <div class="swiper-wrapper d-flex border-animation-left">
+                    @if (Model.Any())
+                    {
+                        @foreach (var product in Model.Take(3))
+                        {
+                            <div class="swiper-slide">
+                                <div class="banner-item image-zoom-effect">
+                                    <div class="image-holder">
+                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
+                                            @if (product.ProductImages.Any())
+                                            {
+                                                <img src="@product.ProductImages.First().ImageUrl" alt="@product.Name" class="img-fluid">
+                                            }
+                                            else
+                                            {
+                                                <img src="~/images/img@((product.Id % 7) + 1).jpg" alt="@product.Name" class="img-fluid">
+                                            }
+                                        </a>
+                                    </div>
+                                    <div class="banner-content py-4">
+                                        <h5 class="element-title text-uppercase">
+                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="item-anchor">@product.Name</a>
+                                        </h5>
+                                        <p>@(product.Description?.Length > 100 ? product.Description.Substring(0, 100) + "..." : product.Description)</p>
+                                        <div class="btn-left">
+                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="swiper-slide">
+                            <div class="banner-item image-zoom-effect">
+                                <div class="image-holder">
+                                    <a href="#">
+                                        <img src="~/images/banner-image-1.jpg" alt="Tennis Racket" class="img-fluid">
+                                    </a>
+                                </div>
+                                <div class="banner-content py-4">
+                                    <h5 class="element-title text-uppercase">
+                                        <a href="#" class="item-anchor">Premium Tennis Rackets</a>
+                                    </h5>
+                                    <p>Professional quality tennis rackets for all skill levels.</p>
+                                    <div class="btn-left">
+                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 text-center" data-aos="fade-in" data-aos-delay="0">
+                <div class="py-5">
+                    <svg width="38" height="38" viewBox="0 0 24 24">
+                        <use xlink:href="#calendar"></use>
+                    </svg>
+                    <h4 class="element-title text-capitalize my-3">Book An Appointment</h4>
+                    <p>Schedule a consultation with our tennis experts for personalized equipment recommendations.</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center" data-aos="fade-in" data-aos-delay="300">
+                <div class="py-5">
+                    <svg width="38" height="38" viewBox="0 0 24 24">
+                        <use xlink:href="#cart"></use>
+                    </svg>
+                    <h4 class="element-title text-capitalize my-3">Pick up in store</h4>
+                    <p>Visit our physical store to try equipment before you buy.</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center" data-aos="fade-in" data-aos-delay="600">
+                <div class="py-5">
+                    <svg width="38" height="38" viewBox="0 0 24 24">
+                        <use xlink:href="#gift"></use>
+                    </svg>
+                    <h4 class="element-title text-capitalize my-3">Special packaging</h4>
+                    <p>Professional packaging for all your tennis equipment needs.</p>
+                </div>
+            </div>
+            <div class="col-md-3 text-center" data-aos="fade-in" data-aos-delay="900">
+                <div class="py-5">
+                    <svg width="38" height="38" viewBox="0 0 24 24">
+                        <use xlink:href="#arrow-cycle"></use>
+                    </svg>
+                    <h4 class="element-title text-capitalize my-3">Free global returns</h4>
+                    <p>Easy returns and exchanges on all tennis equipment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="categories overflow-hidden">
+    <div class="container">
+        <div class="open-up" data-aos="zoom-out">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="cat-item image-zoom-effect">
+                        <div class="image-holder">
+                            <a asp-controller="Product" asp-action="Index">
+                                <img src="~/images/cat-item1.jpg" alt="Tennis Rackets" class="product-image img-fluid">
+                            </a>
+                        </div>
+                        <div class="category-content">
+                            <div class="product-button">
+                                <a asp-controller="Product" asp-action="Index" class="btn btn-common text-uppercase">Shop Tennis Rackets</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="cat-item image-zoom-effect">
+                        <div class="image-holder">
+                            <a asp-controller="Product" asp-action="Index">
+                                <img src="~/images/cat-item2.jpg" alt="Tennis Shoes" class="product-image img-fluid">
+                            </a>
+                        </div>
+                        <div class="category-content">
+                            <div class="product-button">
+                                <a asp-controller="Product" asp-action="Index" class="btn btn-common text-uppercase">Shop Tennis Shoes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="cat-item image-zoom-effect">
+                        <div class="image-holder">
+                            <a asp-controller="Product" asp-action="Index">
+                                <img src="~/images/cat-item3.jpg" alt="Tennis Accessories" class="product-image img-fluid">
+                            </a>
+                        </div>
+                        <div class="category-content">
+                            <div class="product-button">
+                                <a asp-controller="Product" asp-action="Index" class="btn btn-common text-uppercase">Shop Accessories</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="new-arrival" class="new-arrival product-carousel py-5 position-relative overflow-hidden">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
+            <h4 class="text-uppercase">Our Featured Products</h4>
+            <a asp-controller="Product" asp-action="Index" class="btn-link">View All Products</a>
+        </div>
+        <div class="swiper product-swiper open-up" data-aos="zoom-out">
+            <div class="swiper-wrapper d-flex">
+                @if (Model.Any())
+                {
+                    @foreach (var product in Model.Take(5))
+                    {
+                        <div class="swiper-slide">
+                            <div class="product-item image-zoom-effect link-effect">
+                                <div class="image-holder position-relative">
+                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
+                                        @if (product.ProductImages.Any())
+                                        {
+                                            <img src="@product.ProductImages.First().ImageUrl" alt="@product.Name" class="product-image img-fluid">
+                                        }
+                                        else
+                                        {
+                                            <img src="~/images/img@((product.Id % 7) + 1).jpg" alt="@product.Name" class="product-image img-fluid">
+                                        }
+                                    </a>
+                                    <a href="#" class="btn-icon btn-wishlist">
+                                        <svg width="24" height="24" viewBox="0 0 24 24">
+                                            <use xlink:href="#heart"></use>
+                                        </svg>
+                                    </a>
+                                    <div class="product-content">
+                                        <h5 class="element-title text-uppercase fs-5 mt-3">
+                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
+                                        </h5>
+                                        <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$@product.BasePrice.ToString("F2")</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="swiper-slide">
+                        <div class="product-item image-zoom-effect link-effect">
+                            <div class="image-holder position-relative">
+                                <a href="#">
+                                    <img src="~/images/product-item-1.jpg" alt="Tennis Racket" class="product-image img-fluid">
+                                </a>
+                                <a href="#" class="btn-icon btn-wishlist">
+                                    <svg width="24" height="24" viewBox="0 0 24 24">
+                                        <use xlink:href="#heart"></use>
+                                    </svg>
+                                </a>
+                                <div class="product-content">
+                                    <h5 class="element-title text-uppercase fs-5 mt-3">
+                                        <a href="#">Professional Tennis Racket</a>
+                                    </h5>
+                                    <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$199.00</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+</div>
+</section>
+
+<section class="collection bg-light position-relative py-5">
+    <div class="container">
+        <div class="row">
+            <div class="title-xlarge text-uppercase txt-fx domino">Collection</div>
+            <div class="collection-item d-flex flex-wrap my-5">
+                <div class="col-md-6 column-container">
+                    <div class="image-holder">
+                        <img src="~/images/single-image-2.jpg" alt="Tennis Collection" class="product-image img-fluid">
+                    </div>
+                </div>
+                <div class="col-md-6 column-container bg-white">
+                    <div class="collection-content p-5 m-0 m-md-5">
+                        <h3 class="element-title text-uppercase">Professional Tennis Collection</h3>
+                        <p>Discover our premium collection of tennis equipment designed for players who demand the best. From professional-grade rackets to high-performance tennis shoes, our collection combines cutting-edge technology with superior craftsmanship. Whether you're a beginner or a seasoned professional, we have the perfect equipment to elevate your game to the next level.</p>
+                        <a asp-controller="Product" asp-action="Index" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="collection-banner py-5">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="collection-banner-content text-center">
+                    <img src="~/images/collection-banner.jpg" alt="Tennis Collection" class="img-fluid">
+                    <div class="collection-overlay">
+                        <h2 class="collection-title text-uppercase">Professional Tennis Collection</h2>
+                        <p class="collection-subtitle">Discover our premium range of tennis equipment</p>
+                        <a asp-controller="Product" asp-action="Index" class="btn btn-dark btn-lg text-uppercase">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials py-5 bg-light">
+    <div class="section-header text-center mt-5">
+        <h3 class="section-title">WE LOVE TENNIS</h3>
+    </div>
+    <div class="swiper testimonial-swiper overflow-hidden my-5">
+        <div class="swiper-wrapper d-flex">
+            <div class="swiper-slide">
+                <div class="testimonial-item text-center">
+                    <blockquote>
+                        <p>"Excellent tennis rackets with perfect balance and control. My game has improved significantly!"</p>
+                        <div class="review-title text-uppercase">Professional Player</div>
+                    </blockquote>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="testimonial-item text-center">
+                    <blockquote>
+                        <p>"Best tennis shoes I've ever worn. Comfortable and durable for long matches."</p>
+                        <div class="review-title text-uppercase">Tennis Enthusiast</div>
+                    </blockquote>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="testimonial-item text-center">
+                    <blockquote>
+                        <p>"Great quality equipment at reasonable prices. Fast shipping and excellent customer service."</p>
+                        <div class="review-title text-uppercase">Satisfied Customer</div>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="testimonial-swiper-pagination d-flex justify-content-center mb-5"></div>
+</section>
+
+<section class="video py-5 overflow-hidden">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="video-content open-up" data-aos="zoom-out">
+                <div class="video-bg">
+                    <img src="~/images/img7.jpg" alt="Tennis Video" class="video-image img-fluid">
+                </div>
+                <div class="video-player">
+                    <a class="youtube" href="https://www.youtube.com/embed/pjtsGzQjFM4">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <use xlink:href="#play"></use>
+                        </svg>
+                        <img src="~/images/text-pattern.png" alt="pattern" class="text-rotate">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="blog py-5">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
+            <h4 class="text-uppercase">Tennis Blog</h4>
+            <a href="#" class="btn-link">View All Posts</a>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <article class="post-item">
+                    <div class="post-image">
+                        <a href="#">
+                            <img src="~/images/img4.jpg" alt="Tennis Tips" class="post-grid-image img-fluid">
+                        </a>
+                    </div>
+                    <div class="post-content d-flex flex-wrap gap-2 my-3">
+                        <div class="post-meta text-uppercase fs-6 text-secondary">
+                            <span class="post-category">Tennis Tips /</span>
+                            <span class="meta-day"> Jan 15, 2025</span>
+                        </div>
+                        <h5 class="post-title text-uppercase">
+                            <a href="#">How to Choose the Perfect Tennis Racket</a>
+                        </h5>
+                        <p>Learn the essential factors to consider when selecting your ideal tennis racket for maximum performance on the court.</p>
+                    </div>
+                </article>
+            </div>
+            <div class="col-md-4">
+                <article class="post-item">
+                    <div class="post-image">
+                        <a href="#">
+                            <img src="~/images/img5.jpg" alt="Tennis Training" class="post-grid-image img-fluid">
+                        </a>
+                    </div>
+                    <div class="post-content d-flex flex-wrap gap-2 my-3">
+                        <div class="post-meta text-uppercase fs-6 text-secondary">
+                            <span class="post-category">Training /</span>
+                            <span class="meta-day"> Jan 10, 2025</span>
+                        </div>
+                        <h5 class="post-title text-uppercase">
+                            <a href="#">Top 10 Tennis Training Exercises</a>
+                        </h5>
+                        <p>Discover the most effective training exercises to improve your tennis game and build strength and endurance.</p>
+                    </div>
+                </article>
+            </div>
+            <div class="col-md-4">
+                <article class="post-item">
+                    <div class="post-image">
+                        <a href="#">
+                            <img src="~/images/img6.jpg" alt="Tennis Equipment" class="post-grid-image img-fluid">
+                        </a>
+                    </div>
+                    <div class="post-content d-flex flex-wrap gap-2 my-3">
+                        <div class="post-meta text-uppercase fs-6 text-secondary">
+                            <span class="post-category">Equipment /</span>
+                            <span class="meta-day"> Jan 5, 2025</span>
+                        </div>
+                        <h5 class="post-title text-uppercase">
+                            <a href="#">Essential Tennis Equipment for Beginners</a>
+                        </h5>
+                        <p>Everything you need to get started in tennis, from rackets to shoes and accessories for new players.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="logo-bar py-5 my-5">
+    <div class="container">
+        <div class="row">
+            <div class="logo-content d-flex flex-wrap justify-content-between">
+                <img src="~/images/logo1.png" alt="Tennis Brand" class="logo-image img-fluid">
+                <img src="~/images/logo2.png" alt="Tennis Brand" class="logo-image img-fluid">
+                <img src="~/images/logo3.png" alt="Tennis Brand" class="logo-image img-fluid">
+                <img src="~/images/logo4.png" alt="Tennis Brand" class="logo-image img-fluid">
+                <img src="~/images/logo5.png" alt="Tennis Brand" class="logo-image img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="newsletter bg-light" style="background: url(~/images/bg-newsletter.jpg) no-repeat center center; background-size: cover;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 py-5 my-5">
+                <div class="subscribe-header text-center pb-3">
+                    <h3 class="section-title text-uppercase">Sign Up for our newsletter</h3>
+                </div>
+                <form id="form" class="d-flex flex-wrap gap-2">
+                    <input type="text" name="email" placeholder="Your Email Address" class="form-control form-control-lg">
+                    <button class="btn btn-dark btn-lg text-uppercase w-100">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="instagram position-relative">
+    <div class="d-flex justify-content-center w-100 position-absolute bottom-0 z-1">
+        <a href="#" class="btn btn-dark px-5">Follow us on Instagram</a>
+    </div>
+    <div class="row g-0">
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="insta-item">
+                <a href="#" target="_blank">
+                    <img src="~images/insta-item1.jpg" alt="instagram" class="insta-image img-fluid">
+                </a>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="insta-item">
+                <a href="#" target="_blank">
+                    <img src="~/images/insta-item2.jpg" alt="instagram" class="insta-image img-fluid">
+                </a>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="insta-item">
+                <a href="#" target="_blank">
+                    <img src="~/images/insta-item3.jpg" alt="instagram" class="insta-image img-fluid">
+                </a>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="insta-item">
+                <a href="#" target="_blank">
+                    <img src="~/images/insta-item4.jpg" alt="instagram" class="insta-image img-fluid">
+                </a>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="insta-item">
+                <a href="#" target="_blank">
+                    <img src="~/images/insta-item5.jpg" alt="instagram" class="insta-image img-fluid">
+                </a>
+            </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-2">
+            <div class="insta-item">
+                <a href="#" target="_blank">
+                    <img src="~/images/insta-item6.jpg" alt="instagram" class="insta-image img-fluid">
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Setup Section (only show if no users exist) -->
+@if (!User.Identity.IsAuthenticated)
+{
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">First Time Setup?</h5>
+                            <p class="card-text">Initialize the database with default roles and admin account.</p>
+                            <a href="@Url.Action("Initialize", "Setup")" class="btn btn-primary">
+                                <i class="fas fa-cog"></i> Setup Database
+                            </a>
+                            <a href="@Url.Action("FixRoles", "Setup")" class="btn btn-warning mt-2">
+                                <i class="fas fa-tools"></i> Fix Roles
+                            </a>
+                            <a href="@Url.Action("CheckRoles", "Setup")" class="btn btn-info mt-2" target="_blank">
+                                <i class="fas fa-search"></i> Check Roles
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

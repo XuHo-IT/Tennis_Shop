@@ -1,0 +1,148 @@
+@model IEnumerable<DataAccessLayer.Models.Product>
+@{
+    ViewData["Title"] = "Manage Products";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">Product Management</h1>
+                <div>
+                    <a href="@Url.Action("Create", "Product")" class="btn btn-success btn-sm">
+                        <i class="fas fa-plus"></i> Add Product
+                    </a>
+                    <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-primary btn-sm">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">All Products (@Model.Count())</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Brand</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model)
+                        {
+                            <tr>
+                                <td>@product.Id</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if (product.ProductImages?.Any() == true)
+                                        {
+                                            <img src="@product.ProductImages.First().ImageUrl" 
+                                                 alt="@product.Name" 
+                                                 class="img-thumbnail me-2" 
+                                                 style="width: 40px; height: 40px; object-fit: cover;">
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-light d-flex align-items-center justify-content-center me-2" 
+                                                 style="width: 40px; height: 40px;">
+                                                <i class="fas fa-image text-muted"></i>
+                                            </div>
+                                        }
+                                        <div>
+                                            <div class="font-weight-bold">@product.Name</div>
+                                            @if (!string.IsNullOrEmpty(product.Description))
+                                            {
+                                                <small class="text-muted">@(product.Description.Length > 50 ? product.Description.Substring(0, 50) + "..." : product.Description)</small>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@product.Category?.Name</td>
+                                <td>@product.Brand?.Name</td>
+                                <td>
+                                    <div class="font-weight-bold">$@product.BasePrice.ToString("F2")</div>
+                                    @if (product.DiscountPercent.HasValue && product.DiscountPercent > 0)
+                                    {
+                                        <small class="text-success">@product.DiscountPercent% off</small>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge badge-@(product.Stock > 0 ? "success" : "danger")">
+                                        @product.Stock
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-@(product.IsActive == true ? "success" : "secondary")">
+                                        @(product.IsActive == true ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td>@product.CreatedAt?.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="@Url.Action("Details", "Product", new { id = product.Id })" 
+                                           class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                        <a href="@Url.Action("Edit", "Product", new { id = product.Id })" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="@Url.Action("Delete", "Product", new { id = product.Id })" 
+                                           class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .img-thumbnail {
+        border-radius: 0.25rem;
+    }
+    .btn-group .btn {
+        margin-right: 2px;
+    }
+    .btn-group .btn:last-child {
+        margin-right: 0;
+    }
+</style>

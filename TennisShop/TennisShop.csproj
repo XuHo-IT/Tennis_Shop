@@ -1,0 +1,103 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\images\arct-icon.png" />
+    <None Include="wwwroot\images\banner-image-1.jpg" />
+    <None Include="wwwroot\images\banner-image-2.jpg" />
+    <None Include="wwwroot\images\banner-image-3.jpg" />
+    <None Include="wwwroot\images\banner-image-4.jpg" />
+    <None Include="wwwroot\images\banner-image-5.jpg" />
+    <None Include="wwwroot\images\banner-image-6.jpg" />
+    <None Include="wwwroot\images\bg-newsletter.jpg" />
+    <None Include="wwwroot\images\cat-item1.jpg" />
+    <None Include="wwwroot\images\cat-item2.jpg" />
+    <None Include="wwwroot\images\cat-item3.jpg" />
+    <None Include="wwwroot\images\cat-large-item1.jpg" />
+    <None Include="wwwroot\images\cat-large-item2.jpg" />
+    <None Include="wwwroot\images\cat-large-item3.jpg" />
+    <None Include="wwwroot\images\cat-sm-item.jpg" />
+    <None Include="wwwroot\images\cat-sm-item2.jpg" />
+    <None Include="wwwroot\images\cat-sm-item3.jpg" />
+    <None Include="wwwroot\images\collection-banner.jpg" />
+    <None Include="wwwroot\images\dhl-logo.png" />
+    <None Include="wwwroot\images\img1.jpg" />
+    <None Include="wwwroot\images\img2.jpg" />
+    <None Include="wwwroot\images\img3.jpg" />
+    <None Include="wwwroot\images\img4.jpg" />
+    <None Include="wwwroot\images\img5.jpg" />
+    <None Include="wwwroot\images\img6.jpg" />
+    <None Include="wwwroot\images\img7.jpg" />
+    <None Include="wwwroot\images\insta-item1.jpg" />
+    <None Include="wwwroot\images\insta-item2.jpg" />
+    <None Include="wwwroot\images\insta-item3.jpg" />
+    <None Include="wwwroot\images\insta-item4.jpg" />
+    <None Include="wwwroot\images\insta-item5.jpg" />
+    <None Include="wwwroot\images\insta-item6.jpg" />
+    <None Include="wwwroot\images\light-logo.png" />
+    <None Include="wwwroot\images\logo.svg" />
+    <None Include="wwwroot\images\logo1.png" />
+    <None Include="wwwroot\images\logo2.png" />
+    <None Include="wwwroot\images\logo3.png" />
+    <None Include="wwwroot\images\logo4.png" />
+    <None Include="wwwroot\images\logo5.png" />
+    <None Include="wwwroot\images\main-logo.png" />
+    <None Include="wwwroot\images\master-card.png" />
+    <None Include="wwwroot\images\newsletter-image.jpg" />
+    <None Include="wwwroot\images\pattern-bg.png" />
+    <None Include="wwwroot\images\paypal-card.png" />
+    <None Include="wwwroot\images\post-image1.jpg" />
+    <None Include="wwwroot\images\post-image2.jpg" />
+    <None Include="wwwroot\images\post-image3.jpg" />
+    <None Include="wwwroot\images\post-image4.jpg" />
+    <None Include="wwwroot\images\post-image5.jpg" />
+    <None Include="wwwroot\images\post-image6.jpg" />
+    <None Include="wwwroot\images\post-image7.jpg" />
+    <None Include="wwwroot\images\post-image8.jpg" />
+    <None Include="wwwroot\images\post-image9.jpg" />
+    <None Include="wwwroot\images\post-large-image1.jpg" />
+    <None Include="wwwroot\images\post-large-image2.jpg" />
+    <None Include="wwwroot\images\post-large-image3.jpg" />
+    <None Include="wwwroot\images\post-large-image4.jpg" />
+    <None Include="wwwroot\images\post-small-image1.jpg" />
+    <None Include="wwwroot\images\post-small-image2.jpg" />
+    <None Include="wwwroot\images\post-small-image3.jpg" />
+    <None Include="wwwroot\images\product-item-1.jpg" />
+    <None Include="wwwroot\images\product-item-10.jpg" />
+    <None Include="wwwroot\images\product-item-2.jpg" />
+    <None Include="wwwroot\images\product-item-3.jpg" />
+    <None Include="wwwroot\images\product-item-4.jpg" />
+    <None Include="wwwroot\images\product-item-5.jpg" />
+    <None Include="wwwroot\images\product-item-6.jpg" />
+    <None Include="wwwroot\images\product-item-7.jpg" />
+    <None Include="wwwroot\images\product-item-8.jpg" />
+    <None Include="wwwroot\images\product-item-9.jpg" />
+    <None Include="wwwroot\images\single-image-2.jpg" />
+    <None Include="wwwroot\images\text-pattern.png" />
+    <None Include="wwwroot\images\video-image-2.jpg" />
+    <None Include="wwwroot\images\video-image.jpg" />
+    <None Include="wwwroot\images\visa-card.png" />
+    <None Include="wwwroot\images\wishlist-item1.jpg" />
+    <None Include="wwwroot\images\wishlist-item2.jpg" />
+    <None Include="wwwroot\images\wishlist-item3.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BussinessObject\BussinessObject.csproj" />
+    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
+    <ProjectReference Include="..\Repositories\Repositories.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
+  </ItemGroup>
+
+</Project>

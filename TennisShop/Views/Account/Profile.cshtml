@@ -1,0 +1,86 @@
+@model DataAccessLayer.Models.User
+
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">User Profile</h3>
+                    <div class="btn-group">
+                        <a asp-action="Edit" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                        <form asp-action="Logout" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <strong>Full Name:</strong>
+                                </div>
+                                <div class="col-sm-9">
+                                    @Model.FullName
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <strong>Email:</strong>
+                                </div>
+                                <div class="col-sm-9">
+                                    @Model.Email
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <strong>Phone:</strong>
+                                </div>
+                                <div class="col-sm-9">
+                                    @(Model.Phone ?? "Not provided")
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <strong>Address:</strong>
+                                </div>
+                                <div class="col-sm-9">
+                                    @(Model.Address ?? "Not provided")
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <strong>Role:</strong>
+                                </div>
+                                <div class="col-sm-9">
+                                    <span class="badge bg-primary">@(Model.Role?.Name ?? "User")</span>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <strong>Member Since:</strong>
+                                </div>
+                                <div class="col-sm-9">
+                                    @Model.CreatedAt?.ToString("MMM dd, yyyy")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

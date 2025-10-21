@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Database Setup";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-database"></i> Database Setup
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> Initial Setup Required</h5>
+                        <p>This will initialize the database with:</p>
+                        <ul>
+                            <li>User roles (Admin and User)</li>
+                            <li>Default admin account</li>
+                        </ul>
+                        <p><strong>Default Admin Credentials:</strong></p>
+                        <ul>
+                            <li>Email: admin@tennisshop.com</li>
+                            <li>Password: admin123</li>
+                        </ul>
+                        <p class="text-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Important:</strong> Please change the default admin password after first login!
+                        </p>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Initialize", "Setup")" 
+                           class="btn btn-primary btn-lg"
+                           onclick="return confirm('Are you sure you want to initialize the database? This will create default roles and admin user.')">
+                            <i class="fas fa-play"></i> Initialize Database
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

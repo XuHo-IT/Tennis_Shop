@@ -1,0 +1,125 @@
+@{
+    ViewData["Title"] = "Debug Information";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4">Debug Information</h1>
+        </div>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            <strong>Error:</strong> @ViewBag.Error
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Current User Info</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>User Name:</strong> @ViewBag.CurrentUser</p>
+                    <p><strong>Is Admin:</strong> @ViewBag.IsAdmin</p>
+                    <p><strong>All Claims:</strong></p>
+                    <ul>
+                        @foreach (var claim in ViewBag.UserClaims as List<System.Security.Claims.Claim>)
+                        {
+                            <li>@claim.Type: @claim.Value</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Database Roles</h6>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Roles != null)
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var role in ViewBag.Roles as List<DataAccessLayer.Models.UserRole>)
+                                {
+                                    <tr>
+                                        <td>@role.Id</td>
+                                        <td>@role.Name</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No roles found</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">All Users</h6>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Users != null)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role ID</th>
+                                        <th>Role Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in ViewBag.Users as List<DataAccessLayer.Models.User>)
+                                    {
+                                        <tr>
+                                            <td>@user.Id</td>
+                                            <td>@user.FullName</td>
+                                            <td>@user.Email</td>
+                                            <td>@user.RoleId</td>
+                                            <td>@user.Role?.Name</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No users found</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <a href="@Url.Action("Dashboard", "Admin")" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>

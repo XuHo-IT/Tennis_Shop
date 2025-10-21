@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-header bg-dark text-white text-center py-4">
+                        <h3 class="mb-0 text-uppercase">Login</h3>
+                    </div>
+                    <div class="card-body p-5">
+                        <form asp-action="Login" method="post">
+                            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                            
+                            <div class="mb-4">
+                                <label for="email" class="form-label text-uppercase fw-bold">Email</label>
+                                <input type="email" name="email" id="email" class="form-control form-control-lg" required />
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="password" class="form-label text-uppercase fw-bold">Password</label>
+                                <input type="password" name="password" id="password" class="form-control form-control-lg" required />
+                            </div>
+                            
+                            <div class="d-grid mb-4">
+                                <button type="submit" class="btn btn-dark btn-lg text-uppercase">Login</button>
+                            </div>
+                        </form>
+                        
+                        <div class="text-center">
+                            <p class="mb-0">Don't have an account? <a asp-action="Register" class="text-decoration-none fw-bold">Register here</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
