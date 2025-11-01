@@ -19,4 +19,585 @@ html {
 
 body {
   margin-bottom: 60px;
+  font-family: 'Jost', sans-serif;
+}
+
+/* Tennis Shop Custom Styles */
+
+/* Product Cards */
+.product-item .card {
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+    height: 100%; /* Ensure all cards have same height */
+}
+
+.product-item .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15) !important;
+    border-color: #000;
+}
+
+/* Fixed Product Image Container */
+.product-item .card-img-top,
+.product-item .product-image {
+    height: 280px; /* Fixed height for product images */
+    width: 100%;
+    object-fit: cover; /* Cover to fill the space nicely */
+    object-position: center;
+    transition: transform 0.3s ease;
+    background: #f8f9fa; /* Light background */
+}
+
+/* Image container wrapper */
+.product-item .position-relative,
+.product-item .image-holder {
+    height: 280px;
+    overflow: hidden;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-item:hover .product-image,
+.product-item:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+/* Category Cards */
+.category-card {
+    transition: all 0.3s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.15) !important;
+    border-color: #000 !important;
+}
+
+/* Fixed Category Image Size */
+.category-card img,
+.cat-item img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    background: #f8f9fa;
+}
+
+.category-card .image-holder,
+.cat-item .image-holder {
+    height: 200px;
+    overflow: hidden;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Buttons */
+.btn-dark {
+    background-color: #000;
+    border-color: #000;
+    transition: all 0.3s ease;
+}
+
+.btn-dark:hover {
+    background-color: #333;
+    border-color: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.btn-outline-dark:hover {
+    background-color: #000;
+    border-color: #000;
+    transform: translateY(-2px);
+}
+
+/* Wishlist Button */
+.btn-wishlist {
+    transition: all 0.3s ease;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+}
+
+.btn-wishlist:hover {
+    background: #000;
+    transform: scale(1.1);
+}
+
+.btn-wishlist:hover svg {
+    fill: #fff;
+}
+
+/* Badge Animations */
+.badge {
+    transition: all 0.3s ease;
+}
+
+/* Section Titles */
+.section-title {
+    font-family: 'Marcellus', serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+/* Cards */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Forms */
+.form-control-lg {
+    border-radius: 8px;
+    padding: 12px 20px;
+}
+
+.form-control:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 0.2rem rgba(0,0,0,0.1);
+}
+
+/* Navbar */
+.navbar {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #000;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 80%;
+}
+
+/* Image Zoom Effect */
+.image-zoom-effect {
+    overflow: hidden;
+    position: relative;
+}
+
+.image-zoom-effect img {
+    transition: transform 0.5s ease;
+    display: block;
+    width: 100%;
+}
+
+.image-zoom-effect:hover img {
+    transform: scale(1.1);
+}
+
+/* Hero Image Container - Responsive height for banner slider */
+.hero-image-container {
+    height: 500px; /* Fixed height for consistency */
+    overflow: hidden;
+    background: #f8f9fa; /* Light background for letterboxing */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Show full image without cropping */
+    object-position: center;
+}
+
+/* Alternative: If you want images to fill width and adjust height proportionally */
+.main-swiper .swiper-slide {
+    height: auto;
+}
+
+/* Swiper Pagination Spacing */
+.swiper-pagination {
+    padding-top: 20px !important;
+    margin-top: 15px !important;
+    position: relative !important;
+    bottom: auto !important;
+}
+
+.swiper-pagination-bullet {
+    width: 12px;
+    height: 12px;
+    background: #000;
+    opacity: 0.3;
+    transition: all 0.3s ease;
+}
+
+.swiper-pagination-bullet-active {
+    opacity: 1;
+    background: #000;
+    transform: scale(1.2);
+}
+
+/* Featured Products Swiper - Fixed Image Size */
+.product-swiper .swiper-slide .card-img-top,
+.product-swiper .swiper-slide .product-image,
+.product-swiper .swiper-slide img {
+    height: 280px;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    background: #f8f9fa;
+}
+
+.product-swiper .swiper-slide .image-holder,
+.product-swiper .swiper-slide .position-relative {
+    height: 280px;
+    overflow: hidden;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments for hero slider */
+@media (max-width: 768px) {
+    .hero-image-container {
+        height: 350px;
+    }
+    
+    /* Adjust product image height on tablet */
+    .product-item .card-img-top,
+    .product-item .product-image,
+    .product-swiper .swiper-slide .card-img-top,
+    .product-swiper .swiper-slide .product-image,
+    .product-swiper .swiper-slide img {
+        height: 240px;
+    }
+    
+    .product-item .position-relative,
+    .product-item .image-holder,
+    .product-swiper .swiper-slide .image-holder,
+    .product-swiper .swiper-slide .position-relative {
+        height: 240px;
+    }
+    
+    /* Category images on tablet */
+    .category-card img,
+    .cat-item img {
+        height: 180px;
+    }
+    
+    .category-card .image-holder,
+    .cat-item .image-holder {
+        height: 180px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-image-container {
+        height: 250px;
+    }
+    
+    /* Adjust product image height on mobile */
+    .product-item .card-img-top,
+    .product-item .product-image,
+    .product-swiper .swiper-slide .card-img-top,
+    .product-swiper .swiper-slide .product-image,
+    .product-swiper .swiper-slide img {
+        height: 200px;
+    }
+    
+    .product-item .position-relative,
+    .product-item .image-holder,
+    .product-swiper .swiper-slide .image-holder,
+    .product-swiper .swiper-slide .position-relative {
+        height: 200px;
+    }
+    
+    /* Category images on mobile */
+    .category-card img,
+    .cat-item img {
+        height: 150px;
+    }
+    
+    .category-card .image-holder,
+    .cat-item .image-holder {
+        height: 150px;
+    }
+}
+
+/* Product Item Spacing */
+.product-item .product-content {
+    position: relative;
+    z-index: 2;
+    background: white;
+}
+
+.banner-item .banner-content {
+    position: relative;
+    z-index: 2;
+    background: white;
+}
+
+/* Ensure image containers have proper bounds */
+.image-holder {
+    overflow: hidden;
+    position: relative;
+}
+
+.image-holder.overflow-hidden {
+    overflow: hidden !important;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+}
+
+.breadcrumb-item a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: #000;
+}
+
+/* Star Rating */
+.rating {
+    font-size: 1.2em;
+}
+
+/* Product Card Content - Fixed heights for consistency */
+.product-item .card-title,
+.product-swiper .card-title {
+    height: 3em; /* Fixed height for 2 lines */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.5em;
+}
+
+.product-item .card-text,
+.product-swiper .card-text {
+    height: 4.5em; /* Fixed height for 3 lines */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-height: 1.5em;
+}
+
+.product-item .card-body,
+.product-swiper .card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.product-item .card-body .mt-auto,
+.product-swiper .card-body .mt-auto {
+    margin-top: auto !important; /* Push buttons to bottom */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .product-item .card {
+        margin-bottom: 20px;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Loading States */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preloader::after {
+    content: '';
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #000;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Newsletter Background */
+.newsletter-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+}
+
+.newsletter-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/bg-newsletter.jpg') no-repeat center center;
+    background-size: cover;
+    opacity: 0.2;
+    z-index: 0;
+}
+
+.newsletter-bg .container {
+    position: relative;
+    z-index: 1;
+}
+
+.newsletter-bg .section-title {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Search Popup */
+.search-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 9998;
+    padding: 100px 20px;
+}
+
+.search-popup-container {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.search-popup input {
+    background: transparent;
+    color: white;
+    font-size: 2rem;
+    padding: 20px 0;
+}
+
+.search-popup input::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
+.search-popup input:focus {
+    border-color: white;
+    box-shadow: none;
+}
+
+.search-submit {
+    background: transparent !important;
+}
+
+.search-submit svg {
+    fill: white;
+}
+
+/* Additional Styles */
+.border-animation-left li {
+    position: relative;
+    padding-left: 0;
+    transition: all 0.3s ease;
+}
+
+.border-animation-left li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 2px;
+    background: #000;
+    transition: width 0.3s ease;
+}
+
+.border-animation-left li:hover::before {
+    width: 20px;
+}
+
+.border-animation-left li:hover {
+    padding-left: 30px;
+}
+
+.open-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.txt-fx {
+    font-size: 8rem;
+    font-weight: 700;
+    opacity: 0.05;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
 }

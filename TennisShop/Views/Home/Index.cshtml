@@ -4,24 +4,24 @@
     ViewData["Title"] = "Home Page";
 }
 
-<section id="billboard" class="bg-light py-5">
+<section id="billboard" class="bg-light py-3">
     <div class="container">
         <div class="row justify-content-center">
-            <h1 class="section-title text-center mt-4" data-aos="fade-up">Tennis Equipment Collection</h1>
-            <div class="col-md-6 text-center" data-aos="fade-up" data-aos-delay="300">
+            <h1 class="section-title text-center mt-3 mb-2" data-aos="fade-up">Tennis Equipment Collection</h1>
+            <div class="col-md-6 text-center mb-3" data-aos="fade-up" data-aos-delay="300">
                 <p>Discover premium tennis equipment and accessories for players of all levels. From professional rackets to comfortable tennis shoes, we have everything you need to elevate your game.</p>
             </div>
         </div>
         <div class="row">
-            <div class="swiper main-swiper py-4" data-aos="fade-up" data-aos-delay="600">
+            <div class="swiper main-swiper py-2" data-aos="fade-up" data-aos-delay="600">
                 <div class="swiper-wrapper d-flex border-animation-left">
                     @if (Model.Any())
                     {
-                        @foreach (var product in Model.Take(3))
+                        @foreach (var product in Model.Take(6))
                         {
                             <div class="swiper-slide">
-                                <div class="banner-item image-zoom-effect">
-                                    <div class="image-holder">
+                                <div class="banner-item">
+                                    <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
                                         <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
                                             @if (product.ProductImages.Any())
                                             {
@@ -48,11 +48,12 @@
                     }
                     else
                     {
+                        <!-- Sample Slide 1 -->
                         <div class="swiper-slide">
-                            <div class="banner-item image-zoom-effect">
-                                <div class="image-holder">
+                            <div class="banner-item">
+                                <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
                                     <a href="#">
-                                        <img src="~/images/banner-image-1.jpg" alt="Tennis Racket" class="img-fluid">
+                                        <img src="~/images/img1.jpg" alt="Tennis Racket" class="img-fluid">
                                     </a>
                                 </div>
                                 <div class="banner-content py-4">
@@ -60,6 +61,101 @@
                                         <a href="#" class="item-anchor">Premium Tennis Rackets</a>
                                     </h5>
                                     <p>Professional quality tennis rackets for all skill levels.</p>
+                                    <div class="btn-left">
+                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sample Slide 2 -->
+                        <div class="swiper-slide">
+                            <div class="banner-item">
+                                <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
+                                    <a href="#">
+                                        <img src="~/images/img2.jpg" alt="Tennis Shoes" class="img-fluid">
+                                    </a>
+                                </div>
+                                <div class="banner-content py-4">
+                                    <h5 class="element-title text-uppercase">
+                                        <a href="#" class="item-anchor">Tennis Shoes Collection</a>
+                                    </h5>
+                                    <p>Comfortable and durable tennis shoes for maximum performance.</p>
+                                    <div class="btn-left">
+                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sample Slide 3 -->
+                        <div class="swiper-slide">
+                            <div class="banner-item">
+                                <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
+                                    <a href="#">
+                                        <img src="~/images/img3.jpg" alt="Tennis Accessories" class="img-fluid" style="max-height: 400px; object-fit: cover; width: 100%;">
+                                    </a>
+                                </div>
+                                <div class="banner-content py-4">
+                                    <h5 class="element-title text-uppercase">
+                                        <a href="#" class="item-anchor">Tennis Accessories</a>
+                                    </h5>
+                                    <p>Complete your tennis kit with our premium accessories.</p>
+                                    <div class="btn-left">
+                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sample Slide 4 -->
+                        <div class="swiper-slide">
+                            <div class="banner-item">
+                                <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
+                                    <a href="#">
+                                        <img src="~/images/img4.jpg" alt="Tennis Bags" class="img-fluid">
+                                    </a>
+                                </div>
+                                <div class="banner-content py-4">
+                                    <h5 class="element-title text-uppercase">
+                                        <a href="#" class="item-anchor">Tennis Bags</a>
+                                    </h5>
+                                    <p>Spacious and stylish bags to carry all your tennis gear.</p>
+                                    <div class="btn-left">
+                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sample Slide 5 -->
+                        <div class="swiper-slide">
+                            <div class="banner-item">
+                                <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
+                                    <a href="#">
+                                        <img src="~/images/img5.jpg" alt="Tennis Apparel" class="img-fluid">
+                                    </a>
+                                </div>
+                                <div class="banner-content py-4">
+                                    <h5 class="element-title text-uppercase">
+                                        <a href="#" class="item-anchor">Tennis Apparel</a>
+                                    </h5>
+                                    <p>High-quality tennis clothing for comfort and style on court.</p>
+                                    <div class="btn-left">
+                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sample Slide 6 -->
+                        <div class="swiper-slide">
+                            <div class="banner-item">
+                                <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
+                                    <a href="#">
+                                        <img src="~/images/img6.jpg" alt="Tennis Balls" class="img-fluid">
+                                    </a>
+                                </div>
+                                <div class="banner-content py-4">
+                                    <h5 class="element-title text-uppercase">
+                                        <a href="#" class="item-anchor">Premium Tennis Balls</a>
+                                    </h5>
+                                    <p>Professional grade tennis balls for consistent play.</p>
                                     <div class="btn-left">
                                         <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
                                     </div>
@@ -178,11 +274,11 @@
             <div class="swiper-wrapper d-flex">
                 @if (Model.Any())
                 {
-                    @foreach (var product in Model.Take(5))
+                    @foreach (var product in Model.Take(8))
                     {
                         <div class="swiper-slide">
-                            <div class="product-item image-zoom-effect link-effect">
-                                <div class="image-holder position-relative">
+                            <div class="product-item link-effect">
+                                <div class="image-holder position-relative image-zoom-effect overflow-hidden">
                                     <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
                                         @if (product.ProductImages.Any())
                                         {
@@ -193,17 +289,12 @@
                                             <img src="~/images/img@((product.Id % 7) + 1).jpg" alt="@product.Name" class="product-image img-fluid">
                                         }
                                     </a>
-                                    <a href="#" class="btn-icon btn-wishlist">
-                                        <svg width="24" height="24" viewBox="0 0 24 24">
-                                            <use xlink:href="#heart"></use>
-                                        </svg>
-                                    </a>
-                                    <div class="product-content">
-                                        <h5 class="element-title text-uppercase fs-5 mt-3">
-                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
-                                        </h5>
-                                        <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$@product.BasePrice.ToString("F2")</span></a>
-                                    </div>
+                                </div>
+                                <div class="product-content mt-3">
+                                    <h5 class="element-title text-uppercase fs-5">
+                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
+                                    </h5>
+                                    <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$@product.BasePrice.ToString("F2")</span></a>
                                 </div>
                             </div>
                         </div>
@@ -211,23 +302,131 @@
                 }
                 else
                 {
+                    <!-- Sample Product 1 -->
                     <div class="swiper-slide">
-                        <div class="product-item image-zoom-effect link-effect">
-                            <div class="image-holder position-relative">
+                        <div class="product-item link-effect">
+                            <div class="image-holder position-relative image-zoom-effect overflow-hidden">
                                 <a href="#">
-                                    <img src="~/images/product-item-1.jpg" alt="Tennis Racket" class="product-image img-fluid">
+                                    <img src="~/images/img1.jpg" alt="Tennis Racket" class="product-image img-fluid">
                                 </a>
-                                <a href="#" class="btn-icon btn-wishlist">
-                                    <svg width="24" height="24" viewBox="0 0 24 24">
-                                        <use xlink:href="#heart"></use>
-                                    </svg>
+                            </div>
+                            <div class="product-content mt-3">
+                                <h5 class="element-title text-uppercase fs-5">
+                                    <a href="#">Professional Tennis Racket</a>
+                                </h5>
+                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$199.00</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sample Product 2 -->
+                    <div class="swiper-slide">
+                        <div class="product-item link-effect">
+                            <div class="image-holder position-relative image-zoom-effect overflow-hidden">
+                                <a href="#">
+                                    <img src="~/images/img2.jpg" alt="Tennis Shoes" class="product-image img-fluid">
                                 </a>
-                                <div class="product-content">
-                                    <h5 class="element-title text-uppercase fs-5 mt-3">
-                                        <a href="#">Professional Tennis Racket</a>
-                                    </h5>
-                                    <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$199.00</span></a>
-                                </div>
+                            </div>
+                            <div class="product-content mt-3">
+                                <h5 class="element-title text-uppercase fs-5">
+                                    <a href="#">Tennis Court Shoes</a>
+                                </h5>
+                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$149.00</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sample Product 3 -->
+                    <div class="swiper-slide">
+                        <div class="product-item link-effect">
+                            <div class="image-holder position-relative image-zoom-effect overflow-hidden">
+                                <a href="#">
+                                    <img src="~/images/img3.jpg" alt="Tennis Bag" class="product-image img-fluid">
+                                </a>
+                            </div>
+                            <div class="product-content mt-3">
+                                <h5 class="element-title text-uppercase fs-5">
+                                    <a href="#">Tennis Bag Pro</a>
+                                </h5>
+                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$89.00</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sample Product 4 -->
+                    <div class="swiper-slide">
+                        <div class="product-item link-effect">
+                            <div class="image-holder position-relative image-zoom-effect overflow-hidden">
+                                <a href="#">
+                                    <img src="~/images/img4.jpg" alt="Tennis Balls" class="product-image img-fluid">
+                                </a>
+                            </div>
+                            <div class="product-content mt-3">
+                                <h5 class="element-title text-uppercase fs-5">
+                                    <a href="#">Premium Tennis Balls</a>
+                                </h5>
+                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$24.99</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sample Product 5 -->
+                    <div class="swiper-slide">
+                        <div class="product-item link-effect">
+                            <div class="image-holder position-relative image-zoom-effect overflow-hidden">
+                                <a href="#">
+                                    <img src="~/images/img5.jpg" alt="Tennis Apparel" class="product-image img-fluid">
+                                </a>
+                            </div>
+                            <div class="product-content mt-3">
+                                <h5 class="element-title text-uppercase fs-5">
+                                    <a href="#">Tennis Polo Shirt</a>
+                                </h5>
+                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$59.00</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sample Product 6 -->
+                    <div class="swiper-slide">
+                        <div class="product-item link-effect">
+                            <div class="image-holder position-relative image-zoom-effect overflow-hidden">
+                                <a href="#">
+                                    <img src="~/images/img6.jpg" alt="Tennis Grip" class="product-image img-fluid">
+                                </a>
+                            </div>
+                            <div class="product-content mt-3">
+                                <h5 class="element-title text-uppercase fs-5">
+                                    <a href="#">Pro Grip Overgrip</a>
+                                </h5>
+                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$12.99</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sample Product 7 -->
+                    <div class="swiper-slide">
+                        <div class="product-item link-effect">
+                            <div class="image-holder position-relative image-zoom-effect overflow-hidden">
+                                <a href="#">
+                                    <img src="~/images/img7.jpg" alt="Tennis Strings" class="product-image img-fluid">
+                                </a>
+                            </div>
+                            <div class="product-content mt-3">
+                                <h5 class="element-title text-uppercase fs-5">
+                                    <a href="#">Professional Strings</a>
+                                </h5>
+                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$34.99</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sample Product 8 -->
+                    <div class="swiper-slide">
+                        <div class="product-item link-effect">
+                            <div class="image-holder position-relative image-zoom-effect overflow-hidden">
+                                <a href="#">
+                                    <img src="~/images/img1.jpg" alt="Tennis Cap" class="product-image img-fluid">
+                                </a>
+                            </div>
+                            <div class="product-content mt-3">
+                                <h5 class="element-title text-uppercase fs-5">
+                                    <a href="#">Tennis Sport Cap</a>
+                                </h5>
+                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$29.99</span></a>
                             </div>
                         </div>
                     </div>
@@ -238,99 +437,7 @@
 </div>
 </section>
 
-<section class="collection bg-light position-relative py-5">
-    <div class="container">
-        <div class="row">
-            <div class="title-xlarge text-uppercase txt-fx domino">Collection</div>
-            <div class="collection-item d-flex flex-wrap my-5">
-                <div class="col-md-6 column-container">
-                    <div class="image-holder">
-                        <img src="~/images/single-image-2.jpg" alt="Tennis Collection" class="product-image img-fluid">
-                    </div>
-                </div>
-                <div class="col-md-6 column-container bg-white">
-                    <div class="collection-content p-5 m-0 m-md-5">
-                        <h3 class="element-title text-uppercase">Professional Tennis Collection</h3>
-                        <p>Discover our premium collection of tennis equipment designed for players who demand the best. From professional-grade rackets to high-performance tennis shoes, our collection combines cutting-edge technology with superior craftsmanship. Whether you're a beginner or a seasoned professional, we have the perfect equipment to elevate your game to the next level.</p>
-                        <a asp-controller="Product" asp-action="Index" class="btn btn-dark text-uppercase mt-3">Shop Collection</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-<section class="collection-banner py-5">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="collection-banner-content text-center">
-                    <img src="~/images/collection-banner.jpg" alt="Tennis Collection" class="img-fluid">
-                    <div class="collection-overlay">
-                        <h2 class="collection-title text-uppercase">Professional Tennis Collection</h2>
-                        <p class="collection-subtitle">Discover our premium range of tennis equipment</p>
-                        <a asp-controller="Product" asp-action="Index" class="btn btn-dark btn-lg text-uppercase">Shop Now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="testimonials py-5 bg-light">
-    <div class="section-header text-center mt-5">
-        <h3 class="section-title">WE LOVE TENNIS</h3>
-    </div>
-    <div class="swiper testimonial-swiper overflow-hidden my-5">
-        <div class="swiper-wrapper d-flex">
-            <div class="swiper-slide">
-                <div class="testimonial-item text-center">
-                    <blockquote>
-                        <p>"Excellent tennis rackets with perfect balance and control. My game has improved significantly!"</p>
-                        <div class="review-title text-uppercase">Professional Player</div>
-                    </blockquote>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="testimonial-item text-center">
-                    <blockquote>
-                        <p>"Best tennis shoes I've ever worn. Comfortable and durable for long matches."</p>
-                        <div class="review-title text-uppercase">Tennis Enthusiast</div>
-                    </blockquote>
-                </div>
-            </div>
-            <div class="swiper-slide">
-                <div class="testimonial-item text-center">
-                    <blockquote>
-                        <p>"Great quality equipment at reasonable prices. Fast shipping and excellent customer service."</p>
-                        <div class="review-title text-uppercase">Satisfied Customer</div>
-                    </blockquote>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="testimonial-swiper-pagination d-flex justify-content-center mb-5"></div>
-</section>
-
-<section class="video py-5 overflow-hidden">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="video-content open-up" data-aos="zoom-out">
-                <div class="video-bg">
-                    <img src="~/images/img7.jpg" alt="Tennis Video" class="video-image img-fluid">
-                </div>
-                <div class="video-player">
-                    <a class="youtube" href="https://www.youtube.com/embed/pjtsGzQjFM4">
-                        <svg width="24" height="24" viewBox="0 0 24 24">
-                            <use xlink:href="#play"></use>
-                        </svg>
-                        <img src="~/images/text-pattern.png" alt="pattern" class="text-rotate">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <section class="blog py-5">
     <div class="container">
@@ -399,111 +506,3 @@
         </div>
     </div>
 </section>
-
-<section class="logo-bar py-5 my-5">
-    <div class="container">
-        <div class="row">
-            <div class="logo-content d-flex flex-wrap justify-content-between">
-                <img src="~/images/logo1.png" alt="Tennis Brand" class="logo-image img-fluid">
-                <img src="~/images/logo2.png" alt="Tennis Brand" class="logo-image img-fluid">
-                <img src="~/images/logo3.png" alt="Tennis Brand" class="logo-image img-fluid">
-                <img src="~/images/logo4.png" alt="Tennis Brand" class="logo-image img-fluid">
-                <img src="~/images/logo5.png" alt="Tennis Brand" class="logo-image img-fluid">
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="newsletter bg-light" style="background: url(~/images/bg-newsletter.jpg) no-repeat center center; background-size: cover;">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8 py-5 my-5">
-                <div class="subscribe-header text-center pb-3">
-                    <h3 class="section-title text-uppercase">Sign Up for our newsletter</h3>
-                </div>
-                <form id="form" class="d-flex flex-wrap gap-2">
-                    <input type="text" name="email" placeholder="Your Email Address" class="form-control form-control-lg">
-                    <button class="btn btn-dark btn-lg text-uppercase w-100">Sign Up</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="instagram position-relative">
-    <div class="d-flex justify-content-center w-100 position-absolute bottom-0 z-1">
-        <a href="#" class="btn btn-dark px-5">Follow us on Instagram</a>
-    </div>
-    <div class="row g-0">
-        <div class="col-6 col-sm-4 col-md-2">
-            <div class="insta-item">
-                <a href="#" target="_blank">
-                    <img src="~images/insta-item1.jpg" alt="instagram" class="insta-image img-fluid">
-                </a>
-            </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-            <div class="insta-item">
-                <a href="#" target="_blank">
-                    <img src="~/images/insta-item2.jpg" alt="instagram" class="insta-image img-fluid">
-                </a>
-            </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-            <div class="insta-item">
-                <a href="#" target="_blank">
-                    <img src="~/images/insta-item3.jpg" alt="instagram" class="insta-image img-fluid">
-                </a>
-            </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-            <div class="insta-item">
-                <a href="#" target="_blank">
-                    <img src="~/images/insta-item4.jpg" alt="instagram" class="insta-image img-fluid">
-                </a>
-            </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-            <div class="insta-item">
-                <a href="#" target="_blank">
-                    <img src="~/images/insta-item5.jpg" alt="instagram" class="insta-image img-fluid">
-                </a>
-            </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-            <div class="insta-item">
-                <a href="#" target="_blank">
-                    <img src="~/images/insta-item6.jpg" alt="instagram" class="insta-image img-fluid">
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Setup Section (only show if no users exist) -->
-@if (!User.Identity.IsAuthenticated)
-{
-    <section class="py-5 bg-light">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6 text-center">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">First Time Setup?</h5>
-                            <p class="card-text">Initialize the database with default roles and admin account.</p>
-                            <a href="@Url.Action("Initialize", "Setup")" class="btn btn-primary">
-                                <i class="fas fa-cog"></i> Setup Database
-                            </a>
-                            <a href="@Url.Action("FixRoles", "Setup")" class="btn btn-warning mt-2">
-                                <i class="fas fa-tools"></i> Fix Roles
-                            </a>
-                            <a href="@Url.Action("CheckRoles", "Setup")" class="btn btn-info mt-2" target="_blank">
-                                <i class="fas fa-search"></i> Check Roles
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-}
