@@ -12,9 +12,9 @@ namespace TennisShop.Controllers
     {
         private readonly IUserService _userService;
         private readonly IProductService _productService;
-        private readonly DataAccessLayer.SportManagementContext _context;
+        private readonly BussinessObject.SportManagementContext _context;
 
-        public AdminController(IUserService userService, IProductService productService, DataAccessLayer.SportManagementContext context)
+        public AdminController(IUserService userService, IProductService productService, BussinessObject.SportManagementContext context)
         {
             _userService = userService;
             _productService = productService;
