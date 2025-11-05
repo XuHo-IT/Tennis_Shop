@@ -1,0 +1,108 @@
+@model DataAccessLayer.Models.Order
+@{
+    ViewData["Title"] = $"Order #{Model?.Id}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Order #@Model.Id</h2>
+    <div>
+        <span class="badge bg-secondary text-uppercase">@Model.Status</span>
+    </div>
+    </div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Items</div>
+            <div class="card-body p-0">
+                @if (Model.OrderItems == null || !Model.OrderItems.Any())
+                {
+                    <div class="p-3">No items found.</div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Variant</th>
+                                    <th class="text-end">Qty</th>
+                                    <th class="text-end">Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                var productName = item.Product?.Name ?? $"Product #{item.ProductId}";
+                                var variantText = item.Variant != null ? ($"{item.Variant.Color} / {item.Variant.Size}") : "-";
+                                <tr>
+                                    <td>@productName</td>
+                                    <td>@variantText</td>
+                                    <td class="text-end">@item.Quantity</td>
+                                    <td class="text-end">$@item.Price.ToString("0.00")</td>
+                                    <td class="text-end">$@(item.Price * item.Quantity).ToString("0.00")</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header">Summary</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <span>Total</span>
+                    <strong>$@(Model.TotalAmount ?? 0m).ToString("0.00")</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">Shipping</div>
+            <div class="card-body">
+                <div class="mb-1"><strong>Address:</strong></div>
+                <div>@Model.ShippingAddress</div>
+                <div class="mt-2"><strong>Phone:</strong> @Model.Phone</div>
+                <div class="mt-2"><strong>Order Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd HH:mm")</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Actions</span>
+                <a asp-controller="Order" asp-action="Index" class="btn btn-sm btn-outline-secondary">Back to list</a>
+            </div>
+            <div class="card-body">
+                @if (string.Equals(Model.Status, "pending", StringComparison.OrdinalIgnoreCase))
+                {
+                    <form asp-controller="Order" asp-action="Cancel" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Cancel this order?');">Cancel Order</button>
+                    </form>
+                }
+                else
+                {
+                    <button class="btn btn-secondary w-100" disabled>Cancel Order</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+

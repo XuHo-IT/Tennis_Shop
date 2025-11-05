@@ -124,6 +124,7 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Profile</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Order" asp-action="Index">My Orders</a></li>
                                     @if (User.IsInRole("admin"))
                                     {
                                         <li><hr class="dropdown-divider"></li>

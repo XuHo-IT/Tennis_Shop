@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BussinessObject\BussinessObject.csproj" />
-    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
   </ItemGroup>
 
 </Project>

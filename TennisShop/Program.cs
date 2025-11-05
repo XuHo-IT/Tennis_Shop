@@ -1,4 +1,4 @@
-using DataAccessLayer;
+using BussinessObject;
 using Repositories;
 using Services;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Add Entity Framework
-builder.Services.AddDbContext<SportManagementContext>(options =>
+builder.Services.AddDbContext<BussinessObject.SportManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Authentication
@@ -25,14 +25,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // Register DAOs
 builder.Services.AddScoped<ProductDAO>();
 builder.Services.AddScoped<UserDAO>();
+builder.Services.AddScoped<OrderDAO>();
 
 // Register Repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // Register Services
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IImageKitService, ImageKitService>();
 builder.Services.AddHttpClient<IImageKitService, ImageKitService>();
 
