@@ -1,0 +1,490 @@
+@model DataAccessLayer.Models.Carts
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+    var totalAmount = Model.CartItems?.Sum(item => item.Quantity * item.UnitPrice) ?? 0;
+    var totalItems = Model.CartItems?.Sum(item => item.Quantity) ?? 0;
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="section-title text-uppercase mb-0">
+                        <i class="fas fa-shopping-cart me-2"></i>Shopping Cart
+                    </h1>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-dark">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (Model.CartItems == null || !Model.CartItems.Any())
+                {
+                    <div class="card border-0 shadow-sm text-center py-5">
+                        <div class="card-body">
+                            <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+                            <h3 class="text-muted mb-3">Your cart is empty</h3>
+                            <p class="text-secondary mb-4">Looks like you haven't added any items to your cart yet.</p>
+                            <a asp-controller="Product" asp-action="Index" class="btn btn-dark btn-lg">
+                                <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                            </a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row g-4">
+                        <!-- Cart Items -->
+                        <div class="col-lg-8">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-dark text-white py-3">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-list me-2"></i>Cart Items (<span id="totalItems">@totalItems</span> item<span id="itemPlural">@(totalItems > 1 ? "s" : "")</span>)
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th scope="col" class="border-0">Product</th>
+                                                    <th scope="col" class="border-0 text-center" style="width: 150px;">Quantity</th>
+                                                    <th scope="col" class="border-0 text-end" style="width: 120px;">Price</th>
+                                                    <th scope="col" class="border-0 text-end" style="width: 120px;">Total</th>
+                                                    <th scope="col" class="border-0 text-center" style="width: 80px;">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.CartItems)
+                                                {
+                                                    var lineTotal = item.Quantity * item.UnitPrice;
+                                                    <tr>
+                                                        <td class="py-3">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="me-3">
+                                                                    @if (item.Product?.ProductImages != null && item.Product.ProductImages.Any())
+                                                                    {
+                                                                        <img src="@item.Product.ProductImages.First().ImageUrl" 
+                                                                             alt="@item.Product.Name" 
+                                                                             class="img-thumbnail" 
+                                                                             style="width: 80px; height: 80px; object-fit: cover;">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src="~/images/img@((item.ProductId % 7) + 1).jpg" 
+                                                                             alt="@item.Product?.Name" 
+                                                                             class="img-thumbnail" 
+                                                                             style="width: 80px; height: 80px; object-fit: cover;">
+                                                                    }
+                                                                </div>
+                                                                <div>
+                                                                    <h6 class="mb-1">
+                                                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId" 
+                                                                           class="text-decoration-none text-dark">
+                                                                            @item.Product?.Name
+                                                                        </a>
+                                                                        @if (item.Variant != null)
+                                                                        {
+                                                                            <span class="badge bg-secondary ms-2">@item.Variant.Color - @item.Variant.Size</span>
+                                                                        }
+                                                                    </h6>
+                                                                    <small class="text-muted">@item.Product?.Description?.Substring(0, Math.Min(50, item.Product.Description?.Length ?? 0))...</small>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="input-group input-group-sm" style="width: 120px; margin: 0 auto;">
+                                                                <button type="button" class="btn btn-outline-secondary decrease-qty" 
+                                                                        data-item-id="@item.Id">
+                                                                    <i class="fas fa-minus"></i>
+                                                                </button>
+                                                                <input type="number" class="form-control text-center qty-input" 
+                                                                       value="@item.Quantity" 
+                                                                       data-item-id="@item.Id"
+                                                                       data-max="@item.Product?.Stock"
+                                                                       min="1" max="@item.Product?.Stock" 
+                                                                       readonly>
+                                                                <button type="button" class="btn btn-outline-secondary increase-qty" 
+                                                                        data-item-id="@item.Id"
+                                                                        data-max="@item.Product?.Stock">
+                                                                    <i class="fas fa-plus"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <strong>$@item.UnitPrice.ToString("F2")</strong>
+                                                        </td>
+                                                        <td class="text-end item-total" data-item-id="@item.Id">
+                                                            <strong class="text-primary">$@lineTotal.ToString("F2")</strong>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <form asp-action="RemoveItem" method="post" class="d-inline remove-item-form">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item-btn" 
+                                                                        data-item-name="@item.Product?.Name" 
+                                                                        data-variant="@(item.Variant != null ? $"{item.Variant.Color} - {item.Variant.Size}" : "")"
+                                                                        title="Remove">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-light py-3">
+                                    <form asp-action="Clear" method="post" class="d-inline clear-cart-form">
+                                        @Html.AntiForgeryToken()
+                                        <button type="button" class="btn btn-outline-danger clear-cart-btn">
+                                            <i class="fas fa-trash me-2"></i>Clear Cart
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Summary -->
+                        <div class="col-lg-4">
+                            <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                                <div class="card-header bg-dark text-white py-3">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-receipt me-2"></i>Order Summary
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Subtotal:</span>
+                                        <strong id="subtotal">$@totalAmount.ToString("F2")</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Shipping:</span>
+                                        <span class="text-success">Free</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Tax (10%):</span>
+                                        <strong id="tax">$@((totalAmount * 0.1m).ToString("F2"))</strong>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <h5 class="mb-0">Total:</h5>
+                                        <h5 class="mb-0 text-primary" id="total">$@((totalAmount * 1.1m).ToString("F2"))</h5>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <a asp-controller="Order" asp-action="Checkout" class="btn btn-dark btn-lg">
+                                            <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                                        </a>
+                                        <a asp-controller="Product" asp-action="Index" class="btn btn-outline-dark">
+                                            <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-light text-center py-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-shield-alt me-1"></i>Secure Checkout
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Update quantity via AJAX
+        function updateQuantity(cartItemId, newQuantity) {
+            // Add loading state
+            const itemTotal = $(`.item-total[data-item-id="${cartItemId}"]`);
+            itemTotal.addClass('updating');
+            
+            // Disable buttons during update
+            $(`.increase-qty[data-item-id="${cartItemId}"], .decrease-qty[data-item-id="${cartItemId}"]`).prop('disabled', true);
+            
+            $.ajax({
+                url: '@Url.Action("UpdateQuantity", "Cart")',
+                type: 'POST',
+                data: {
+                    cartItemId: cartItemId,
+                    quantity: newQuantity,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Update item quantity display
+                        $(`.qty-input[data-item-id="${cartItemId}"]`).val(newQuantity);
+                        
+                        // Update line total with animation
+                        const lineTotal = response.lineTotal;
+                        itemTotal.find('strong').text('$' + lineTotal.toFixed(2));
+                        
+                        // Update summary
+                        updateCartSummary();
+                        
+                        // Update cart count in navbar
+                        if (typeof loadCartCount === 'function') {
+                            loadCartCount();
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'Failed to update quantity',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to update cart. Please try again.',
+                        confirmButtonColor: '#dc3545'
+                    });
+                },
+                complete: function() {
+                    // Remove loading state
+                    itemTotal.removeClass('updating');
+                    // Re-enable buttons
+                    $(`.increase-qty[data-item-id="${cartItemId}"], .decrease-qty[data-item-id="${cartItemId}"]`).prop('disabled', false);
+                }
+            });
+        }
+
+        // Calculate and update cart summary
+        function updateCartSummary() {
+            let subtotal = 0;
+            
+            // Calculate subtotal from all line totals
+            $('.item-total strong').each(function() {
+                const amount = parseFloat($(this).text().replace('$', ''));
+                subtotal += amount;
+            });
+            
+            const tax = subtotal * 0.1;
+            const total = subtotal + tax;
+            
+            // Calculate total items
+            let totalItems = 0;
+            $('.qty-input').each(function() {
+                totalItems += parseInt($(this).val());
+            });
+            
+            // Update display
+            $('#subtotal').text('$' + subtotal.toFixed(2));
+            $('#tax').text('$' + tax.toFixed(2));
+            $('#total').text('$' + total.toFixed(2));
+            $('#totalItems').text(totalItems);
+            $('#itemPlural').text(totalItems > 1 ? 's' : '');
+        }
+
+        // Increase quantity button
+        $(document).on('click', '.increase-qty', function() {
+            const button = $(this);
+            const itemId = button.data('item-id');
+            const maxStock = button.data('max');
+            const input = $(`.qty-input[data-item-id="${itemId}"]`);
+            const currentQty = parseInt(input.val());
+            
+            if (currentQty < maxStock) {
+                updateQuantity(itemId, currentQty + 1);
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Stock Limit',
+                    text: `Maximum stock available is ${maxStock}`,
+                    confirmButtonColor: '#6c757d'
+                });
+            }
+        });
+
+        // Decrease quantity button
+        $(document).on('click', '.decrease-qty', function() {
+            const button = $(this);
+            const itemId = button.data('item-id');
+            const input = $(`.qty-input[data-item-id="${itemId}"]`);
+            const currentQty = parseInt(input.val());
+            
+            if (currentQty > 1) {
+                updateQuantity(itemId, currentQty - 1);
+            }
+        });
+
+        // SweetAlert2 for Remove Item
+        $('.remove-item-btn').off('click').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const button = $(this);
+            const form = button.closest('form');
+            const itemName = button.data('item-name');
+            const variant = button.data('variant');
+            
+            let titleHtml = `<strong>${itemName}</strong>`;
+            if (variant) {
+                titleHtml += `<br><small class="text-muted">${variant}</small>`;
+            }
+
+            Swal.fire({
+                title: 'Remove from cart?',
+                html: titleHtml,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-trash me-2"></i>Yes, remove it',
+                cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'swal-popup-bounce',
+                    confirmButton: 'btn-lg px-4',
+                    cancelButton: 'btn-lg px-4'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form[0].submit();
+                } else {
+                    // Force close when cancelled
+                    Swal.close();
+                    // Remove backdrop if exists
+                    $('.swal2-container').remove();
+                    $('body').removeClass('swal2-shown swal2-height-auto');
+                    $('html').removeClass('swal2-shown swal2-height-auto');
+                }
+            }).catch(() => {
+                // Catch any error and force close
+                Swal.close();
+                $('.swal2-container').remove();
+                $('body').removeClass('swal2-shown swal2-height-auto');
+                $('html').removeClass('swal2-shown swal2-height-auto');
+            });
+        });
+
+        // SweetAlert2 for Clear Cart
+        $('.clear-cart-btn').off('click').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const form = $(this).closest('form');
+
+            Swal.fire({
+                title: 'Clear entire cart?',
+                html: '<p class="mb-3">All items will be removed from your cart</p><i class="fas fa-exclamation-triangle text-warning fa-3x"></i>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fas fa-trash-alt me-2"></i>Yes, clear all',
+                cancelButtonText: '<i class="fas fa-times me-2"></i>Cancel',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'swal-popup-bounce',
+                    confirmButton: 'btn-lg px-4',
+                    cancelButton: 'btn-lg px-4'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form[0].submit();
+                } else {
+                    // Force close when cancelled
+                    Swal.close();
+                    // Remove backdrop if exists
+                    $('.swal2-container').remove();
+                    $('body').removeClass('swal2-shown swal2-height-auto');
+                    $('html').removeClass('swal2-shown swal2-height-auto');
+                }
+            }).catch(() => {
+                // Catch any error and force close
+                Swal.close();
+                $('.swal2-container').remove();
+                $('body').removeClass('swal2-shown swal2-height-auto');
+                $('html').removeClass('swal2-shown swal2-height-auto');
+            });
+        });
+    </script>
+}
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .input-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .sticky-top {
+        position: sticky;
+        z-index: 1020;
+    }
+
+    /* Smooth transition for updating values */
+    .item-total strong, #subtotal, #tax, #total {
+        transition: all 0.3s ease;
+    }
+
+    .item-total.updating strong {
+        color: #ffc107 !important;
+    }
+
+    /* Button disable state */
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* SweetAlert2 Custom Styles */
+    .swal-popup-bounce {
+        animation: bounceIn 0.4s ease-out;
+    }
+
+    @@keyframes bounceIn {
+        0% {
+            transform: scale(0.3);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        70% {
+            transform: scale(0.9);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* Custom button hover effects */
+    .swal2-confirm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4) !important;
+    }
+
+    .swal2-cancel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4) !important;
+    }
+</style>

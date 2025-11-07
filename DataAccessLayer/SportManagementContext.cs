@@ -18,6 +18,10 @@ public partial class SportManagementContext : DbContext
 
     public virtual DbSet<Brand> Brands { get; set; }
 
+    public virtual DbSet<Carts> Carts { get; set; }
+
+    public virtual DbSet<CartItems> CartItems { get; set; }
+
     public virtual DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
@@ -62,6 +66,54 @@ public partial class SportManagementContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<Carts>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__carts__3213E83F");
+
+            entity.ToTable("carts");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_carts_user");
+        });
+
+        modelBuilder.Entity<CartItems>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__cart_items__3213E83F");
+
+            entity.ToTable("cart_items");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CartId).HasColumnName("cart_id");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.VariantId).HasColumnName("variant_id");
+            entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.UnitPrice)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("unit_price");
+
+            entity.HasOne(d => d.Cart).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.CartId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_cartitems_cart");
+
+            entity.HasOne(d => d.Product).WithMany()
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_cartitems_product");
+
+            entity.HasOne(d => d.Variant).WithMany()
+                .HasForeignKey(d => d.VariantId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_cartitems_variant");
         });
 
         modelBuilder.Entity<NewsletterSubscriber>(entity =>
@@ -240,12 +292,15 @@ public partial class SportManagementContext : DbContext
             entity.ToTable("product_images");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ImageId).HasColumnName("image_id");
             entity.Property(e => e.ImageUrl).HasColumnName("image_url");
             entity.Property(e => e.IsMain)
                 .HasDefaultValue(false)
                 .HasColumnName("is_main");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
-
+            entity.Property(e => e.IsPrimary)
+            .HasDefaultValue(false)
+            .HasColumnName("is_Primary");
             entity.HasOne(d => d.Product).WithMany(p => p.ProductImages)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.Cascade)
