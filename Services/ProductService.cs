@@ -16,6 +16,18 @@ namespace Services
         {
             return await _productRepository.GetAllProductsAsync();
         }
+        public async Task<IEnumerable<ProductCategory>> GetAllCategorysAsync()
+        {
+            var categories = await _productRepository.GetAllCategories();
+            return categories ?? new List<ProductCategory>();
+        }
+
+        public async Task<IEnumerable<Brand>> GetAllBrandsAsync()
+        {
+            var brands = await _productRepository.GetAllBrands();
+            return brands ?? new List<Brand>();
+        }
+
 
         public async Task<Product?> GetProductByIdAsync(int id)
         {
@@ -81,5 +93,6 @@ namespace Services
 
             return await _productRepository.SearchProductsAsync(searchTerm.Trim());
         }
+
     }
 }

@@ -1,4 +1,5 @@
-using BussinessObject;
+
+using DataAccessLayer;
 using DataAccessLayer.Models;
 
 namespace Repositories
@@ -14,7 +15,7 @@ namespace Repositories
 
         public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
-            return await _productDAO.GetAllProductsAsync();
+            return await _productDAO.GetAllProductAsync();
         }
 
         public async Task<Product?> GetProductByIdAsync(int id)
@@ -45,6 +46,14 @@ namespace Repositories
         public async Task<IEnumerable<Product>> SearchProductsAsync(string searchTerm)
         {
             return await _productDAO.SearchProductsAsync(searchTerm);
+        }
+        public async Task<IEnumerable<ProductCategory>> GetAllCategories()
+        {
+            return await _productDAO.GetAllCategoryAsync();
+        }
+        public async Task<IEnumerable<Brand>> GetAllBrands()
+        {
+            return await _productDAO.GetAllBrandAsync();
         }
     }
 }

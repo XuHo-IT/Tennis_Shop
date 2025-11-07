@@ -11,5 +11,7 @@ namespace Services
         Task<bool> DeleteProductAsync(int id);
         Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId);
         Task<IEnumerable<Product>> SearchProductsAsync(string searchTerm);
+        Task<IEnumerable<ProductCategory>> GetAllCategorysAsync();
+        Task<IEnumerable<Brand>> GetAllBrandsAsync();
     }
 }
