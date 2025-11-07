@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using DataAccessLayer.Models;
 
 namespace DataAccessLayer
@@ -12,7 +12,7 @@ namespace DataAccessLayer
             _context = context;
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        public async Task<IEnumerable<Product>> GetAllProductAsync()
         {
             return await _context.Products
                 .Include(p => p.Brand)
@@ -20,6 +20,16 @@ namespace DataAccessLayer
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductVariants)
                 .Where(p => p.IsActive == true)
+                .ToListAsync();
+        }
+        public async Task<IEnumerable<ProductCategory>> GetAllCategoryAsync()
+        {
+            return await _context.ProductCategories            
+                .ToListAsync();
+        }
+        public async Task<IEnumerable<Brand>> GetAllBrandAsync()
+        {
+            return await _context.Brands
                 .ToListAsync();
         }
 
@@ -47,10 +57,11 @@ namespace DataAccessLayer
             var existingProduct = await _context.Products
                 .Include(p => p.ProductImages)
                 .FirstOrDefaultAsync(p => p.Id == product.Id);
-            
+
             if (existingProduct == null)
                 return null;
 
+            // Update scalar properties
             existingProduct.Name = product.Name;
             existingProduct.Description = product.Description;
             existingProduct.CategoryId = product.CategoryId;
@@ -60,27 +71,41 @@ namespace DataAccessLayer
             existingProduct.Stock = product.Stock;
             existingProduct.IsActive = product.IsActive;
 
-            // Handle ProductImages updates
+            // --- Handle ProductImages updates ---
             if (product.ProductImages != null && product.ProductImages.Any())
             {
-                // Remove existing primary images if new ones are being added
-                var existingPrimaryImages = existingProduct.ProductImages.Where(img => img.IsPrimary == true || img.IsMain == true).ToList();
+                // Remove existing primary/main images only if a new one is provided
+                var existingPrimaryImages = existingProduct.ProductImages
+                     .Where(img => (img.IsPrimary ?? false) || (img.IsMain ?? false))
+                     .ToList();
+
+
                 foreach (var existingImg in existingPrimaryImages)
                 {
                     _context.ProductImages.Remove(existingImg);
                 }
 
-                // Add new images
                 foreach (var newImage in product.ProductImages)
                 {
-                    newImage.ProductId = existingProduct.Id;
-                    _context.ProductImages.Add(newImage);
+                    // If this image already exists in DB (has Id > 0), reattach instead of inserting
+                    if (newImage.Id > 0)
+                    {
+                        _context.Entry(newImage).State = EntityState.Unchanged;
+                        existingProduct.ProductImages.Add(newImage);
+                    }
+                    else
+                    {
+                        // New image → mark for insertion
+                        newImage.ProductId = existingProduct.Id;
+                        _context.ProductImages.Add(newImage);
+                    }
                 }
             }
 
             await _context.SaveChangesAsync();
             return existingProduct;
         }
+
 
         public async Task<bool> DeleteProductAsync(int id)
         {

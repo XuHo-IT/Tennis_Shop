@@ -4,6 +4,7 @@ using DataAccessLayer.Models;
 using Services;
 using System.Security.Claims;
 using System.Linq;
+using DataAccessLayer;
 
 namespace TennisShop.Controllers
 {
@@ -12,9 +13,9 @@ namespace TennisShop.Controllers
     {
         private readonly IUserService _userService;
         private readonly IProductService _productService;
-        private readonly BussinessObject.SportManagementContext _context;
+        private readonly SportManagementContext _context;
 
-        public AdminController(IUserService userService, IProductService productService, BussinessObject.SportManagementContext context)
+        public AdminController(IUserService userService, IProductService productService, SportManagementContext context)
         {
             _userService = userService;
             _productService = productService;

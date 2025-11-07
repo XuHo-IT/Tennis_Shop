@@ -78,15 +78,33 @@
                                         <div>
                                             @if (product.DiscountPercent > 0)
                                             {
+                                                // Safely cast nullable decimals to decimal
+                                                decimal basePrice = product.BasePrice;
+                                                decimal discountPercent = product.DiscountPercent ?? 0;
+
+                                                // Correct formula for discounted price
+                                                decimal finalPrice = basePrice * (1 - discountPercent / 100m);
+
                                                 <div>
-                                                    <span class="h5 text-primary mb-0">${{(product.BasePrice * (1 - product.DiscountPercent / 100)).ToString("F2")}}</span>
-                                                    <small class="text-muted text-decoration-line-through ms-2">$@product.BasePrice.ToString("F2")</small>
+                                                    <span class="h5 text-primary mb-0">
+                                                        $@finalPrice.ToString("F2")
+                                                    </span>
+                                                    <small class="text-muted text-decoration-line-through ms-2">
+                                                        $@basePrice.ToString("F2")
+                                                    </small>
+                                                    <span class="badge bg-success ms-2">-@discountPercent%</span>
                                                 </div>
                                             }
                                             else
                                             {
-                                                <span class="h5 text-primary mb-0">$@product.BasePrice.ToString("F2")</span>
+                                                <div>
+                                                    <span class="h5 text-primary mb-0">
+                                                        $@product.BasePrice
+                                                    </span>
+                                                </div>
                                             }
+
+
                                         </div>
                                     </div>
                                     
