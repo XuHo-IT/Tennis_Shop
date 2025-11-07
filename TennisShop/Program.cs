@@ -27,16 +27,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<ProductDAO>();
 builder.Services.AddScoped<UserDAO>();
 builder.Services.AddScoped<OrderDAO>();
+builder.Services.AddScoped<CartDAO>();
 
 // Register Repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 // Register Services
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IImageKitService, ImageKitService>();
 builder.Services.AddHttpClient<IImageKitService, ImageKitService>();
 
