@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Models;
+namespace BussinessObject;
 
-public partial class CartItems
+public partial class CartItem
 {
     public int Id { get; set; }
 
@@ -17,9 +17,9 @@ public partial class CartItems
 
     public decimal UnitPrice { get; set; }
 
-    public virtual Carts? Cart { get; set; }
+    public virtual Cart Cart { get; set; } = null!;
 
-    public virtual Product? Product { get; set; }
+    public virtual Product Product { get; set; } = null!;
 
     public virtual ProductVariant? Variant { get; set; }
 }

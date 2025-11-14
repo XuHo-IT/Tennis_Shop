@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using BussinessObject;
 
-namespace DataAccessLayer;
+namespace BussinessObject;
 
-public partial class SportManagementContext : DbContext
+public partial class SportContext : DbContext
 {
-    public SportManagementContext()
+    public SportContext()
     {
     }
 
-    public SportManagementContext(DbContextOptions<SportManagementContext> options)
+    public SportContext(DbContextOptions<SportContext> options)
         : base(options)
     {
     }

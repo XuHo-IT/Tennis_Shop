@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Models;
+using BussinessObject;
 
 namespace DataAccessLayer
 {
@@ -13,7 +13,7 @@ namespace DataAccessLayer
         }
 
         // Get cart by user ID
-        public async Task<Carts?> GetCartByUserIdAsync(int userId)
+        public async Task<Cart?> GetCartByUserIdAsync(int userId)
         {
             return await _context.Carts
                 .Include(c => c.CartItems)
@@ -26,7 +26,7 @@ namespace DataAccessLayer
         }
 
         // Get cart by ID
-        public async Task<Carts?> GetCartByIdAsync(int cartId)
+        public async Task<Cart?> GetCartByIdAsync(int cartId)
         {
             return await _context.Carts
                 .Include(c => c.CartItems)
@@ -37,9 +37,9 @@ namespace DataAccessLayer
         }
 
         // Create new cart for user
-        public async Task<Carts> CreateCartAsync(int userId)
+        public async Task<Cart> CreateCartAsync(int userId)
         {
-            var cart = new Carts
+            var cart = new Cart
             {
                 UserId = userId,
                 CreatedAt = DateTime.Now
@@ -51,7 +51,7 @@ namespace DataAccessLayer
         }
 
         // Add item to cart
-        public async Task<CartItems> AddItemToCartAsync(int cartId, int productId, int quantity, int? variantId = null)
+        public async Task<CartItem> AddItemToCartAsync(int cartId, int productId, int quantity, int? variantId = null)
         {
             // Check if item already exists in cart with same product and variant
             var existingItem = await _context.CartItems
@@ -85,7 +85,7 @@ namespace DataAccessLayer
             }
 
             // Create new cart item
-            var cartItem = new CartItems
+            var cartItem = new CartItem
             {
                 CartId = cartId,
                 ProductId = productId,
@@ -100,7 +100,7 @@ namespace DataAccessLayer
         }
 
         // Update cart item quantity
-        public async Task<CartItems?> UpdateCartItemQuantityAsync(int cartItemId, int quantity)
+        public async Task<CartItem?> UpdateCartItemQuantityAsync(int cartItemId, int quantity)
         {
             var cartItem = await _context.CartItems.FindAsync(cartItemId);
             if (cartItem == null)

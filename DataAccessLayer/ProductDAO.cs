@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Models;
+using BussinessObject;
 
 namespace DataAccessLayer
 {

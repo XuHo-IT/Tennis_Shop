@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Models;
+namespace BussinessObject;
 
 public partial class User
 {
@@ -20,6 +20,8 @@ public partial class User
     public int? RoleId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
+
+    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 

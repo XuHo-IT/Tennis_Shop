@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
-using DataAccessLayer.Models;
+using DataAccessLayer;
 using Services;
+using BussinessObject;
 
 namespace TennisShop.Controllers
 {

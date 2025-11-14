@@ -1,4 +1,4 @@
-using DataAccessLayer.Models;
+using BussinessObject;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -40,7 +40,7 @@ namespace TennisShop.Controllers
                 if (cart == null)
                 {
                     // Create empty cart view
-                    cart = new Carts { CartItems = new List<CartItems>() };
+                    cart = new Cart { CartItems = new List<CartItem>() };
                 }
 
                 return View(cart);

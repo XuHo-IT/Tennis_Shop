@@ -1,4 +1,4 @@
-using DataAccessLayer.Models;
+using BussinessObject;
 using Repositories;
 
 namespace Services
@@ -12,17 +12,17 @@ namespace Services
             _cartRepository = cartRepository;
         }
 
-        public async Task<Carts?> GetCartByUserIdAsync(int userId)
+        public async Task<Cart?> GetCartByUserIdAsync(int userId)
         {
             return await _cartRepository.GetCartByUserIdAsync(userId);
         }
 
-        public async Task<Carts?> GetCartByIdAsync(int cartId)
+        public async Task<Cart?> GetCartByIdAsync(int cartId)
         {
             return await _cartRepository.GetCartByIdAsync(cartId);
         }
 
-        public async Task<Carts> GetOrCreateCartAsync(int userId)
+        public async Task<Cart> GetOrCreateCartAsync(int userId)
         {
             // Try to get existing cart
             var cart = await _cartRepository.GetCartByUserIdAsync(userId);
@@ -36,7 +36,7 @@ namespace Services
             return cart;
         }
 
-        public async Task<CartItems> AddItemToCartAsync(int userId, int productId, int quantity, int? variantId = null)
+        public async Task<CartItem> AddItemToCartAsync(int userId, int productId, int quantity, int? variantId = null)
         {
             if (userId <= 0)
                 throw new ArgumentException("Invalid user ID");
@@ -54,7 +54,7 @@ namespace Services
             return await _cartRepository.AddItemToCartAsync(cart.Id, productId, quantity, variantId);
         }
 
-        public async Task<CartItems?> UpdateCartItemQuantityAsync(int cartItemId, int quantity)
+        public async Task<CartItem?> UpdateCartItemQuantityAsync(int cartItemId, int quantity)
         {
             if (cartItemId <= 0)
                 throw new ArgumentException("Invalid cart item ID");

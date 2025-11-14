@@ -1,0 +1,137 @@
+@model BussinessObject.Order
+
+@{
+    ViewData["Title"] = "Thanh toán bị hủy";
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5 text-center">
+                        <!-- Cancel Icon -->
+                        <div class="mb-4">
+                            <i class="fas fa-times-circle text-warning" style="font-size: 5rem;"></i>
+                        </div>
+                        
+                        <h2 class="card-title mb-3">Thanh Toán Bị Hủy</h2>
+                        <p class="lead text-muted mb-4">Bạn đã hủy quá trình thanh toán.</p>
+                        
+                        <div class="alert alert-warning mb-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Đơn hàng của bạn với mã <strong class="text-primary">#@Model.Id</strong> vẫn được lưu lại 
+                            với trạng thái <strong>chờ thanh toán</strong>. Bạn có thể tiếp tục thanh toán bất cứ lúc nào.
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Order Details -->
+                        <div class="text-start">
+                            <div class="row mb-3">
+                                <div class="col-5">
+                                    <strong><i class="fas fa-calendar-alt me-2 text-primary"></i>Ngày đặt:</strong>
+                                </div>
+                                <div class="col-7">
+                                    @Model.OrderDate?.ToString("dd/MM/yyyy, HH:mm")
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-5">
+                                    <strong><i class="fas fa-shipping-fast me-2 text-primary"></i>Giao đến:</strong>
+                                </div>
+                                <div class="col-7">
+                                    @(Model.ShippingAddress ?? "Chưa cập nhật")
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-5">
+                                    <strong><i class="fas fa-phone me-2 text-primary"></i>Số điện thoại:</strong>
+                                </div>
+                                <div class="col-7">
+                                    @(Model.Phone ?? "Chưa cập nhật")
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-5">
+                                    <strong><i class="fas fa-dollar-sign me-2 text-primary"></i>Tổng tiền:</strong>
+                                </div>
+                                <div class="col-7">
+                                    <strong class="fs-5 text-danger">$@Model.TotalAmount?.ToString("F2")</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a asp-controller="Payment" asp-action="RetryPayment" asp-route-id="@Model.Id" 
+                               class="btn btn-success btn-lg">
+                                <i class="fas fa-redo me-2"></i>Thử lại thanh toán
+                            </a>
+                            <a asp-controller="Order" asp-action="Details" asp-route-id="@Model.Id" 
+                               class="btn btn-primary btn-lg">
+                                <i class="fas fa-eye me-2"></i>Xem chi tiết đơn hàng
+                            </a>
+                            <a asp-controller="Home" asp-action="Index" 
+                               class="btn btn-outline-dark btn-lg">
+                                <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="mt-4 text-center">
+                    <p class="text-muted">
+                        <i class="fas fa-question-circle me-2"></i>
+                        Nếu bạn gặp vấn đề với thanh toán, vui lòng liên hệ với chúng tôi để được hỗ trợ.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .card {
+        border-radius: 10px;
+    }
+
+    .card-body {
+        border-radius: 10px;
+    }
+
+    .lead {
+        font-size: 1.1rem;
+    }
+
+    @@media (max-width: 768px) {
+        .card-body {
+            padding: 2rem !important;
+        }
+        
+        .row.mb-3 {
+            margin-bottom: 1rem !important;
+        }
+        
+        .col-5, .col-7 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .col-5 {
+            margin-bottom: 0.25rem;
+        }
+
+        .d-md-flex {
+            flex-direction: column;
+        }
+
+        .btn-lg {
+            margin-bottom: 0.5rem;
+        }
+    }
+</style>
+

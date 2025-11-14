@@ -1,0 +1,313 @@
+@{
+    ViewData["Title"] = "Checkout";
+    var user = ViewBag.User as BussinessObject.User;
+    var cart = ViewBag.Cart as BussinessObject.Cart;
+    var subtotal = ViewBag.Subtotal as decimal? ?? 0;
+    var tax = ViewBag.Tax as decimal? ?? 0;
+    var total = ViewBag.Total as decimal? ?? 0;
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="section-title text-uppercase mb-0">
+                        <i class="fas fa-credit-card me-2"></i>Checkout
+                    </h1>
+                    <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-dark">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Cart
+                    </a>
+                </div>
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <form asp-action="Checkout" method="post" id="checkoutForm">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="row g-4">
+                        <!-- Left Column - Shipping & Payment -->
+                        <div class="col-lg-8">
+                            <!-- Shipping Information -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-dark text-white py-3">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-shipping-fast me-2"></i>Shipping Information
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label for="fullName" class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="fullName" 
+                                                   value="@user?.FullName" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" 
+                                                   value="@user?.Email" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                                   value="@user?.Phone" required 
+                                                   placeholder="Enter your phone number">
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="shippingAddress" class="form-label">Shipping Address <span class="text-danger">*</span></label>
+                                            <textarea class="form-control" id="shippingAddress" name="shippingAddress" 
+                                                      rows="3" required 
+                                                      placeholder="Enter your full shipping address">@user?.Address</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Method -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-dark text-white py-3">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-credit-card me-2"></i>Payment Method
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="payment-methods">
+                                        <!-- PayOS -->
+                                        <div class="form-check payment-option mb-3 p-3 border rounded">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" 
+                                                   id="paymentPayOS" value="PayOS" checked>
+                                            <label class="form-check-label w-100" for="paymentPayOS">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div>
+                                                        <strong><i class="fas fa-qrcode me-2 text-primary"></i>PayOS</strong>
+                                                        <p class="mb-0 text-muted small">Pay securely with PayOS payment gateway</p>
+                                                    </div>
+                                                    <div class="payment-logos">
+                                                        <i class="fas fa-credit-card fa-2x text-primary"></i>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <!-- Cash on Delivery -->
+                                        <div class="form-check payment-option p-3 border rounded">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" 
+                                                   id="paymentCOD" value="COD">
+                                            <label class="form-check-label w-100" for="paymentCOD">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div>
+                                                        <strong><i class="fas fa-money-bill-wave me-2 text-success"></i>Cash on Delivery</strong>
+                                                        <p class="mb-0 text-muted small">Pay when you receive your order</p>
+                                                    </div>
+                                                    <div class="payment-logos">
+                                                        <i class="fas fa-truck fa-2x text-success"></i>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-info mt-3 mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Secure Payment:</strong> Your payment information is encrypted and secure.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Order Items -->
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-dark text-white py-3">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-box me-2"></i>Order Items (@cart?.CartItems?.Count() items)
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th scope="col" class="border-0">Product</th>
+                                                    <th scope="col" class="border-0 text-center" style="width: 100px;">Quantity</th>
+                                                    <th scope="col" class="border-0 text-end" style="width: 120px;">Price</th>
+                                                    <th scope="col" class="border-0 text-end" style="width: 120px;">Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (cart?.CartItems != null)
+                                                {
+                                                    foreach (var item in cart.CartItems)
+                                                    {
+                                                        var lineTotal = item.Quantity * item.UnitPrice;
+                                                        <tr>
+                                                            <td class="py-3">
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="me-3">
+                                                                        @if (item.Product?.ProductImages != null && item.Product.ProductImages.Any())
+                                                                        {
+                                                                            <img src="@item.Product.ProductImages.First().ImageUrl" 
+                                                                                 alt="@item.Product.Name" 
+                                                                                 class="img-thumbnail" 
+                                                                                 style="width: 60px; height: 60px; object-fit: cover;">
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <img src="~/images/img@((item.ProductId % 7) + 1).jpg" 
+                                                                                 alt="@item.Product?.Name" 
+                                                                                 class="img-thumbnail" 
+                                                                                 style="width: 60px; height: 60px; object-fit: cover;">
+                                                                        }
+                                                                    </div>
+                                                                    <div>
+                                                                        <h6 class="mb-1">@item.Product?.Name</h6>
+                                                                        @if (item.Variant != null)
+                                                                        {
+                                                                            <small class="text-muted">@item.Variant.Color - @item.Variant.Size</small>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="badge bg-secondary">@item.Quantity</span>
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <strong>$@item.UnitPrice.ToString("F2")</strong>
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <strong class="text-primary">$@lineTotal.ToString("F2")</strong>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column - Order Summary -->
+                        <div class="col-lg-4">
+                            <div class="card border-0 shadow-sm sticky-top" style="top: 20px;">
+                                <div class="card-header bg-dark text-white py-3">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-receipt me-2"></i>Order Summary
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Subtotal:</span>
+                                        <strong>$@subtotal.ToString("F2")</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Shipping:</span>
+                                        <span class="text-success">Free</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Tax (10%):</span>
+                                        <strong>$@tax.ToString("F2")</strong>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <h5 class="mb-0">Total:</h5>
+                                        <h5 class="mb-0 text-primary">$@total.ToString("F2")</h5>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-dark btn-lg" id="placeOrderBtn">
+                                            <i class="fas fa-check-circle me-2"></i>Place Order
+                                        </button>
+                                        <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-dark">
+                                            <i class="fas fa-arrow-left me-2"></i>Back to Cart
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-light text-center py-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-shield-alt me-1"></i>Secure Checkout
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Payment method selection animation
+            $('.payment-option').on('click', function() {
+                $('.payment-option').removeClass('border-primary shadow-sm');
+                $(this).addClass('border-primary shadow-sm');
+            });
+
+            // Form validation
+            $('#checkoutForm').on('submit', function(e) {
+                const phone = $('#phone').val().trim();
+                const address = $('#shippingAddress').val().trim();
+
+                if (!phone || !address) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Required Fields',
+                        text: 'Please fill in all required fields',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return false;
+                }
+
+                // Show loading
+                $('#placeOrderBtn').html('<i class="fas fa-spinner fa-spin me-2"></i>Processing...').prop('disabled', true);
+            });
+        });
+    </script>
+}
+
+<style>
+    .section-title {
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .payment-option {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .payment-option:hover {
+        background-color: #f8f9fa;
+        border-color: #dee2e6 !important;
+    }
+
+    .payment-option.border-primary {
+        background-color: #f0f8ff;
+    }
+
+    .form-check-input:checked ~ .form-check-label {
+        font-weight: 500;
+    }
+
+    .payment-logos i {
+        opacity: 0.7;
+    }
+
+    .payment-option:hover .payment-logos i {
+        opacity: 1;
+    }
+
+    .sticky-top {
+        position: sticky;
+        z-index: 1020;
+    }
+</style>
+

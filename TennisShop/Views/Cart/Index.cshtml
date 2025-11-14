@@ -1,4 +1,4 @@
-@model DataAccessLayer.Models.Carts
+@model BussinessObject.Cart
 
 @{
     ViewData["Title"] = "Shopping Cart";
@@ -185,9 +185,9 @@
                                     </div>
                                     
                                     <div class="d-grid gap-2">
-                                        <a asp-controller="Order" asp-action="Checkout" class="btn btn-dark btn-lg">
-                                            <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
-                                        </a>
+                                <a asp-controller="Payment" asp-action="Checkout" class="btn btn-dark btn-lg">
+                                    <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                                </a>
                                         <a asp-controller="Product" asp-action="Index" class="btn btn-outline-dark">
                                             <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
                                         </a>

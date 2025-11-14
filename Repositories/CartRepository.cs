@@ -1,5 +1,5 @@
 using DataAccessLayer;
-using DataAccessLayer.Models;
+using BussinessObject;
 
 namespace Repositories
 {
@@ -12,27 +12,27 @@ namespace Repositories
             _cartDAO = cartDAO;
         }
 
-        public async Task<Carts?> GetCartByUserIdAsync(int userId)
+        public async Task<Cart?> GetCartByUserIdAsync(int userId)
         {
             return await _cartDAO.GetCartByUserIdAsync(userId);
         }
 
-        public async Task<Carts?> GetCartByIdAsync(int cartId)
+        public async Task<Cart?> GetCartByIdAsync(int cartId)
         {
             return await _cartDAO.GetCartByIdAsync(cartId);
         }
 
-        public async Task<Carts> CreateCartAsync(int userId)
+        public async Task<Cart> CreateCartAsync(int userId)
         {
             return await _cartDAO.CreateCartAsync(userId);
         }
 
-        public async Task<CartItems> AddItemToCartAsync(int cartId, int productId, int quantity, int? variantId = null)
+        public async Task<CartItem> AddItemToCartAsync(int cartId, int productId, int quantity, int? variantId = null)
         {
             return await _cartDAO.AddItemToCartAsync(cartId, productId, quantity, variantId);
         }
 
-        public async Task<CartItems?> UpdateCartItemQuantityAsync(int cartItemId, int quantity)
+        public async Task<CartItem?> UpdateCartItemQuantityAsync(int cartItemId, int quantity)
         {
             return await _cartDAO.UpdateCartItemQuantityAsync(cartItemId, quantity);
         }

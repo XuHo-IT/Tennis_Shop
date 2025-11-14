@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Models;
+namespace BussinessObject;
 
 public partial class ProductVariant
 {
@@ -18,6 +18,8 @@ public partial class ProductVariant
     public int? Stock { get; set; }
 
     public decimal? Price { get; set; }
+
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
