@@ -43,16 +43,16 @@ namespace TennisShop.Controllers
                 var user = await _userService.AuthenticateUserAsync(email, password);
                 if (user != null)
                 {
+                    // Use role name exactly as stored in database (Admin, Customer)
+                    var roleName = user.Role?.Name ?? "Customer";
+                    
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new Claim(ClaimTypes.Name, user.FullName),
                         new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.Role, user.Role?.Name ?? "User")
+                        new Claim(ClaimTypes.Role, roleName)
                     };
-
-                    // Debug: Log the role information
-                    System.Diagnostics.Debug.WriteLine($"User {user.Email} - RoleId: {user.RoleId}, RoleName: {user.Role?.Name}");
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties
@@ -98,7 +98,7 @@ namespace TennisShop.Controllers
             {
                 try
                 {
-                    // Set default role to User (assuming role ID 2 is for regular users)
+                    // Set default role to Customer (role ID 2)
                     user.RoleId = 2;
                     await _userService.CreateUserAsync(user);
                     TempData["SuccessMessage"] = "Registration successful! Please login.";
@@ -190,5 +190,6 @@ namespace TennisShop.Controllers
             }
             return View(user);
         }
+
     }
 }
