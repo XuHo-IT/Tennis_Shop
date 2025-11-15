@@ -8,7 +8,7 @@ using DataAccessLayer;
 
 namespace TennisShop.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IUserService _userService;
@@ -27,7 +27,6 @@ namespace TennisShop.Controllers
         {
             // Debug: Check user's role
             System.Diagnostics.Debug.WriteLine($"Current user: {User.Identity.Name}");
-            System.Diagnostics.Debug.WriteLine($"Is in admin role: {User.IsInRole("admin")}");
             System.Diagnostics.Debug.WriteLine($"All roles: {string.Join(", ", User.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value))}");
             
             try
@@ -225,7 +224,7 @@ namespace TennisShop.Controllers
                 ViewBag.Users = users;
                 ViewBag.Roles = roles;
                 ViewBag.CurrentUser = User.Identity.Name;
-                ViewBag.IsAdmin = User.IsInRole("admin");
+                ViewBag.IsAdmin = User.IsInRole("Admin");
                 ViewBag.UserClaims = User.Claims.ToList();
                 
                 return View();

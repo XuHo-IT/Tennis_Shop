@@ -43,6 +43,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IImageKitService, ImageKitService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPayOSService, PayOSService>();
+builder.Services.AddSingleton<IBlogService, BlogService>();
 builder.Services.AddHttpClient<IImageKitService, ImageKitService>();
 builder.Services.AddHttpClient<IPaymentService, PaymentService>();
 
