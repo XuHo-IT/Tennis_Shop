@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using BussinessObject;
 
 namespace DataAccessLayer
 {
     public class ProductDAO
     {
-        private readonly SportManagementContext _context;
+        private readonly SportContext _context;
 
-        public ProductDAO(SportManagementContext context)
+        public ProductDAO(SportContext context)
         {
             _context = context;
         }

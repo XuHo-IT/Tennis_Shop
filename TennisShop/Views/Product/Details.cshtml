@@ -564,18 +564,130 @@
         }
     }
     
-    // Validate variant selection before submit
+    // Handle Add to Cart form submission with AJAX
     const addToCartForm = document.getElementById('addToCartForm');
     if (addToCartForm) {
-        addToCartForm.addEventListener('submit', function(e) {
+        addToCartForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
             const hasVariants = @((Model.ProductVariants?.Any() ?? false).ToString().ToLower());
             if (hasVariants) {
                 const variantId = document.getElementById('selectedVariantId').value;
                 if (!variantId || variantId === '0') {
-                    e.preventDefault();
-                    alert('Please select a product variant before adding to cart.');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Variant Required',
+                        text: 'Please select a product variant before adding to cart.',
+                        confirmButtonColor: '#000'
+                    });
                     return false;
                 }
+            }
+            
+            // Get form data
+            const formData = new FormData(addToCartForm);
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            
+            // Disable submit button
+            const submitBtn = addToCartForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Adding...';
+            
+            try {
+                // Handle variantId properly
+                const variantIdInput = document.getElementById('selectedVariantId');
+                const hasVariants = @((Model.ProductVariants?.Any() ?? false).ToString().ToLower());
+                
+                // If product has no variants, remove variantId from form data
+                if (!hasVariants) {
+                    formData.delete('variantId');
+                } else {
+                    // Ensure variantId is set correctly
+                    const variantIdValue = variantIdInput ? variantIdInput.value : '0';
+                    if (variantIdValue === '0' || variantIdValue === '') {
+                        // Don't send variantId if it's 0 or empty for products with variants
+                        // This will trigger validation error which is better than silent failure
+                    }
+                }
+                
+                // Ensure token is in form data
+                formData.set('__RequestVerificationToken', token);
+                
+                const response = await fetch('@Url.Action("AddItem", "Cart")', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                // Check if response is OK
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error:', response.status, errorText);
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned non-JSON response');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success popup and reload after it closes
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added to Cart!',
+                        text: result.message || 'Product added to cart successfully!',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#000',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(() => {
+                        // Reload the page after popup closes
+                        window.location.reload();
+                    });
+                } else {
+                    // Show error popup with detailed message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message || 'Failed to add product to cart.',
+                        confirmButtonColor: '#000'
+                    });
+                    
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            } catch (error) {
+                console.error('Error details:', error);
+                let errorMessage = 'An error occurred while adding the product to cart.';
+                
+                // Try to extract more detailed error message
+                if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage,
+                    confirmButtonColor: '#000',
+                    footer: 'Please check the console for more details.'
+                });
+                
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
             }
         });
     }

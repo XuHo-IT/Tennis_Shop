@@ -5,9 +5,9 @@ namespace DataAccessLayer
 {
     public class OrderDAO
     {
-        private readonly SportManagementContext _context;
+        private readonly SportContext _context;
 
-        public OrderDAO(SportManagementContext context)
+        public OrderDAO(SportContext context)
         {
             _context = context;
         }
