@@ -78,8 +78,9 @@
                                         <div>
                                             @if (product.DiscountPercent > 0)
                                             {
+                                                var discountedPrice = product.BasePrice * (1 - (product.DiscountPercent ?? 0) / 100m);
                                                 <div>
-                                                    <span class="h5 text-primary mb-0">${{(product.BasePrice * (1 - product.DiscountPercent / 100)).ToString("F2")}}</span>
+                                                    <span class="h5 text-primary mb-0">$@discountedPrice.ToString("F2")</span>
                                                     <small class="text-muted text-decoration-line-through ms-2">$@product.BasePrice.ToString("F2")</small>
                                                 </div>
                                             }

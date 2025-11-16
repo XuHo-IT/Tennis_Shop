@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using DataAccessLayer.Models;
-using System.Security.Cryptography;
-using System.Text;
+using BussinessObject;
 
 namespace DataAccessLayer
 {
@@ -37,7 +36,7 @@ namespace DataAccessLayer
 
         public async Task<User> CreateUserAsync(User user)
         {
-            user.PasswordHash = HashPassword(user.PasswordHash);
+            // Store password as plain text (no hashing)
             user.CreatedAt = DateTime.Now;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -58,7 +57,7 @@ namespace DataAccessLayer
 
             if (!string.IsNullOrEmpty(user.PasswordHash))
             {
-                existingUser.PasswordHash = HashPassword(user.PasswordHash);
+                existingUser.PasswordHash = user.PasswordHash; // Store plain text
             }
 
             await _context.SaveChangesAsync();
@@ -82,25 +81,11 @@ namespace DataAccessLayer
             if (user == null)
                 return null;
 
-            if (VerifyPassword(password, user.PasswordHash))
+            // Compare plain text passwords
+            if (user.PasswordHash == password)
                 return user;
 
             return null;
-        }
-
-        private string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
-        }
-
-        private bool VerifyPassword(string password, string hashedPassword)
-        {
-            var hashedInput = HashPassword(password);
-            return hashedInput == hashedPassword;
         }
     }
 }

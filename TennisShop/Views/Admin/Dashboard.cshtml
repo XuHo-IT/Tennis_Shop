@@ -17,11 +17,11 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Users</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalUsers</div>
+                            <div class="small fw-bold text-primary text-uppercase mb-1">Total Users</div>
+                            <div class="h5 mb-0 fw-bold text-dark">@Model.TotalUsers</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                            <i class="fas fa-users fa-2x text-secondary opacity-50"></i>
                         </div>
                     </div>
                 </div>
@@ -33,11 +33,11 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Products</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalProducts</div>
+                            <div class="small fw-bold text-success text-uppercase mb-1">Total Products</div>
+                            <div class="h5 mb-0 fw-bold text-dark">@Model.TotalProducts</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-box fa-2x text-gray-300"></i>
+                            <i class="fas fa-box fa-2x text-secondary opacity-50"></i>
                         </div>
                     </div>
                 </div>
@@ -49,11 +49,11 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Orders</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalOrders</div>
+                            <div class="small fw-bold text-info text-uppercase mb-1">Total Orders</div>
+                            <div class="h5 mb-0 fw-bold text-dark">@Model.TotalOrders</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                            <i class="fas fa-shopping-cart fa-2x text-secondary opacity-50"></i>
                         </div>
                     </div>
                 </div>
@@ -65,11 +65,11 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Active Products</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.RecentProducts.Count(p => p.IsActive == true)</div>
+                            <div class="small fw-bold text-warning text-uppercase mb-1">Active Products</div>
+                            <div class="h5 mb-0 fw-bold text-dark">@Model.RecentProducts.Count(p => p.IsActive == true)</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                            <i class="fas fa-check-circle fa-2x text-secondary opacity-50"></i>
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
         <div class="col-12">
             <div class="card shadow">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                    <h6 class="m-0 fw-bold text-primary">Quick Actions</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -117,7 +117,7 @@
         <div class="col-lg-6">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Users</h6>
+                    <h6 class="m-0 fw-bold text-primary">Recent Users</h6>
                 </div>
                 <div class="card-body">
                     @if (Model.RecentUsers.Any())
@@ -139,7 +139,7 @@
                                             <td>@user.FullName</td>
                                             <td>@user.Email</td>
                                             <td>
-                                                <span class="badge badge-@(user.Role?.Name == "Admin" ? "danger" : "primary")">
+                                                <span class="badge bg-@(user.Role?.Name == "Admin" ? "danger" : "primary")">
                                                     @user.Role?.Name
                                                 </span>
                                             </td>
@@ -161,7 +161,7 @@
         <div class="col-lg-6">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Products</h6>
+                    <h6 class="m-0 fw-bold text-primary">Recent Products</h6>
                 </div>
                 <div class="card-body">
                     @if (Model.RecentProducts.Any())
@@ -184,7 +184,7 @@
                                             <td>$@product.BasePrice.ToString("F2")</td>
                                             <td>@product.Stock</td>
                                             <td>
-                                                <span class="badge badge-@(product.IsActive == true ? "success" : "secondary")">
+                                                <span class="badge bg-@(product.IsActive == true ? "success" : "secondary")">
                                                     @(product.IsActive == true ? "Active" : "Inactive")
                                                 </span>
                                             </td>
@@ -219,8 +219,5 @@
     }
     .text-gray-800 {
         color: #5a5c69 !important;
-    }
-    .text-gray-300 {
-        color: #dddfeb !important;
     }
 </style>

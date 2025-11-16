@@ -85,11 +85,11 @@
                     <div class="price-section mb-4 pb-4 border-bottom">
                         @if (Model.DiscountPercent > 0)
                         {
-                            var discountedPrice = Model.BasePrice * (1 - Model.DiscountPercent / 100);
+                            var discountedPrice = Model.BasePrice * (1 - (Model.DiscountPercent ?? 0) / 100m);
                             <div class="d-flex align-items-center gap-3">
-                                <h2 class="text-primary mb-0">${{discountedPrice.ToString("F2")}}</h2>
+                                <h2 class="text-primary mb-0">$@discountedPrice.ToString("F2")</h2>
                                 <h4 class="text-muted text-decoration-line-through mb-0">$@Model.BasePrice.ToString("F2")</h4>
-                                <span class="badge bg-success fs-6 px-3 py-2">You Save: ${(Model.BasePrice - discountedPrice).ToString("F2")}</span>
+                                <span class="badge bg-success fs-6 px-3 py-2">You Save: $@((Model.BasePrice - discountedPrice).ToString("F2"))</span>
                             </div>
                         }
                         else
@@ -172,7 +172,7 @@
                                                     <span class="badge bg-secondary">@variant.Color</span>
                                                 </td>
                                                 <td><strong>@variant.Size</strong></td>
-                                                <td class="text-primary fw-bold">${{(variant.Price ?? Model.BasePrice).ToString("F2")}}</td>
+                                                <td class="text-primary fw-bold">$@((variant.Price ?? Model.BasePrice).ToString("F2"))</td>
                                                 <td>
                                                     @if (variant.Stock > 0)
                                                     {

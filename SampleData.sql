@@ -81,14 +81,15 @@ GO
 -- =============================================
 SET IDENTITY_INSERT users ON;
 
--- Note: Password hashes are SHA256 hashed passwords
--- Example: 'admin123' -> Base64 encoded SHA256 hash
+-- Note: Passwords are stored as plain text (no hashing)
+-- Admin Password: admin123
+-- User Passwords: john123, jane123, mike123, sarah123
 INSERT INTO users (id, full_name, email, password_hash, phone, address, role_id, created_at) VALUES
-(1, 'Admin User', 'admin@tennisshop.com', 'jGl25bEBBRv98otuJlzGKHlOCxBhFjL4gkICPYzJj8M=', '0123456789', '123 Admin Street, City', 1, '2024-01-01 10:00:00'),
-(2, 'John Doe', 'john.doe@email.com', 'jGl25bEBBRv98otuJlzGKHlOCxBhFjL4gkICPYzJj8M=', '0987654321', '456 Main Street, District 1', 2, '2024-01-15 14:30:00'),
-(3, 'Jane Smith', 'jane.smith@email.com', 'jGl25bEBBRv98otuJlzGKHlOCxBhFjL4gkICPYzJj8M=', '0912345678', '789 Park Avenue, District 2', 2, '2024-02-01 09:15:00'),
-(4, 'Mike Johnson', 'mike.j@email.com', 'jGl25bEBBRv98otuJlzGKHlOCxBhFjL4gkICPYzJj8M=', '0923456789', '321 Sports Lane, District 3', 2, '2024-02-10 16:45:00'),
-(5, 'Sarah Williams', 'sarah.w@email.com', 'jGl25bEBBRv98otuJlzGKHlOCxBhFjL4gkICPYzJj8M=', '0934567890', '654 Tennis Court Road, District 7', 2, '2024-02-20 11:20:00');
+(1, 'Admin User', 'admin@tennisshop.com', 'admin123', '0123456789', '123 Admin Street, City', 1, '2024-01-01 10:00:00'),
+(2, 'John Doe', 'john.doe@email.com', 'john123', '0987654321', '456 Main Street, District 1', 2, '2024-01-15 14:30:00'),
+(3, 'Jane Smith', 'jane.smith@email.com', 'jane123', '0912345678', '789 Park Avenue, District 2', 2, '2024-02-01 09:15:00'),
+(4, 'Mike Johnson', 'mike.j@email.com', 'mike123', '0923456789', '321 Sports Lane, District 3', 2, '2024-02-10 16:45:00'),
+(5, 'Sarah Williams', 'sarah.w@email.com', 'sarah123', '0934567890', '654 Tennis Court Road, District 7', 2, '2024-02-20 11:20:00');
 
 SET IDENTITY_INSERT users OFF;
 GO
@@ -183,29 +184,59 @@ GO
 -- =============================================
 SET IDENTITY_INSERT product_images ON;
 
-INSERT INTO product_images (id, product_id, image_url, image_id, is_main, is_primary) VALUES
--- Product 1 (Wilson Pro Staff)
-(1, 1, 'https://example.com/images/wilson-prostaff-1.jpg', 'img001', 1, 1),
-(2, 1, 'https://example.com/images/wilson-prostaff-2.jpg', 'img002', 0, 0),
--- Product 2 (Babolat Pure Drive)
-(3, 2, 'https://example.com/images/babolat-puredrive-1.jpg', 'img003', 1, 1),
-(4, 2, 'https://example.com/images/babolat-puredrive-2.jpg', 'img004', 0, 0),
--- Product 3 (Head Speed)
-(5, 3, 'https://example.com/images/head-speed-1.jpg', 'img005', 1, 1),
--- Product 6 (Nike Court Vapor)
-(6, 6, 'https://example.com/images/nike-court-1.jpg', 'img006', 1, 1),
-(7, 6, 'https://example.com/images/nike-court-2.jpg', 'img007', 0, 0),
+INSERT INTO product_images (id, product_id, image_url, is_main) VALUES
+-- Product 1 (Wilson Pro Staff RF97)
+(1, 1, 'https://example.com/images/wilson-prostaff-1.jpg', 1),
+(2, 1, 'https://example.com/images/wilson-prostaff-2.jpg', 0),
+(3, 1, 'https://example.com/images/wilson-prostaff-3.jpg', 0),
+-- Product 2 (Babolat Pure Drive 2024)
+(4, 2, 'https://example.com/images/babolat-puredrive-1.jpg', 1),
+(5, 2, 'https://example.com/images/babolat-puredrive-2.jpg', 0),
+-- Product 3 (Head Speed Pro)
+(6, 3, 'https://example.com/images/head-speed-1.jpg', 1),
+(7, 3, 'https://example.com/images/head-speed-2.jpg', 0),
+-- Product 4 (Wilson Blade 98)
+(8, 4, 'https://example.com/images/wilson-blade-1.jpg', 1),
+(9, 4, 'https://example.com/images/wilson-blade-2.jpg', 0),
+-- Product 5 (Yonex EZONE 100)
+(10, 5, 'https://example.com/images/yonex-ezone-1.jpg', 1),
+(11, 5, 'https://example.com/images/yonex-ezone-2.jpg', 0),
+-- Product 6 (Nike Court Vapor - Men Shoes)
+(12, 6, 'https://example.com/images/nike-court-vapor-1.jpg', 1),
+(13, 6, 'https://example.com/images/nike-court-vapor-2.jpg', 0),
+(14, 6, 'https://example.com/images/nike-court-vapor-3.jpg', 0),
+-- Product 7 (Adidas Barricade - Men Shoes)
+(15, 7, 'https://example.com/images/adidas-barricade-1.jpg', 1),
+(16, 7, 'https://example.com/images/adidas-barricade-2.jpg', 0),
 -- Product 8 (Nike Women Air Zoom)
-(8, 8, 'https://example.com/images/nike-women-shoes-1.jpg', 'img008', 1, 1),
--- Product 10 (Nike Polo)
-(9, 10, 'https://example.com/images/nike-polo-1.jpg', 'img009', 1, 1),
--- Product 12 (Nike Skirt)
-(10, 12, 'https://example.com/images/nike-skirt-1.jpg', 'img010', 1, 1),
--- Product 14 (Tennis Balls)
-(11, 14, 'https://example.com/images/tennis-balls-1.jpg', 'img011', 1, 1),
--- Product 15 (Babolat Backpack)
-(12, 15, 'https://example.com/images/babolat-bag-1.jpg', 'img012', 1, 1),
-(13, 15, 'https://example.com/images/babolat-bag-2.jpg', 'img013', 0, 0);
+(17, 8, 'https://example.com/images/nike-women-airzoom-1.jpg', 1),
+(18, 8, 'https://example.com/images/nike-women-airzoom-2.jpg', 0),
+-- Product 9 (Adidas Stella Court - Women Shoes)
+(19, 9, 'https://example.com/images/adidas-stella-1.jpg', 1),
+(20, 9, 'https://example.com/images/adidas-stella-2.jpg', 0),
+-- Product 10 (Nike Men Tennis Polo)
+(21, 10, 'https://example.com/images/nike-polo-1.jpg', 1),
+(22, 10, 'https://example.com/images/nike-polo-2.jpg', 0),
+-- Product 11 (Adidas Men Shorts)
+(23, 11, 'https://example.com/images/adidas-shorts-1.jpg', 1),
+(24, 11, 'https://example.com/images/adidas-shorts-2.jpg', 0),
+-- Product 12 (Nike Women Skirt)
+(25, 12, 'https://example.com/images/nike-skirt-1.jpg', 1),
+(26, 12, 'https://example.com/images/nike-skirt-2.jpg', 0),
+-- Product 13 (Adidas Women Tank Top)
+(27, 13, 'https://example.com/images/adidas-tank-1.jpg', 1),
+(28, 13, 'https://example.com/images/adidas-tank-2.jpg', 0),
+-- Product 14 (Wilson Pro Staff Tennis Balls)
+(29, 14, 'https://example.com/images/tennis-balls-1.jpg', 1),
+(30, 14, 'https://example.com/images/tennis-balls-2.jpg', 0),
+-- Product 15 (Babolat Tennis Backpack)
+(31, 15, 'https://example.com/images/babolat-backpack-1.jpg', 1),
+(32, 15, 'https://example.com/images/babolat-backpack-2.jpg', 0),
+(33, 15, 'https://example.com/images/babolat-backpack-3.jpg', 0),
+-- Product 16 (Head Tennis Bag)
+(34, 16, 'https://example.com/images/head-tennis-bag-1.jpg', 1),
+(35, 16, 'https://example.com/images/head-tennis-bag-2.jpg', 0),
+(36, 16, 'https://example.com/images/head-tennis-bag-3.jpg', 0);
 
 SET IDENTITY_INSERT product_images OFF;
 GO
@@ -343,4 +374,6 @@ SELECT 'newsletter_subscribers', COUNT(*) FROM newsletter_subscribers;
 
 PRINT 'Sample data insertion completed successfully!';
 GO
+
+
 

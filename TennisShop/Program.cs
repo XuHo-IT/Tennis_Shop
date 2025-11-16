@@ -1,6 +1,7 @@
-using BussinessObject;
+using DataAccessLayer;
 using Repositories;
 using Services;
+using BussinessObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -10,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Add Entity Framework
-builder.Services.AddDbContext<BussinessObject.SportManagementContext>(options =>
+builder.Services.AddDbContext<SportManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Authentication

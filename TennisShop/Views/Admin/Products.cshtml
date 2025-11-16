@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-12">
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Product Management</h1>
+                <h1 class="h3 mb-0 text-dark">Product Management</h1>
                 <div>
                     <a href="@Url.Action("Create", "Product")" class="btn btn-success btn-sm">
                         <i class="fas fa-plus"></i> Add Product
@@ -24,9 +24,7 @@
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             @TempData["SuccessMessage"]
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
@@ -34,15 +32,13 @@
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             @TempData["ErrorMessage"]
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">All Products (@Model.Count())</h6>
+            <h6 class="m-0 fw-bold text-primary">All Products (@Model.Count())</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -82,7 +78,7 @@
                                             </div>
                                         }
                                         <div>
-                                            <div class="font-weight-bold">@product.Name</div>
+                                            <div class="fw-bold">@product.Name</div>
                                             @if (!string.IsNullOrEmpty(product.Description))
                                             {
                                                 <small class="text-muted">@(product.Description.Length > 50 ? product.Description.Substring(0, 50) + "..." : product.Description)</small>
@@ -93,19 +89,19 @@
                                 <td>@product.Category?.Name</td>
                                 <td>@product.Brand?.Name</td>
                                 <td>
-                                    <div class="font-weight-bold">$@product.BasePrice.ToString("F2")</div>
+                                    <div class="fw-bold">$@product.BasePrice.ToString("F2")</div>
                                     @if (product.DiscountPercent.HasValue && product.DiscountPercent > 0)
                                     {
                                         <small class="text-success">@product.DiscountPercent% off</small>
                                     }
                                 </td>
                                 <td>
-                                    <span class="badge badge-@(product.Stock > 0 ? "success" : "danger")">
+                                    <span class="badge bg-@(product.Stock > 0 ? "success" : "danger")">
                                         @product.Stock
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="badge badge-@(product.IsActive == true ? "success" : "secondary")">
+                                    <span class="badge bg-@(product.IsActive == true ? "success" : "secondary")">
                                         @(product.IsActive == true ? "Active" : "Inactive")
                                     </span>
                                 </td>
