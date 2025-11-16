@@ -1,14 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Models;
 using BussinessObject;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace DataAccessLayer
 {
     public class UserDAO
     {
-        private readonly SportManagementContext _context;
+        private readonly SportContext _context;
 
-        public UserDAO(SportManagementContext context)
+        public UserDAO(SportContext context)
         {
             _context = context;
         }

@@ -1,4 +1,4 @@
-@model DataAccessLayer.Models.User
+@model BussinessObject.User
 @{
     ViewData["Title"] = "Edit User";
 }
@@ -68,7 +68,7 @@
                         <div class="form-group">
                             <label asp-for="RoleId" class="control-label">Role</label>
                             <select asp-for="RoleId" class="form-control">
-                                @foreach (var role in ViewBag.Roles as List<DataAccessLayer.Models.UserRole>)
+                                @foreach (var role in ViewBag.Roles as List<BussinessObject.UserRole>)
                                 {
                                     <option value="@role.Id" selected="@(Model.RoleId == role.Id)">
                                         @role.Name

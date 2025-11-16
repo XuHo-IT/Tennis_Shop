@@ -4,6 +4,7 @@ using Services;
 using BussinessObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using DataAccessLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Add Entity Framework
-builder.Services.AddDbContext<SportManagementContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<SportContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 
 // Add Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -27,18 +28,25 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<ProductDAO>();
 builder.Services.AddScoped<UserDAO>();
 builder.Services.AddScoped<OrderDAO>();
+builder.Services.AddScoped<CartDAO>();
 
 // Register Repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 // Register Services
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IImageKitService, ImageKitService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IPayOSService, PayOSService>();
+builder.Services.AddSingleton<IBlogService, BlogService>();
 builder.Services.AddHttpClient<IImageKitService, ImageKitService>();
+builder.Services.AddHttpClient<IPaymentService, PaymentService>();
 
 var app = builder.Build();
 

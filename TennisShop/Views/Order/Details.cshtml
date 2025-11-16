@@ -1,108 +1,285 @@
-@model DataAccessLayer.Models.Order
+@model BussinessObject.Order
 @{
     ViewData["Title"] = $"Order #{Model?.Id}";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var statusClass = Model.Status?.ToLower() switch
+    {
+        "pending" => "warning",
+        "processing" => "info",
+        "shipped" => "primary",
+        "delivered" => "success",
+        "cancelled" => "danger",
+        _ => "secondary"
+    };
+
+    var statusIcon = Model.Status?.ToLower() switch
+    {
+        "pending" => "fa-clock",
+        "processing" => "fa-cog fa-spin",
+        "shipped" => "fa-truck",
+        "delivered" => "fa-check-circle",
+        "cancelled" => "fa-times-circle",
+        _ => "fa-box"
+    };
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Order #@Model.Id</h2>
-    <div>
-        <span class="badge bg-secondary text-uppercase">@Model.Status</span>
-    </div>
-    </div>
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="section-title text-uppercase mb-0">
+                        <i class="fas fa-receipt me-2"></i>Order #@Model.Id
+                    </h1>
+                    <a asp-controller="Order" asp-action="Index" class="btn btn-outline-dark">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Orders
+                    </a>
+                </div>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-}
-
-<div class="row g-4">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">Items</div>
-            <div class="card-body p-0">
-                @if (Model.OrderItems == null || !Model.OrderItems.Any())
+                @if (TempData["SuccessMessage"] != null)
                 {
-                    <div class="p-3">No items found.</div>
-                }
-                else
-                {
-                    <div class="table-responsive">
-                        <table class="table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Variant</th>
-                                    <th class="text-end">Qty</th>
-                                    <th class="text-end">Price</th>
-                                    <th class="text-end">Subtotal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var item in Model.OrderItems)
-                            {
-                                var productName = item.Product?.Name ?? $"Product #{item.ProductId}";
-                                var variantText = item.Variant != null ? ($"{item.Variant.Color} / {item.Variant.Size}") : "-";
-                                <tr>
-                                    <td>@productName</td>
-                                    <td>@variantText</td>
-                                    <td class="text-end">@item.Quantity</td>
-                                    <td class="text-end">$@item.Price.ToString("0.00")</td>
-                                    <td class="text-end">$@(item.Price * item.Quantity).ToString("0.00")</td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 }
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <div class="card mb-3">
-            <div class="card-header">Summary</div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <span>Total</span>
-                    <strong>$@(Model.TotalAmount ?? 0m).ToString("0.00")</strong>
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <!-- Order Status Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="status-icon me-4">
+                                        <i class="fas @statusIcon fa-3x text-@statusClass"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="mb-1">
+                                            Order Status: 
+                                            <span class="badge bg-@statusClass">
+                                                <i class="fas @statusIcon me-1"></i>@Model.Status?.ToUpper()
+                                            </span>
+                                        </h4>
+                                        <p class="text-muted mb-0">
+                                            <i class="fas fa-calendar-alt me-2"></i>
+                                            Ordered on @Model.OrderDate?.ToString("MMMM dd, yyyy 'at' HH:mm")
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                <h5 class="text-muted mb-1">Total Amount</h5>
+                                <h2 class="text-primary mb-0">$@Model.TotalAmount?.ToString("F2")</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Order Items -->
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-dark text-white py-3">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-box me-2"></i>Order Items (@(Model.OrderItems?.Count() ?? 0))
+                                </h5>
+                            </div>
+                            <div class="card-body p-0">
+                                @if (Model.OrderItems == null || !Model.OrderItems.Any())
+                                {
+                                    <div class="p-4 text-center text-muted">
+                                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                                        <p>No items found in this order.</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th scope="col" class="border-0">Product</th>
+                                                    <th scope="col" class="border-0 text-center" style="width: 100px;">Quantity</th>
+                                                    <th scope="col" class="border-0 text-end" style="width: 120px;">Price</th>
+                                                    <th scope="col" class="border-0 text-end" style="width: 120px;">Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model.OrderItems)
+                                                {
+                                                    var productName = item.Product?.Name ?? $"Product #{item.ProductId}";
+                                                    var lineTotal = item.Price * item.Quantity;
+                                                    <tr>
+                                                        <td class="py-3">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="me-3">
+                                                                    @if (item.Product?.ProductImages != null && item.Product.ProductImages.Any())
+                                                                    {
+                                                                        <img src="@item.Product.ProductImages.First().ImageUrl" 
+                                                                             alt="@productName" 
+                                                                             class="img-thumbnail" 
+                                                                             style="width: 60px; height: 60px; object-fit: cover;">
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <img src="~/images/img@((item.ProductId % 7) + 1).jpg" 
+                                                                             alt="@productName" 
+                                                                             class="img-thumbnail" 
+                                                                             style="width: 60px; height: 60px; object-fit: cover;">
+                                                                    }
+                                                                </div>
+                                                                <div>
+                                                                    <h6 class="mb-1">@productName</h6>
+                                                                    @if (item.Variant != null)
+                                                                    {
+                                                                        <small class="text-muted">
+                                                                            <i class="fas fa-palette me-1"></i>@item.Variant.Color
+                                                                            <span class="mx-1">|</span>
+                                                                            <i class="fas fa-ruler me-1"></i>@item.Variant.Size
+                                                                        </small>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="badge bg-secondary">×@item.Quantity</span>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <strong>$@item.Price.ToString("F2")</strong>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <strong class="text-primary">$@lineTotal.ToString("F2")</strong>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Summary & Actions -->
+                    <div class="col-lg-4">
+                        <!-- Order Summary -->
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-dark text-white py-3">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-calculator me-2"></i>Order Summary
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                @{
+                                    var subtotal = Model.OrderItems?.Sum(i => i.Price * i.Quantity) ?? 0;
+                                    var tax = subtotal * 0.1m;
+                                }
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal:</span>
+                                    <strong>$@subtotal.ToString("F2")</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Shipping:</span>
+                                    <span class="text-success">Free</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tax (10%):</span>
+                                    <strong>$@tax.ToString("F2")</strong>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="mb-0">Total:</h5>
+                                    <h5 class="mb-0 text-primary">$@Model.TotalAmount?.ToString("F2")</h5>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Information -->
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-dark text-white py-3">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-shipping-fast me-2"></i>Shipping Info
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-1">
+                                        <i class="fas fa-map-marker-alt me-1"></i>Address
+                                    </small>
+                                    <p class="mb-0">@Model.ShippingAddress</p>
+                                </div>
+                                <div class="mb-0">
+                                    <small class="text-muted d-block mb-1">
+                                        <i class="fas fa-phone me-1"></i>Phone
+                                    </small>
+                                    <p class="mb-0">@Model.Phone</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-dark text-white py-3">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-tasks me-2"></i>Actions
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                @if (string.Equals(Model.Status, "pending", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <div class="d-grid gap-2">
+                                        <a asp-controller="Payment" asp-action="RetryPayment" asp-route-id="@Model.Id" 
+                                           class="btn btn-primary btn-lg">
+                                            <i class="fas fa-credit-card me-2"></i>Pay with PayOS
+                                        </a>
+                                        <form asp-controller="Order" asp-action="Cancel" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@Model.Id" />
+                                            <button type="submit" class="btn btn-danger btn-lg w-100" 
+                                                    onclick="return confirm('Are you sure you want to cancel this order?');">
+                                                <i class="fas fa-times me-2"></i>Cancel Order
+                                            </button>
+                                        </form>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary btn-lg w-100" disabled>
+                                        <i class="fas fa-info-circle me-2"></i>Order @Model.Status?.ToUpper()
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="card mb-3">
-            <div class="card-header">Shipping</div>
-            <div class="card-body">
-                <div class="mb-1"><strong>Address:</strong></div>
-                <div>@Model.ShippingAddress</div>
-                <div class="mt-2"><strong>Phone:</strong> @Model.Phone</div>
-                <div class="mt-2"><strong>Order Date:</strong> @Model.OrderDate?.ToString("yyyy-MM-dd HH:mm")</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>Actions</span>
-                <a asp-controller="Order" asp-action="Index" class="btn btn-sm btn-outline-secondary">Back to list</a>
-            </div>
-            <div class="card-body">
-                @if (string.Equals(Model.Status, "pending", StringComparison.OrdinalIgnoreCase))
-                {
-                    <form asp-controller="Order" asp-action="Cancel" method="post">
-                        <input type="hidden" name="id" value="@Model.Id" />
-                        <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Cancel this order?');">Cancel Order</button>
-                    </form>
-                }
-                else
-                {
-                    <button class="btn btn-secondary w-100" disabled>Cancel Order</button>
-                }
-            </div>
-        </div>
     </div>
-</div>
+</section>
+
+<style>
+    .section-title {
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .status-icon {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: 50%;
+    }
+</style>
 
 

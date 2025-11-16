@@ -4,16 +4,19 @@ using BussinessObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace BussinessObject.Migrations
 {
-    [DbContext(typeof(SportManagementContext))]
-    partial class SportManagementContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SportContext))]
+    [Migration("20251116190858_FirstInit")]
+    partial class FirstInit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace BussinessObject.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DataAccessLayer.Models.Brand", b =>
+            modelBuilder.Entity("BussinessObject.Brand", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,7 +54,83 @@ namespace BussinessObject.Migrations
                     b.ToTable("brands", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.NewsletterSubscriber", b =>
+            modelBuilder.Entity("BussinessObject.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("PK__carts__3213E83F09A6FB17");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("carts", (string)null);
+                });
+
+            modelBuilder.Entity("BussinessObject.CartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int")
+                        .HasColumnName("cart_id");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("product_id");
+
+                    b.Property<int>("Quantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1)
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("unit_price");
+
+                    b.Property<int?>("VariantId")
+                        .HasColumnType("int")
+                        .HasColumnName("variant_id");
+
+                    b.HasKey("Id")
+                        .HasName("PK__cart_ite__3213E83FA053847B");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("VariantId");
+
+                    b.HasIndex(new[] { "CartId", "ProductId" }, "UQ_cart_product_per_cart")
+                        .IsUnique()
+                        .HasFilter("([variant_id] IS NULL AND [product_id] IS NOT NULL)");
+
+                    b.HasIndex(new[] { "CartId", "VariantId" }, "UQ_cart_variant_per_cart")
+                        .IsUnique()
+                        .HasFilter("([variant_id] IS NOT NULL)");
+
+                    b.ToTable("cart_items", (string)null);
+                });
+
+            modelBuilder.Entity("BussinessObject.NewsletterSubscriber", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -82,7 +161,7 @@ namespace BussinessObject.Migrations
                     b.ToTable("newsletter_subscribers", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Order", b =>
+            modelBuilder.Entity("BussinessObject.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -126,12 +205,12 @@ namespace BussinessObject.Migrations
                     b.HasKey("Id")
                         .HasName("PK__orders__3213E83FC6EE01A0");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex(new[] { "UserId" }, "IX_orders_user_id");
 
                     b.ToTable("orders", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.OrderItem", b =>
+            modelBuilder.Entity("BussinessObject.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -163,16 +242,16 @@ namespace BussinessObject.Migrations
                     b.HasKey("Id")
                         .HasName("PK__order_it__3213E83FD8FE9A52");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex(new[] { "OrderId" }, "IX_order_items_order_id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_order_items_product_id");
 
-                    b.HasIndex("VariantId");
+                    b.HasIndex(new[] { "VariantId" }, "IX_order_items_variant_id");
 
                     b.ToTable("order_items", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Payment", b =>
+            modelBuilder.Entity("BussinessObject.Payment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -210,12 +289,12 @@ namespace BussinessObject.Migrations
                     b.HasKey("Id")
                         .HasName("PK__payments__3213E83F3BAA84C4");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex(new[] { "OrderId" }, "IX_payments_order_id");
 
                     b.ToTable("payments", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Product", b =>
+            modelBuilder.Entity("BussinessObject.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -249,7 +328,7 @@ namespace BussinessObject.Migrations
                     b.Property<decimal?>("DiscountPercent")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(5, 2)")
-                        .HasDefaultValue(0m)
+                        .HasDefaultValue(0.0m)
                         .HasColumnName("discount_percent");
 
                     b.Property<bool?>("IsActive")
@@ -274,14 +353,14 @@ namespace BussinessObject.Migrations
                     b.HasKey("Id")
                         .HasName("PK__products__3213E83F10B31910");
 
-                    b.HasIndex("BrandId");
+                    b.HasIndex(new[] { "BrandId" }, "IX_products_brand_id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex(new[] { "CategoryId" }, "IX_products_category_id");
 
                     b.ToTable("products", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.ProductCategory", b =>
+            modelBuilder.Entity("BussinessObject.ProductCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -308,12 +387,12 @@ namespace BussinessObject.Migrations
                     b.HasKey("Id")
                         .HasName("PK__product___3213E83FC4D90A8D");
 
-                    b.HasIndex("ParentId");
+                    b.HasIndex(new[] { "ParentId" }, "IX_product_categories_parent_id");
 
                     b.ToTable("product_categories", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.ProductImage", b =>
+            modelBuilder.Entity("BussinessObject.ProductImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -346,12 +425,12 @@ namespace BussinessObject.Migrations
                     b.HasKey("Id")
                         .HasName("PK__product___3213E83F2CBD0BC3");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_product_images_product_id");
 
                     b.ToTable("product_images", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.ProductVariant", b =>
+            modelBuilder.Entity("BussinessObject.ProductVariant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -395,16 +474,16 @@ namespace BussinessObject.Migrations
                     b.HasKey("Id")
                         .HasName("PK__product___3213E83F92BDD3E6");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_product_variants_product_id");
 
                     b.HasIndex(new[] { "Sku" }, "UQ__product___DDDF4BE7B86C54F8")
                         .IsUnique()
-                        .HasFilter("[sku] IS NOT NULL");
+                        .HasFilter("([sku] IS NOT NULL)");
 
                     b.ToTable("product_variants", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.PromoCode", b =>
+            modelBuilder.Entity("BussinessObject.PromoCode", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -447,7 +526,7 @@ namespace BussinessObject.Migrations
                     b.ToTable("promo_codes", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Review", b =>
+            modelBuilder.Entity("BussinessObject.Review", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -481,14 +560,14 @@ namespace BussinessObject.Migrations
                     b.HasKey("Id")
                         .HasName("PK__reviews__3213E83F02B86B08");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex(new[] { "ProductId" }, "IX_reviews_product_id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex(new[] { "UserId" }, "IX_reviews_user_id");
 
                     b.ToTable("reviews", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.User", b =>
+            modelBuilder.Entity("BussinessObject.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -539,7 +618,7 @@ namespace BussinessObject.Migrations
                     b.HasKey("Id")
                         .HasName("PK__users__3213E83FA6C2DE2A");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex(new[] { "RoleId" }, "IX_users_role_id");
 
                     b.HasIndex(new[] { "Email" }, "UQ__users__AB6E61649ED9A618")
                         .IsUnique();
@@ -547,7 +626,7 @@ namespace BussinessObject.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.UserRole", b =>
+            modelBuilder.Entity("BussinessObject.UserRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -572,9 +651,47 @@ namespace BussinessObject.Migrations
                     b.ToTable("user_roles", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Order", b =>
+            modelBuilder.Entity("BussinessObject.Cart", b =>
                 {
-                    b.HasOne("DataAccessLayer.Models.User", "User")
+                    b.HasOne("BussinessObject.User", "User")
+                        .WithMany("Carts")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_carts_user");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BussinessObject.CartItem", b =>
+                {
+                    b.HasOne("BussinessObject.Cart", "Cart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_cartitems_cart");
+
+                    b.HasOne("BussinessObject.Product", "Product")
+                        .WithMany("CartItems")
+                        .HasForeignKey("ProductId")
+                        .IsRequired()
+                        .HasConstraintName("FK_cartitems_product");
+
+                    b.HasOne("BussinessObject.ProductVariant", "Variant")
+                        .WithMany("CartItems")
+                        .HasForeignKey("VariantId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("FK_cartitems_variant");
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Variant");
+                });
+
+            modelBuilder.Entity("BussinessObject.Order", b =>
+                {
+                    b.HasOne("BussinessObject.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK__orders__user_id__5535A963");
@@ -582,20 +699,20 @@ namespace BussinessObject.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.OrderItem", b =>
+            modelBuilder.Entity("BussinessObject.OrderItem", b =>
                 {
-                    b.HasOne("DataAccessLayer.Models.Order", "Order")
+                    b.HasOne("BussinessObject.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK__order_ite__order__59FA5E80");
 
-                    b.HasOne("DataAccessLayer.Models.Product", "Product")
+                    b.HasOne("BussinessObject.Product", "Product")
                         .WithMany("OrderItems")
                         .HasForeignKey("ProductId")
                         .HasConstraintName("FK__order_ite__produ__5AEE82B9");
 
-                    b.HasOne("DataAccessLayer.Models.ProductVariant", "Variant")
+                    b.HasOne("BussinessObject.ProductVariant", "Variant")
                         .WithMany("OrderItems")
                         .HasForeignKey("VariantId")
                         .HasConstraintName("FK__order_ite__varia__5BE2A6F2");
@@ -607,9 +724,9 @@ namespace BussinessObject.Migrations
                     b.Navigation("Variant");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Payment", b =>
+            modelBuilder.Entity("BussinessObject.Payment", b =>
                 {
-                    b.HasOne("DataAccessLayer.Models.Order", "Order")
+                    b.HasOne("BussinessObject.Order", "Order")
                         .WithMany("Payments")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -618,14 +735,14 @@ namespace BussinessObject.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Product", b =>
+            modelBuilder.Entity("BussinessObject.Product", b =>
                 {
-                    b.HasOne("DataAccessLayer.Models.Brand", "Brand")
+                    b.HasOne("BussinessObject.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
                         .HasConstraintName("FK__products__brand___45F365D3");
 
-                    b.HasOne("DataAccessLayer.Models.ProductCategory", "Category")
+                    b.HasOne("BussinessObject.ProductCategory", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .HasConstraintName("FK__products__catego__44FF419A");
@@ -635,9 +752,9 @@ namespace BussinessObject.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.ProductCategory", b =>
+            modelBuilder.Entity("BussinessObject.ProductCategory", b =>
                 {
-                    b.HasOne("DataAccessLayer.Models.ProductCategory", "Parent")
+                    b.HasOne("BussinessObject.ProductCategory", "Parent")
                         .WithMany("InverseParent")
                         .HasForeignKey("ParentId")
                         .HasConstraintName("FK__product_c__paren__4222D4EF");
@@ -645,9 +762,9 @@ namespace BussinessObject.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.ProductImage", b =>
+            modelBuilder.Entity("BussinessObject.ProductImage", b =>
                 {
-                    b.HasOne("DataAccessLayer.Models.Product", "Product")
+                    b.HasOne("BussinessObject.Product", "Product")
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -656,9 +773,9 @@ namespace BussinessObject.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.ProductVariant", b =>
+            modelBuilder.Entity("BussinessObject.ProductVariant", b =>
                 {
-                    b.HasOne("DataAccessLayer.Models.Product", "Product")
+                    b.HasOne("BussinessObject.Product", "Product")
                         .WithMany("ProductVariants")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -667,14 +784,14 @@ namespace BussinessObject.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Review", b =>
+            modelBuilder.Entity("BussinessObject.Review", b =>
                 {
-                    b.HasOne("DataAccessLayer.Models.Product", "Product")
+                    b.HasOne("BussinessObject.Product", "Product")
                         .WithMany("Reviews")
                         .HasForeignKey("ProductId")
                         .HasConstraintName("FK__reviews__product__6383C8BA");
 
-                    b.HasOne("DataAccessLayer.Models.User", "User")
+                    b.HasOne("BussinessObject.User", "User")
                         .WithMany("Reviews")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK__reviews__user_id__628FA481");
@@ -684,9 +801,9 @@ namespace BussinessObject.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.User", b =>
+            modelBuilder.Entity("BussinessObject.User", b =>
                 {
-                    b.HasOne("DataAccessLayer.Models.UserRole", "Role")
+                    b.HasOne("BussinessObject.UserRole", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .HasConstraintName("FK__users__role_id__3B75D760");
@@ -694,20 +811,27 @@ namespace BussinessObject.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Brand", b =>
+            modelBuilder.Entity("BussinessObject.Brand", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Order", b =>
+            modelBuilder.Entity("BussinessObject.Cart", b =>
+                {
+                    b.Navigation("CartItems");
+                });
+
+            modelBuilder.Entity("BussinessObject.Order", b =>
                 {
                     b.Navigation("OrderItems");
 
                     b.Navigation("Payments");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.Product", b =>
+            modelBuilder.Entity("BussinessObject.Product", b =>
                 {
+                    b.Navigation("CartItems");
+
                     b.Navigation("OrderItems");
 
                     b.Navigation("ProductImages");
@@ -717,26 +841,30 @@ namespace BussinessObject.Migrations
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.ProductCategory", b =>
+            modelBuilder.Entity("BussinessObject.ProductCategory", b =>
                 {
                     b.Navigation("InverseParent");
 
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.ProductVariant", b =>
+            modelBuilder.Entity("BussinessObject.ProductVariant", b =>
                 {
+                    b.Navigation("CartItems");
+
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.User", b =>
+            modelBuilder.Entity("BussinessObject.User", b =>
                 {
+                    b.Navigation("Carts");
+
                     b.Navigation("Orders");
 
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("DataAccessLayer.Models.UserRole", b =>
+            modelBuilder.Entity("BussinessObject.UserRole", b =>
                 {
                     b.Navigation("Users");
                 });

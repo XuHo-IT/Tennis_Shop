@@ -1,4 +1,4 @@
-@model DataAccessLayer.Models.Product
+@model BussinessObject.Product
 
 @{
     ViewData["Title"] = "Create Product";
@@ -36,9 +36,8 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="CategoryId" class="form-label">Category</label>
-                                    <select asp-for="CategoryId" class="form-control">
+                                    <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-control">
                                         <option value="">Select Category</option>
-                                        <!-- You can populate this from a service -->
                                     </select>
                                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                                 </div>
@@ -46,9 +45,8 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label asp-for="BrandId" class="form-label">Brand</label>
-                                    <select asp-for="BrandId" class="form-control">
+                                    <select asp-for="BrandId" asp-items="ViewBag.Brands" class="form-control">
                                         <option value="">Select Brand</option>
-                                        <!-- You can populate this from a service -->
                                     </select>
                                     <span asp-validation-for="BrandId" class="text-danger"></span>
                                 </div>

@@ -1,4 +1,5 @@
-using DataAccessLayer.Models;
+using BussinessObject;
+using DataAccessLayer;
 
 namespace Repositories
 {
@@ -11,5 +12,8 @@ namespace Repositories
         Task<bool> DeleteProductAsync(int id);
         Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId);
         Task<IEnumerable<Product>> SearchProductsAsync(string searchTerm);
+        Task<IEnumerable<ProductCategory>> GetAllCategories();
+        Task<IEnumerable<Brand>> GetAllBrands();
+       
     }
 }

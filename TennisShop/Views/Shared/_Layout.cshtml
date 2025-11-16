@@ -19,6 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Marcellus&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body class="homepage">
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -95,10 +96,10 @@
                                     <a class="nav-link" asp-controller="Product" asp-action="Index">Products</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Home" asp-action="Privacy">About</a>
+                                    <a class="nav-link" asp-controller="Blog" asp-action="Index">Blog</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Contact</a>
+                                    <a class="nav-link" asp-controller="Home" asp-action="Privacy">About</a>
                                 </li>
                             </ul>
                         </div>
@@ -106,29 +107,35 @@
                 </div>
 
                 <div class="col-3 col-lg-auto">
-                    <ul class="list-unstyled d-flex m-0">
+                    <ul class="list-unstyled d-flex align-items-center m-0">
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="d-none d-lg-block">
-                                <a href="#" class="text-uppercase mx-3">Wishlist <span class="wishlist-count">(0)</span></a>
+                                <a asp-controller="Cart" asp-action="Index" class="text-uppercase text-decoration-none text-dark d-flex align-items-center">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" class="me-2">
+                                        <use xlink:href="#cart"></use>
+                                    </svg>
+                                    <span class="me-2">Cart</span>
+                                    <span class="cart-count badge bg-dark" id="cartCount">(0)</span>
+                                </a>
                             </li>
-                            <li class="d-none d-lg-block">
-                                <a href="#" class="text-uppercase mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">Cart <span class="cart-count">(0)</span></a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <svg width="24" height="24" viewBox="0 0 24 24">
+                            <li class="nav-item dropdown ms-3">
+                                <a class="nav-link dropdown-toggle text-dark d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" class="me-2">
                                         <use xlink:href="#user"></use>
                                     </svg>
                                     @User.Identity.Name
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Profile</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Cart" asp-action="Index">My Cart</a></li>
                                     <li><a class="dropdown-item" asp-controller="Order" asp-action="Index">My Orders</a></li>
-                                    @if (User.IsInRole("admin"))
+                                    @if (User.IsInRole("Admin"))
                                     {
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a></li>
+                                        <li><a class="dropdown-item text-danger fw-bold" asp-controller="Admin" asp-action="Dashboard">
+                                            <i class="fas fa-crown me-2"></i>Admin Dashboard
+                                        </a></li>
                                         <li><a class="dropdown-item" asp-controller="Admin" asp-action="Users">Manage Users</a></li>
                                         <li><a class="dropdown-item" asp-controller="Admin" asp-action="Products">Manage Products</a></li>
                                     }
@@ -144,19 +151,14 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Register</a>
+                                <a href="#" class="nav-link text-dark d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#authModal" title="Login / Register">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" class="me-1">
+                                        <use xlink:href="#user"></use>
+                                    </svg>
+                                    <span class="d-none d-lg-inline">Account</span>
+                                </a>
                             </li>
                         }
-                        <li class="search-box mx-2">
-                            <a href="#search" class="search-button">
-                                <svg width="24" height="24" viewBox="0 0 24 24">
-                                    <use xlink:href="#search"></use>
-                                </svg>
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -186,49 +188,40 @@
                         <ul class="menu-list list-unstyled text-uppercase border-animation-left fs-6">
                             <li class="menu-item"><a asp-controller="Home" asp-action="Index" class="item-anchor">Home</a></li>
                             <li class="menu-item"><a asp-controller="Product" asp-action="Index" class="item-anchor">Products</a></li>
+                            <li class="menu-item"><a asp-controller="Blog" asp-action="Index" class="item-anchor">Blog</a></li>
                             <li class="menu-item"><a asp-controller="Home" asp-action="Privacy" class="item-anchor">About</a></li>
-                            <li class="menu-item"><a href="#" class="item-anchor">Contact</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <div class="footer-menu footer-menu-003">
-                        <h5 class="widget-title text-uppercase mb-4">Help & Info</h5>
-                        <ul class="menu-list list-unstyled text-uppercase border-animation-left fs-6">
-                            <li class="menu-item"><a href="#" class="item-anchor">Track Your Order</a></li>
-                            <li class="menu-item"><a href="#" class="item-anchor">Returns + Exchanges</a></li>
-                            <li class="menu-item"><a href="#" class="item-anchor">Shipping + Delivery</a></li>
-                            <li class="menu-item"><a href="#" class="item-anchor">Contact Us</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="footer-menu footer-menu-004 border-animation-left">
-                        <h5 class="widget-title text-uppercase mb-4">Contact Us</h5>
-                        <p>Do you have any questions or suggestions? <a href="mailto:contact@tennisshop.com" class="item-anchor">contact@tennisshop.com</a></p>
-                        <p>Do you need support? Give us a call. <a href="tel:+1 555 123 4567" class="item-anchor">+1 555 123 4567</a></p>
+                        <h5 class="widget-title text-uppercase mb-4">Connect</h5>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <ul class="menu-list list-unstyled text-uppercase border-animation-left fs-6">
+                                <li class="menu-item"><a asp-controller="Account" asp-action="Profile" class="item-anchor">My Account</a></li>
+                                <li class="menu-item"><a asp-controller="Order" asp-action="Index" class="item-anchor">My Orders</a></li>
+                                <li class="menu-item"><a asp-controller="Cart" asp-action="Index" class="item-anchor">My Cart</a></li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="mb-2">Sign in to access your account and orders.</p>
+                        }
                     </div>
                 </div>
             </div>
         </div>
         <div class="border-top py-4">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-6 d-flex flex-wrap">
-                        <div class="shipping">
-                            <span>We ship with:</span>
-                            <img src="~/images/arct-icon.png" alt="Shipping" class="ms-2">
-                            <img src="~/images/dhl-logo.png" alt="DHL" class="ms-2">
-                        </div>
-                        <div class="payment-option ms-4">
-                            <span>Payment Options:</span>
-                            <img src="~/images/visa-card.png" alt="Visa" class="ms-2">
-                            <img src="~/images/paypal-card.png" alt="PayPal" class="ms-2">
-                            <img src="~/images/master-card.png" alt="MasterCard" class="ms-2">
-                        </div>
+                <div class="row align-items-center">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <p class="mb-0">© Copyright 2025 TennisShop. All rights reserved.</p>
                     </div>
-                    <div class="col-md-6 text-end">
-                        <p>© Copyright 2025 TennisShop. All rights reserved.</p>
+                    <div class="col-md-6 text-md-end">
+                        <div class="payment-option">
+                            <span class="me-2">Payment with PayOS and COD</span>                     
+                        </div>
                     </div>
                 </div>
             </div>
@@ -239,6 +232,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/js/site.js"></script>
     <script>
         // Wait for DOM to be ready
@@ -359,8 +353,128 @@
             $(window).on('load', function() {
                 $('.preloader').fadeOut('fast');
             });
+
+            // Load cart count on page load
+            @if (User.Identity.IsAuthenticated)
+            {
+                <text>
+                loadCartCount();
+                </text>
+            }
         });
+
+        // Function to load and update cart count
+        function loadCartCount() {
+            $.get('@Url.Action("GetItemCount", "Cart")', function(data) {
+                if (data && data.count !== undefined) {
+                    $('#cartCount').text('(' + data.count + ')');
+                }
+            }).fail(function() {
+                console.error('Failed to load cart count');
+            });
+        }
+
+        // Make loadCartCount available globally for other pages to call
+        window.loadCartCount = loadCartCount;
     </script>
+
+    <!-- Authentication Modal (Login/Register) -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title text-uppercase" id="authModalLabel">Account</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs mb-4" id="authTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">
+                                Login
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">
+                                Register
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab content -->
+                    <div class="tab-content" id="authTabsContent">
+                        <!-- Login Tab -->
+                        <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                            <form asp-controller="Account" asp-action="Login" method="post">
+                                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                                
+                                <div class="mb-3">
+                                    <label for="modalEmail" class="form-label text-uppercase fw-bold">Email</label>
+                                    <input type="email" name="email" id="modalEmail" class="form-control" required />
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="modalPassword" class="form-label text-uppercase fw-bold">Password</label>
+                                    <input type="password" name="password" id="modalPassword" class="form-control" required />
+                                </div>
+                                
+                                <div class="d-grid mb-3">
+                                    <button type="submit" class="btn btn-dark text-uppercase">Login</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Register Tab -->
+                        <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                            <form asp-controller="Account" asp-action="Register" method="post">
+                                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="modalFullName" class="form-label text-uppercase fw-bold">Full Name</label>
+                                            <input type="text" name="FullName" id="modalFullName" class="form-control" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="modalRegisterEmail" class="form-label text-uppercase fw-bold">Email</label>
+                                            <input type="email" name="Email" id="modalRegisterEmail" class="form-control" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="modalPhone" class="form-label text-uppercase fw-bold">Phone</label>
+                                            <input type="tel" name="Phone" id="modalPhone" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="modalRegisterPassword" class="form-label text-uppercase fw-bold">Password</label>
+                                            <input type="password" name="PasswordHash" id="modalRegisterPassword" class="form-control" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="modalAddress" class="form-label text-uppercase fw-bold">Address</label>
+                                    <textarea name="Address" id="modalAddress" class="form-control" rows="3"></textarea>
+                                </div>
+                                
+                                <div class="d-grid mb-3">
+                                    <button type="submit" class="btn btn-dark text-uppercase">Register</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

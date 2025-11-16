@@ -52,7 +52,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var role in ViewBag.Roles as List<DataAccessLayer.Models.UserRole>)
+                                @foreach (var role in ViewBag.Roles as List<BussinessObject.UserRole>)
                                 {
                                     <tr>
                                         <td>@role.Id</td>
@@ -92,7 +92,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var user in ViewBag.Users as List<DataAccessLayer.Models.User>)
+                                    @foreach (var user in ViewBag.Users as List<BussinessObject.User>)
                                     {
                                         <tr>
                                             <td>@user.Id</td>

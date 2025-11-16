@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Models;
+namespace BussinessObject;
 
 public partial class Product
 {
@@ -26,6 +26,8 @@ public partial class Product
     public DateTime? CreatedAt { get; set; }
 
     public virtual Brand? Brand { get; set; }
+
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual ProductCategory? Category { get; set; }
 

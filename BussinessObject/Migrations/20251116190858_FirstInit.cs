@@ -100,7 +100,7 @@ namespace BussinessObject.Migrations
                     category_id = table.Column<int>(type: "int", nullable: true),
                     brand_id = table.Column<int>(type: "int", nullable: true),
                     base_price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    discount_percent = table.Column<decimal>(type: "decimal(5,2)", nullable: true, defaultValue: 0m),
+                    discount_percent = table.Column<decimal>(type: "decimal(5,2)", nullable: true, defaultValue: 0.0m),
                     stock = table.Column<int>(type: "int", nullable: true, defaultValue: 0),
                     is_active = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
                     created_at = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
@@ -192,6 +192,25 @@ namespace BussinessObject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "carts",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<int>(type: "int", nullable: true),
+                    created_at = table.Column<DateTime>(type: "datetime", nullable: true, defaultValueSql: "(getdate())")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__carts__3213E83F09A6FB17", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_carts_user",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "orders",
                 columns: table => new
                 {
@@ -239,6 +258,40 @@ namespace BussinessObject.Migrations
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "cart_items",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    cart_id = table.Column<int>(type: "int", nullable: false),
+                    product_id = table.Column<int>(type: "int", nullable: false),
+                    variant_id = table.Column<int>(type: "int", nullable: true),
+                    quantity = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    unit_price = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__cart_ite__3213E83FA053847B", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_cartitems_cart",
+                        column: x => x.cart_id,
+                        principalTable: "carts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_cartitems_product",
+                        column: x => x.product_id,
+                        principalTable: "products",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_cartitems_variant",
+                        column: x => x.variant_id,
+                        principalTable: "product_variants",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -304,6 +357,35 @@ namespace BussinessObject.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_cart_items_product_id",
+                table: "cart_items",
+                column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_cart_items_variant_id",
+                table: "cart_items",
+                column: "variant_id");
+
+            migrationBuilder.CreateIndex(
+                name: "UQ_cart_product_per_cart",
+                table: "cart_items",
+                columns: new[] { "cart_id", "product_id" },
+                unique: true,
+                filter: "([variant_id] IS NULL AND [product_id] IS NOT NULL)");
+
+            migrationBuilder.CreateIndex(
+                name: "UQ_cart_variant_per_cart",
+                table: "cart_items",
+                columns: new[] { "cart_id", "variant_id" },
+                unique: true,
+                filter: "([variant_id] IS NOT NULL)");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_carts_user_id",
+                table: "carts",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "UQ__newslett__AB6E61643EBE7565",
                 table: "newsletter_subscribers",
                 column: "email",
@@ -354,7 +436,7 @@ namespace BussinessObject.Migrations
                 table: "product_variants",
                 column: "sku",
                 unique: true,
-                filter: "[sku] IS NOT NULL");
+                filter: "([sku] IS NOT NULL)");
 
             migrationBuilder.CreateIndex(
                 name: "IX_products_brand_id",
@@ -404,6 +486,9 @@ namespace BussinessObject.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "cart_items");
+
+            migrationBuilder.DropTable(
                 name: "newsletter_subscribers");
 
             migrationBuilder.DropTable(
@@ -420,6 +505,9 @@ namespace BussinessObject.Migrations
 
             migrationBuilder.DropTable(
                 name: "reviews");
+
+            migrationBuilder.DropTable(
+                name: "carts");
 
             migrationBuilder.DropTable(
                 name: "product_variants");

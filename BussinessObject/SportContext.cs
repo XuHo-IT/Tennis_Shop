@@ -1,23 +1,26 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace BussinessObject;
 
-public partial class SportManagementContext : DbContext
+public partial class SportContext : DbContext
 {
-    public SportManagementContext()
+    public SportContext()
     {
     }
 
-    public SportManagementContext(DbContextOptions<SportManagementContext> options)
+    public SportContext(DbContextOptions<SportContext> options)
         : base(options)
     {
     }
 
     public virtual DbSet<Brand> Brands { get; set; }
+
+    public virtual DbSet<Cart> Carts { get; set; }
+
+    public virtual DbSet<CartItem> CartItems { get; set; }
 
     public virtual DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }
 
@@ -45,16 +48,14 @@ public partial class SportManagementContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
-        {
-            var configuration = new ConfigurationBuilder()
+        optionsBuilder.UseSqlServer(GetConnectionString());
+    }
+    private string GetConnectionString()
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            optionsBuilder.UseSqlServer(connectionString);
-        }
+                .AddJsonFile("appsettings.json", true, true).Build();
+        return configuration["ConnectionStrings:DefaultConnectionString"];
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -73,6 +74,64 @@ public partial class SportManagementContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<Cart>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__carts__3213E83F09A6FB17");
+
+            entity.ToTable("carts");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Carts)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_carts_user");
+        });
+
+        modelBuilder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__cart_ite__3213E83FA053847B");
+
+            entity.ToTable("cart_items");
+
+            entity.HasIndex(e => new { e.CartId, e.ProductId }, "UQ_cart_product_per_cart")
+                .IsUnique()
+                .HasFilter("([variant_id] IS NULL AND [product_id] IS NOT NULL)");
+
+            entity.HasIndex(e => new { e.CartId, e.VariantId }, "UQ_cart_variant_per_cart")
+                .IsUnique()
+                .HasFilter("([variant_id] IS NOT NULL)");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CartId).HasColumnName("cart_id");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.Quantity)
+                .HasDefaultValue(1)
+                .HasColumnName("quantity");
+            entity.Property(e => e.UnitPrice)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("unit_price");
+            entity.Property(e => e.VariantId).HasColumnName("variant_id");
+
+            entity.HasOne(d => d.Cart).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.CartId)
+                .HasConstraintName("FK_cartitems_cart");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_cartitems_product");
+
+            entity.HasOne(d => d.Variant).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.VariantId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_cartitems_variant");
         });
 
         modelBuilder.Entity<NewsletterSubscriber>(entity =>
@@ -99,6 +158,8 @@ public partial class SportManagementContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__orders__3213E83FC6EE01A0");
 
             entity.ToTable("orders");
+
+            entity.HasIndex(e => e.UserId, "IX_orders_user_id");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.OrderDate)
@@ -131,6 +192,12 @@ public partial class SportManagementContext : DbContext
 
             entity.ToTable("order_items");
 
+            entity.HasIndex(e => e.OrderId, "IX_order_items_order_id");
+
+            entity.HasIndex(e => e.ProductId, "IX_order_items_product_id");
+
+            entity.HasIndex(e => e.VariantId, "IX_order_items_variant_id");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
             entity.Property(e => e.Price)
@@ -159,6 +226,8 @@ public partial class SportManagementContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__payments__3213E83F3BAA84C4");
 
             entity.ToTable("payments");
+
+            entity.HasIndex(e => e.OrderId, "IX_payments_order_id");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Amount)
@@ -190,6 +259,10 @@ public partial class SportManagementContext : DbContext
 
             entity.ToTable("products");
 
+            entity.HasIndex(e => e.BrandId, "IX_products_brand_id");
+
+            entity.HasIndex(e => e.CategoryId, "IX_products_category_id");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.BasePrice)
                 .HasColumnType("decimal(10, 2)")
@@ -202,7 +275,7 @@ public partial class SportManagementContext : DbContext
                 .HasColumnName("created_at");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.DiscountPercent)
-                .HasDefaultValue(0m)
+                .HasDefaultValue(0.0m)
                 .HasColumnType("decimal(5, 2)")
                 .HasColumnName("discount_percent");
             entity.Property(e => e.IsActive)
@@ -231,6 +304,8 @@ public partial class SportManagementContext : DbContext
 
             entity.ToTable("product_categories");
 
+            entity.HasIndex(e => e.ParentId, "IX_product_categories_parent_id");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Name)
@@ -249,6 +324,8 @@ public partial class SportManagementContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__product___3213E83F2CBD0BC3");
 
             entity.ToTable("product_images");
+
+            entity.HasIndex(e => e.ProductId, "IX_product_images_product_id");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ImageUrl).HasColumnName("image_url");
@@ -269,7 +346,11 @@ public partial class SportManagementContext : DbContext
 
             entity.ToTable("product_variants");
 
-            entity.HasIndex(e => e.Sku, "UQ__product___DDDF4BE7B86C54F8").IsUnique();
+            entity.HasIndex(e => e.ProductId, "IX_product_variants_product_id");
+
+            entity.HasIndex(e => e.Sku, "UQ__product___DDDF4BE7B86C54F8")
+                .IsUnique()
+                .HasFilter("([sku] IS NOT NULL)");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Color)
@@ -327,6 +408,10 @@ public partial class SportManagementContext : DbContext
 
             entity.ToTable("reviews");
 
+            entity.HasIndex(e => e.ProductId, "IX_reviews_product_id");
+
+            entity.HasIndex(e => e.UserId, "IX_reviews_user_id");
+
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Comment).HasColumnName("comment");
             entity.Property(e => e.CreatedAt)
@@ -351,6 +436,8 @@ public partial class SportManagementContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__users__3213E83FA6C2DE2A");
 
             entity.ToTable("users");
+
+            entity.HasIndex(e => e.RoleId, "IX_users_role_id");
 
             entity.HasIndex(e => e.Email, "UQ__users__AB6E61649ED9A618").IsUnique();
 
@@ -400,4 +487,3 @@ public partial class SportManagementContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
-

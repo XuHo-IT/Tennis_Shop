@@ -1,4 +1,4 @@
-@model IEnumerable<DataAccessLayer.Models.Product>
+@model IEnumerable<BussinessObject.Product>
 
 @{
     ViewData["Title"] = "Products";
@@ -15,6 +15,7 @@
         <div class="row justify-content-center mb-5" data-aos="fade-up" data-aos-delay="200">
             <div class="col-md-8 col-lg-6">
                 <form asp-action="Search" method="get">
+                    <input type="hidden" name="sortBy" value="@ViewBag.SortBy" />
                     <div class="input-group input-group-lg shadow-sm">
                         <input type="text" name="searchTerm" class="form-control border-0" placeholder="Search for rackets, shoes, accessories..." value="@ViewBag.SearchTerm" />
                         <button type="submit" class="btn btn-dark text-uppercase">
@@ -28,7 +29,87 @@
             </div>
         </div>
 
-        @if (User.IsInRole("admin"))
+        <!-- Category Navigation and Sort -->
+        <div class="row mb-4" data-aos="fade-up" data-aos-delay="250">
+            <div class="col-md-8">
+                @if (ViewBag.Categories != null)
+                {
+                    <div class="d-flex flex-wrap gap-2">
+                        <a asp-action="Index" asp-route-categoryId="" asp-route-sortBy="@ViewBag.SortBy"
+                           class="btn @(ViewBag.SelectedCategoryId == null ? "btn-dark" : "btn-outline-dark") text-uppercase">
+                            All Products
+                        </a>
+                        @foreach (var category in ViewBag.Categories as IEnumerable<BussinessObject.ProductCategory>)
+                        {
+                            <a asp-action="Index" asp-route-categoryId="@category.Id" asp-route-sortBy="@ViewBag.SortBy"
+                               class="btn @(ViewBag.SelectedCategoryId != null && (int)ViewBag.SelectedCategoryId == category.Id ? "btn-dark" : "btn-outline-dark") text-uppercase">
+                                @category.Name
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex justify-content-end">
+                    <label for="sortBy" class="form-label me-2 align-self-center mb-0 text-uppercase fw-bold">Sort By:</label>
+                    @{
+                        var currentSort = ViewBag.SortBy?.ToString() ?? "newest";
+                    }
+                    <select id="sortBy" name="sortBy" class="form-select" style="max-width: 200px;" onchange="sortProducts(this.value)">
+                        @if (currentSort == "newest")
+                        {
+                            <option value="newest" selected>Newest</option>
+                        }
+                        else
+                        {
+                            <option value="newest">Newest</option>
+                        }
+                        @if (currentSort == "oldest")
+                        {
+                            <option value="oldest" selected>Oldest</option>
+                        }
+                        else
+                        {
+                            <option value="oldest">Oldest</option>
+                        }
+                        @if (currentSort == "pricelow")
+                        {
+                            <option value="pricelow" selected>Price: Low to High</option>
+                        }
+                        else
+                        {
+                            <option value="pricelow">Price: Low to High</option>
+                        }
+                        @if (currentSort == "pricehigh")
+                        {
+                            <option value="pricehigh" selected>Price: High to Low</option>
+                        }
+                        else
+                        {
+                            <option value="pricehigh">Price: High to Low</option>
+                        }
+                        @if (currentSort == "nameaz")
+                        {
+                            <option value="nameaz" selected>Name: A to Z</option>
+                        }
+                        else
+                        {
+                            <option value="nameaz">Name: A to Z</option>
+                        }
+                        @if (currentSort == "nameza")
+                        {
+                            <option value="nameza" selected>Name: Z to A</option>
+                        }
+                        else
+                        {
+                            <option value="nameza">Name: Z to A</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        @if (User.IsInRole("Admin"))
         {
             <div class="text-end mb-4">
                 <a asp-action="Create" class="btn btn-outline-dark text-uppercase">
@@ -78,16 +159,33 @@
                                         <div>
                                             @if (product.DiscountPercent > 0)
                                             {
-                                                var discountedPrice = product.BasePrice * (1 - (product.DiscountPercent ?? 0) / 100m);
+                                                // Safely cast nullable decimals to decimal
+                                                decimal basePrice = product.BasePrice;
+                                                decimal discountPercent = product.DiscountPercent ?? 0;
+
+                                                // Correct formula for discounted price
+                                                decimal finalPrice = basePrice * (1 - discountPercent / 100m);
+
                                                 <div>
-                                                    <span class="h5 text-primary mb-0">$@discountedPrice.ToString("F2")</span>
-                                                    <small class="text-muted text-decoration-line-through ms-2">$@product.BasePrice.ToString("F2")</small>
+                                                    <span class="h5 text-primary mb-0">
+                                                        $@finalPrice.ToString("F2")
+                                                    </span>
+                                                    <small class="text-muted text-decoration-line-through ms-2">
+                                                        $@basePrice.ToString("F2")
+                                                    </small>
+                                                    <span class="badge bg-success ms-2">-@discountPercent%</span>
                                                 </div>
                                             }
                                             else
                                             {
-                                                <span class="h5 text-primary mb-0">$@product.BasePrice.ToString("F2")</span>
+                                                <div>
+                                                    <span class="h5 text-primary mb-0">
+                                                        $@product.BasePrice
+                                                    </span>
+                                                </div>
                                             }
+
+
                                         </div>
                                     </div>
                                     
@@ -105,7 +203,7 @@
                                         <button class="btn btn-secondary w-100 text-uppercase btn-sm" disabled>Out of Stock</button>
                                     }
                                     
-                                    @if (User.IsInRole("admin"))
+                                    @if (User.IsInRole("Admin"))
                                     {
                                         <div class="btn-group w-100 mt-2">
                                             <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-outline-warning btn-sm">Edit</a>
@@ -137,46 +235,46 @@
 </section>
 
 <!-- Featured Categories Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title text-uppercase">Shop by Category</h2>
-            <p class="text-muted">Browse our complete tennis equipment collection</p>
+@if (ViewBag.Categories != null)
+{
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title text-uppercase">Shop by Category</h2>
+                <p class="text-muted">Browse our complete tennis equipment collection</p>
+            </div>
+            <div class="row g-4">
+                @if (ViewBag.Categories != null)
+                {
+                    var categories = ViewBag.Categories as IEnumerable<BussinessObject.ProductCategory>;
+                    var categoryList = new List<BussinessObject.ProductCategory>();
+                    if (categories != null)
+                    {
+                        categoryList = categories.ToList();
+                    }
+                    var imageIndex = 1;
+                    var maxCategories = Math.Min(3, categoryList.Count);
+                    
+                    @for (int i = 0; i < maxCategories; i++)
+                    {
+                        var category = categoryList[i];
+                        <div class="col-md-4">
+                            <div class="category-card text-center p-4 border rounded shadow-sm h-100 hover-effect">
+                                <div class="mb-3">
+                                    <img src="~/images/cat-item@(imageIndex).jpg" alt="@category.Name" class="img-fluid rounded" style="height: 200px; object-fit: cover; width: 100%;">
+                                </div>
+                                <h4 class="text-uppercase mb-3">@category.Name</h4>
+                                <p class="text-muted">@(category.Description ?? "Browse our collection")</p>
+                                <a asp-action="Index" asp-route-categoryId="@category.Id" class="btn btn-outline-dark text-uppercase mt-2">Shop Now</a>
+                            </div>
+                        </div>
+                        imageIndex++;
+                    }
+                }
+            </div>
         </div>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="category-card text-center p-4 border rounded shadow-sm h-100 hover-effect">
-                    <div class="mb-3">
-                        <img src="~/images/cat-item1.jpg" alt="Tennis Rackets" class="img-fluid rounded" style="height: 200px; object-fit: cover; width: 100%;">
-                    </div>
-                    <h4 class="text-uppercase mb-3">Tennis Rackets</h4>
-                    <p class="text-muted">Professional rackets for all skill levels</p>
-                    <a asp-action="Index" class="btn btn-outline-dark text-uppercase mt-2">Shop Now</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="category-card text-center p-4 border rounded shadow-sm h-100 hover-effect">
-                    <div class="mb-3">
-                        <img src="~/images/cat-item2.jpg" alt="Tennis Shoes" class="img-fluid rounded" style="height: 200px; object-fit: cover; width: 100%;">
-                    </div>
-                    <h4 class="text-uppercase mb-3">Tennis Shoes</h4>
-                    <p class="text-muted">Comfort and performance footwear</p>
-                    <a asp-action="Index" class="btn btn-outline-dark text-uppercase mt-2">Shop Now</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="category-card text-center p-4 border rounded shadow-sm h-100 hover-effect">
-                    <div class="mb-3">
-                        <img src="~/images/cat-item3.jpg" alt="Accessories" class="img-fluid rounded" style="height: 200px; object-fit: cover; width: 100%;">
-                    </div>
-                    <h4 class="text-uppercase mb-3">Accessories</h4>
-                    <p class="text-muted">Complete your tennis kit</p>
-                    <a asp-action="Index" class="btn btn-outline-dark text-uppercase mt-2">Shop Now</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
+}
 
 <style>
     .hover-effect {
@@ -194,3 +292,26 @@
         box-shadow: 0 12px 35px rgba(0,0,0,0.2) !important;
     }
 </style>
+
+<script>
+    function sortProducts(sortBy) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryId = urlParams.get('categoryId');
+        
+        let url = '@Url.Action("Index", "Product")';
+        const params = [];
+        
+        if (categoryId) {
+            params.push('categoryId=' + categoryId);
+        }
+        if (sortBy) {
+            params.push('sortBy=' + sortBy);
+        }
+        
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+        
+        window.location.href = url;
+    }
+</script>

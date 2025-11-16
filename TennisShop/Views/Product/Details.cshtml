@@ -1,4 +1,4 @@
-@model DataAccessLayer.Models.Product
+@model BussinessObject.Product
 
 @{
     ViewData["Title"] = Model.Name;
@@ -56,7 +56,7 @@
             <div class="col-md-6">
                 <div class="product-info">
                     <!-- Admin Controls -->
-                    @if (User.IsInRole("admin"))
+                    @if (User.IsInRole("Admin"))
                     {
                         <div class="alert alert-info d-flex justify-content-between align-items-center mb-4">
                             <span><i class="fas fa-shield-alt me-2"></i>Admin Mode</span>
@@ -85,17 +85,23 @@
                     <div class="price-section mb-4 pb-4 border-bottom">
                         @if (Model.DiscountPercent > 0)
                         {
-                            var discountedPrice = Model.BasePrice * (1 - (Model.DiscountPercent ?? 0) / 100m);
+                            var discountedPrice = Model.BasePrice * (1 - Model.DiscountPercent / 100m);
                             <div class="d-flex align-items-center gap-3">
-                                <h2 class="text-primary mb-0">$@discountedPrice.ToString("F2")</h2>
-                                <h4 class="text-muted text-decoration-line-through mb-0">$@Model.BasePrice.ToString("F2")</h4>
-                                <span class="badge bg-success fs-6 px-3 py-2">You Save: $@((Model.BasePrice - discountedPrice).ToString("F2"))</span>
+                                <h2 class="text-primary mb-0">$@discountedPrice</h2>
+                                <h4 class="text-muted text-decoration-line-through mb-0">
+                                    $@Model.BasePrice.ToString("F2")
+                                </h4>
+                                <span class="badge bg-success fs-6 px-3 py-2">
+                                    You Save: $@(Model.BasePrice - discountedPrice)
+                                </span>
                             </div>
                         }
                         else
                         {
-                            <h2 class="text-primary mb-0">$@Model.BasePrice.ToString("F2")</h2>
+                            <h2 class="text-primary mb-0">$@Model.BasePrice</h2>
                         }
+
+
                     </div>
 
                     <!-- Description -->
@@ -152,84 +158,150 @@
                     @if (Model.ProductVariants != null && Model.ProductVariants.Any())
                     {
                         <div class="variants-section mb-4 pb-4 border-bottom">
-                            <h5 class="text-uppercase mb-3">Available Options</h5>
+                            <h5 class="text-uppercase mb-3">
+                                <i class="fas fa-box-open me-2"></i>Available Options
+                                <small class="text-muted ms-2">(Please select a variant)</small>
+                            </h5>
                             <div class="table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-hover align-middle" id="variantsTable">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Color</th>
                                             <th>Size</th>
                                             <th>Price</th>
                                             <th>Stock</th>
-                                            <th></th>
+                                            <th class="text-center">Select</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @{
+                                            var index = 0;
+                                        }
                                         @foreach (var variant in Model.ProductVariants)
                                         {
-                                            <tr>
+                                            var variantPrice = variant.Price ?? Model.BasePrice;
+                                            var isFirstVariant = index == 0;
+                                            <tr class="variant-row @(variant.Stock <= 0 ? "table-secondary" : "")" 
+                                                data-variant-id="@variant.Id" 
+                                                data-variant-price="@variantPrice"
+                                                data-variant-stock="@variant.Stock"
+                                                data-variant-color="@variant.Color"
+                                                data-variant-size="@variant.Size">
                                                 <td>
                                                     <span class="badge bg-secondary">@variant.Color</span>
                                                 </td>
                                                 <td><strong>@variant.Size</strong></td>
-                                                <td class="text-primary fw-bold">$@((variant.Price ?? Model.BasePrice).ToString("F2"))</td>
+                                                <td class="text-primary fw-bold">
+                                                    $@variantPrice.ToString("F2")
+                                                </td>
                                                 <td>
                                                     @if (variant.Stock > 0)
                                                     {
-                                                        <span class="text-success">@variant.Stock available</span>
+                                                        <span class="text-success">
+                                                            <i class="fas fa-check-circle me-1"></i>@variant.Stock available
+                                                        </span>
                                                     }
                                                     else
                                                     {
-                                                        <span class="text-danger">Out of stock</span>
+                                                        <span class="text-danger">
+                                                            <i class="fas fa-times-circle me-1"></i>Out of stock
+                                                        </span>
                                                     }
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     @if (variant.Stock > 0)
                                                     {
-                                                        <button class="btn btn-sm btn-outline-dark">Select</button>
+                                                        <button type="button" 
+                                                                class="btn btn-sm btn-outline-dark select-variant-btn @(isFirstVariant ? "active" : "")" 
+                                                                data-variant-id="@variant.Id"
+                                                                onclick="selectVariant(@variant.Id, @variantPrice, @variant.Stock, '@variant.Color', '@variant.Size')">
+                                                            <i class="fas fa-check me-1"></i>Select
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="btn btn-sm btn-secondary" disabled>
+                                                            <i class="fas fa-ban me-1"></i>Unavailable
+                                                        </button>
                                                     }
                                                 </td>
                                             </tr>
+                                            index++;
                                         }
                                     </tbody>
                                 </table>
+                            </div>
+                            
+                            <!-- Selected Variant Info -->
+                            <div id="selectedVariantInfo" class="alert alert-info mt-3" style="display: none;">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Selected:</strong> 
+                                <span id="selectedVariantText"></span>
                             </div>
                         </div>
                     }
 
                     <!-- Quantity & Add to Cart -->
                     <div class="purchase-section mb-4">
-                        @if (Model.Stock > 0)
+                        @{
+                            var hasVariants = Model.ProductVariants != null && Model.ProductVariants.Any();
+                            var availableStock = hasVariants 
+                                ? Model.ProductVariants.FirstOrDefault(v => v.Stock > 0)?.Stock ?? 0
+                                : Model.Stock ?? 0;
+                            var firstVariantPrice = hasVariants
+                                ? Model.ProductVariants.FirstOrDefault(v => v.Stock > 0)?.Price ?? Model.BasePrice
+                                : Model.BasePrice;
+                        }
+                        
+                        @if ((hasVariants && availableStock > 0) || (!hasVariants && Model.Stock > 0))
                         {
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label class="form-label text-uppercase fw-bold">Quantity</label>
-                                    <div class="input-group input-group-lg">
-                                        <button class="btn btn-outline-secondary" type="button">-</button>
-                                        <input type="number" class="form-control text-center" value="1" min="1" max="@Model.Stock">
-                                        <button class="btn btn-outline-secondary" type="button">+</button>
+                            <form asp-controller="Cart" asp-action="AddItem" method="post" id="addToCartForm">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                <input type="hidden" id="selectedVariantId" name="variantId" value="@(hasVariants ? Model.ProductVariants.FirstOrDefault(v => v.Stock > 0)?.Id : 0)" />
+                                
+                                <!-- Display Current Price -->
+                                <div class="mb-3">
+                                    <h3 class="text-primary mb-0">
+                                        <span id="displayPrice">$@firstVariantPrice.ToString("F2")</span>
+                                    </h3>
+                                    @if (hasVariants)
+                                    {
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle me-1"></i>Price based on selected variant
+                                        </small>
+                                    }
+                                </div>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label text-uppercase fw-bold">Quantity</label>
+                                        <div class="input-group input-group-lg">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="decreaseQty()">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <input type="number" id="quantity" name="quantity" class="form-control text-center" value="1" min="1" max="@availableStock">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="increaseQty(@availableStock)">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <small class="text-muted">
+                                            <span id="stockInfo">@availableStock available</span>
+                                        </small>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="form-label text-uppercase fw-bold invisible">Action</label>
+                                        <div class="d-grid gap-2">
+                                            <button type="submit" class="btn btn-dark btn-lg text-uppercase">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white" class="me-2">
+                                                    <use xlink:href="#cart"></use>
+                                                </svg>
+                                                Add to Cart
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <label class="form-label text-uppercase fw-bold invisible">Action</label>
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-dark btn-lg text-uppercase">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white" class="me-2">
-                                                <use xlink:href="#cart"></use>
-                                            </svg>
-                                            Add to Cart
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <button class="btn btn-outline-dark btn-lg w-100 text-uppercase">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" class="me-2">
-                                        <use xlink:href="#heart"></use>
-                                    </svg>
-                                    Add to Wishlist
-                                </button>
-                            </div>
+                            </form>
                         }
                         else
                         {
@@ -365,6 +437,27 @@
     .btn-icon:hover svg {
         fill: white;
     }
+    
+    /* Variant Selection Styles */
+    .select-variant-btn.active {
+        background-color: #000;
+        color: white;
+        border-color: #000;
+    }
+    
+    .select-variant-btn.active i {
+        display: inline;
+    }
+    
+    .variant-row:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    
+    .variant-row.selected {
+        background-color: #e8f4f8;
+        border-left: 4px solid #000;
+    }
 </style>
 
 <script>
@@ -374,4 +467,228 @@
             document.getElementById('mainProductImage').src = this.src;
         });
     });
+
+    // Variant selection
+    let selectedVariantId = @(Model.ProductVariants?.Any() == true ? Model.ProductVariants.FirstOrDefault(v => v.Stock > 0)?.Id ?? 0 : 0);
+    let currentMaxStock = @(Model.ProductVariants?.Any() == true ? Model.ProductVariants.FirstOrDefault(v => v.Stock > 0)?.Stock ?? Model.Stock ?? 0 : Model.Stock ?? 0);
+    
+    // Initialize first variant if exists
+    window.addEventListener('DOMContentLoaded', function() {
+        const hasVariants = @((Model.ProductVariants?.Any() ?? false).ToString().ToLower());
+        if (hasVariants) {
+            const firstVariant = document.querySelector('.select-variant-btn.active');
+            if (firstVariant) {
+                const variantId = firstVariant.getAttribute('data-variant-id');
+                const row = document.querySelector(`tr[data-variant-id="${variantId}"]`);
+                if (row) {
+                    row.classList.add('selected');
+                    const color = row.getAttribute('data-variant-color');
+                    const size = row.getAttribute('data-variant-size');
+                    const price = row.getAttribute('data-variant-price');
+                    updateSelectedVariantInfo(color, size, price);
+                }
+            }
+        }
+    });
+    
+    function selectVariant(variantId, price, stock, color, size) {
+        // Update selected variant
+        selectedVariantId = variantId;
+        currentMaxStock = stock;
+        
+        // Update hidden input
+        document.getElementById('selectedVariantId').value = variantId;
+        
+        // Update price display
+        document.getElementById('displayPrice').textContent = '$' + price.toFixed(2);
+        
+        // Update stock info
+        document.getElementById('stockInfo').textContent = stock + ' available';
+        
+        // Update quantity max
+        const qtyInput = document.getElementById('quantity');
+        qtyInput.setAttribute('max', stock);
+        if (parseInt(qtyInput.value) > stock) {
+            qtyInput.value = stock;
+        }
+        
+        // Update button states
+        document.querySelectorAll('.select-variant-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="fas fa-check me-1"></i>Select';
+        });
+        
+        const selectedBtn = document.querySelector(`button[data-variant-id="${variantId}"]`);
+        if (selectedBtn) {
+            selectedBtn.classList.add('active');
+            selectedBtn.innerHTML = '<i class="fas fa-check-double me-1"></i>Selected';
+        }
+        
+        // Highlight selected row
+        document.querySelectorAll('.variant-row').forEach(row => {
+            row.classList.remove('selected');
+        });
+        
+        const selectedRow = document.querySelector(`tr[data-variant-id="${variantId}"]`);
+        if (selectedRow) {
+            selectedRow.classList.add('selected');
+        }
+        
+        // Update selected variant info
+        updateSelectedVariantInfo(color, size, price);
+    }
+    
+    function updateSelectedVariantInfo(color, size, price) {
+        const infoDiv = document.getElementById('selectedVariantInfo');
+        const infoText = document.getElementById('selectedVariantText');
+        
+        infoText.textContent = `Color: ${color} | Size: ${size} | Price: $${parseFloat(price).toFixed(2)}`;
+        infoDiv.style.display = 'block';
+    }
+
+    // Quantity controls
+    function increaseQty(maxStock) {
+        const input = document.getElementById('quantity');
+        const currentValue = parseInt(input.value);
+        const actualMax = currentMaxStock || maxStock;
+        if (currentValue < actualMax) {
+            input.value = currentValue + 1;
+        }
+    }
+
+    function decreaseQty() {
+        const input = document.getElementById('quantity');
+        const currentValue = parseInt(input.value);
+        if (currentValue > 1) {
+            input.value = currentValue - 1;
+        }
+    }
+    
+    // Handle Add to Cart form submission with AJAX
+    const addToCartForm = document.getElementById('addToCartForm');
+    if (addToCartForm) {
+        addToCartForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const hasVariants = @((Model.ProductVariants?.Any() ?? false).ToString().ToLower());
+            if (hasVariants) {
+                const variantId = document.getElementById('selectedVariantId').value;
+                if (!variantId || variantId === '0') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Variant Required',
+                        text: 'Please select a product variant before adding to cart.',
+                        confirmButtonColor: '#000'
+                    });
+                    return false;
+                }
+            }
+            
+            // Get form data
+            const formData = new FormData(addToCartForm);
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            
+            // Disable submit button
+            const submitBtn = addToCartForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Adding...';
+            
+            try {
+                // Handle variantId properly
+                const variantIdInput = document.getElementById('selectedVariantId');
+                const hasVariants = @((Model.ProductVariants?.Any() ?? false).ToString().ToLower());
+                
+                // If product has no variants, remove variantId from form data
+                if (!hasVariants) {
+                    formData.delete('variantId');
+                } else {
+                    // Ensure variantId is set correctly
+                    const variantIdValue = variantIdInput ? variantIdInput.value : '0';
+                    if (variantIdValue === '0' || variantIdValue === '') {
+                        // Don't send variantId if it's 0 or empty for products with variants
+                        // This will trigger validation error which is better than silent failure
+                    }
+                }
+                
+                // Ensure token is in form data
+                formData.set('__RequestVerificationToken', token);
+                
+                const response = await fetch('@Url.Action("AddItem", "Cart")', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                // Check if response is OK
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error:', response.status, errorText);
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned non-JSON response');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success popup and reload after it closes
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added to Cart!',
+                        text: result.message || 'Product added to cart successfully!',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#000',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(() => {
+                        // Reload the page after popup closes
+                        window.location.reload();
+                    });
+                } else {
+                    // Show error popup with detailed message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message || 'Failed to add product to cart.',
+                        confirmButtonColor: '#000'
+                    });
+                    
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            } catch (error) {
+                console.error('Error details:', error);
+                let errorMessage = 'An error occurred while adding the product to cart.';
+                
+                // Try to extract more detailed error message
+                if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage,
+                    confirmButtonColor: '#000',
+                    footer: 'Please check the console for more details.'
+                });
+                
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
+    }
 </script>
