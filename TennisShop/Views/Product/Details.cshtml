@@ -622,7 +622,37 @@
                     }
                 });
                 
-                // Check if response is OK
+                // Check if response is OK or 401 (Unauthorized)
+                if (response.status === 401) {
+                    // Handle unauthorized - try to parse as JSON
+                    try {
+                        const result = await response.json();
+                        if (result.requiresAuth) {
+                            // Close any existing SweetAlert
+                            Swal.close();
+                            // Open login modal
+                            const authModalElement = document.getElementById('authModal');
+                            if (authModalElement) {
+                                const authModal = new bootstrap.Modal(authModalElement);
+                                authModal.show();
+                                // Show error message in modal
+                                const errorDiv = document.getElementById('authError');
+                                const errorText = document.getElementById('authErrorText');
+                                if (errorDiv && errorText) {
+                                    errorText.textContent = result.message || 'Please login to add items to cart';
+                                    errorDiv.style.display = 'block';
+                                }
+                            }
+                            // Re-enable submit button
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnText;
+                            return;
+                        }
+                    } catch (e) {
+                        // If not JSON, treat as regular error
+                    }
+                }
+                
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('Server error:', response.status, errorText);
@@ -656,13 +686,32 @@
                         window.location.reload();
                     });
                 } else {
-                    // Show error popup with detailed message
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: result.message || 'Failed to add product to cart.',
-                        confirmButtonColor: '#000'
-                    });
+                    // Check if authentication is required
+                    if (result.requiresAuth) {
+                        // Close any existing SweetAlert
+                        Swal.close();
+                        // Open login modal
+                        const authModalElement = document.getElementById('authModal');
+                        if (authModalElement) {
+                            const authModal = new bootstrap.Modal(authModalElement);
+                            authModal.show();
+                            // Show error message in modal
+                            const errorDiv = document.getElementById('authError');
+                            const errorText = document.getElementById('authErrorText');
+                            if (errorDiv && errorText) {
+                                errorText.textContent = result.message || 'Please login to add items to cart';
+                                errorDiv.style.display = 'block';
+                            }
+                        }
+                    } else {
+                        // Show error popup with detailed message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: result.message || 'Failed to add product to cart.',
+                            confirmButtonColor: '#000'
+                        });
+                    }
                     
                     // Re-enable submit button
                     submitBtn.disabled = false;

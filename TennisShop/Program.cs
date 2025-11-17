@@ -22,6 +22,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
         options.AccessDeniedPath = "/Shared/AccessDenied";
+        options.Events.OnRedirectToLogin = context =>
+        {
+            // For AJAX requests, return 401 with JSON instead of redirecting
+            if (context.Request.Headers["X-Requested-With"] == "XMLHttpRequest" || 
+                context.Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                var json = System.Text.Json.JsonSerializer.Serialize(new { success = false, requiresAuth = true, message = "Please login to add items to cart" });
+                return context.Response.WriteAsync(json);
+            }
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
     });
 
 // Register DAOs

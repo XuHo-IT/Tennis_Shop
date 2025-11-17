@@ -20,7 +20,7 @@ namespace TennisShop.Controllers
         // GET: Account/Login
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -32,8 +32,15 @@ namespace TennisShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string password)
         {
+            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest" || 
+                         Request.Headers["Accept"].ToString().Contains("application/json");
+
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
+                if (isAjax)
+                {
+                    return Json(new { success = false, message = "Email and password are required." });
+                }
                 ModelState.AddModelError("", "Email and password are required.");
                 return View();
             }
@@ -64,25 +71,42 @@ namespace TennisShop.Controllers
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
                         new ClaimsPrincipal(claimsIdentity), authProperties);
 
+                    if (isAjax)
+                    {
+                        return Json(new { success = true, message = "Login successful!" });
+                    }
                     return RedirectToAction("Index", "Home");
                 }
                 else
                 {
+                    if (isAjax)
+                    {
+                        return Json(new { success = false, message = "Invalid email or password." });
+                    }
                     ModelState.AddModelError("", "Invalid email or password.");
                 }
             }
             catch (Exception ex)
             {
+                if (isAjax)
+                {
+                    return Json(new { success = false, message = "An error occurred during login: " + ex.Message });
+                }
                 ModelState.AddModelError("", "An error occurred during login: " + ex.Message);
             }
 
+            if (isAjax)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return Json(new { success = false, message = string.Join(", ", errors) });
+            }
             return View();
         }
 
         // GET: Account/Register
         public IActionResult Register()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -94,6 +118,9 @@ namespace TennisShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(User user)
         {
+            bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest" || 
+                         Request.Headers["Accept"].ToString().Contains("application/json");
+
             if (ModelState.IsValid)
             {
                 try
@@ -101,17 +128,36 @@ namespace TennisShop.Controllers
                     // Set default role to Customer (role ID 2)
                     user.RoleId = 2;
                     await _userService.CreateUserAsync(user);
+                    
+                    if (isAjax)
+                    {
+                        return Json(new { success = true, message = "Registration successful! Please login." });
+                    }
                     TempData["SuccessMessage"] = "Registration successful! Please login.";
                     return RedirectToAction("Login");
                 }
                 catch (ArgumentException ex)
                 {
+                    if (isAjax)
+                    {
+                        return Json(new { success = false, message = ex.Message });
+                    }
                     ModelState.AddModelError("", ex.Message);
                 }
                 catch (InvalidOperationException ex)
                 {
+                    if (isAjax)
+                    {
+                        return Json(new { success = false, message = ex.Message });
+                    }
                     ModelState.AddModelError("", ex.Message);
                 }
+            }
+            
+            if (isAjax)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return Json(new { success = false, message = string.Join(", ", errors) });
             }
             return View(user);
         }
@@ -128,7 +174,7 @@ namespace TennisShop.Controllers
         // GET: Account/Profile
         public async Task<IActionResult> Profile()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated != true)
             {
                 return RedirectToAction("Login");
             }
@@ -147,7 +193,7 @@ namespace TennisShop.Controllers
         // GET: Account/Edit
         public async Task<IActionResult> Edit()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated != true)
             {
                 return RedirectToAction("Login");
             }
