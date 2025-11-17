@@ -318,21 +318,23 @@ public partial class SportContext : DbContext
                 .HasForeignKey(d => d.ParentId)
                 .HasConstraintName("FK__product_c__paren__4222D4EF");
         });
-
         modelBuilder.Entity<ProductImage>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__product___3213E83F2CBD0BC3");
 
             entity.ToTable("product_images");
 
-            entity.HasIndex(e => e.ProductId, "IX_product_images_product_id");
-
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ImageId).HasColumnName("image_id");
+
             entity.Property(e => e.ImageUrl).HasColumnName("image_url");
             entity.Property(e => e.IsMain)
                 .HasDefaultValue(false)
                 .HasColumnName("is_main");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.IsPrimary)
+                .HasDefaultValue(false)
+                .HasColumnName("is_primary");
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductImages)
                 .HasForeignKey(d => d.ProductId)

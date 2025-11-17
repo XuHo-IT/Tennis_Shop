@@ -1,6 +1,7 @@
 using BussinessObject;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Services;
 using System.Security.Claims;
 
@@ -16,6 +17,25 @@ namespace TennisShop.Controllers
         {
             _cartService = cartService;
             _productService = productService;
+        }
+
+        // Override OnActionExecuting to handle AJAX requests that get 401
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
+            
+            // If authorization failed and this is an AJAX request, return JSON instead of redirect
+            if (context.Result is Microsoft.AspNetCore.Mvc.ChallengeResult || 
+                context.Result is Microsoft.AspNetCore.Mvc.ForbidResult)
+            {
+                bool isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest" || 
+                             Request.Headers["Accept"].ToString().Contains("application/json");
+                
+                if (isAjax)
+                {
+                    context.Result = Json(new { success = false, requiresAuth = true, message = "Please login to add items to cart" });
+                }
+            }
         }
 
         // Helper method to get current user ID

@@ -376,6 +376,156 @@
 
         // Make loadCartCount available globally for other pages to call
         window.loadCartCount = loadCartCount;
+
+        // Handle login form submission via AJAX
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const errorDiv = document.getElementById('authError');
+                const errorText = document.getElementById('authErrorText');
+                const submitBtn = document.getElementById('loginSubmitBtn');
+                const originalBtnText = submitBtn.innerHTML;
+                
+                // Hide previous errors
+                errorDiv.style.display = 'none';
+                
+                // Disable submit button
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Logging in...';
+                
+                const formData = new FormData(loginForm);
+                const token = document.querySelector('#loginForm input[name="__RequestVerificationToken"]').value;
+                formData.set('__RequestVerificationToken', token);
+                
+                try {
+                    const response = await fetch('@Url.Action("Login", "Account")', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Close modal and reload page
+                        const authModal = bootstrap.Modal.getInstance(document.getElementById('authModal'));
+                        if (authModal) {
+                            authModal.hide();
+                        }
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: result.message || 'Login successful!',
+                            confirmButtonColor: '#000',
+                            timer: 1500,
+                            timerProgressBar: true
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        // Show error in modal
+                        errorText.textContent = result.message || 'Login failed. Please try again.';
+                        errorDiv.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    }
+                } catch (error) {
+                    errorText.textContent = 'An error occurred. Please try again.';
+                    errorDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            });
+        }
+
+        // Handle register form submission via AJAX
+        const registerForm = document.getElementById('registerForm');
+        if (registerForm) {
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const errorDiv = document.getElementById('authError');
+                const errorText = document.getElementById('authErrorText');
+                const submitBtn = document.getElementById('registerSubmitBtn');
+                const originalBtnText = submitBtn.innerHTML;
+                
+                // Hide previous errors
+                errorDiv.style.display = 'none';
+                
+                // Disable submit button
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registering...';
+                
+                const formData = new FormData(registerForm);
+                const token = document.querySelector('#registerForm input[name="__RequestVerificationToken"]').value;
+                formData.set('__RequestVerificationToken', token);
+                
+                try {
+                    const response = await fetch('@Url.Action("Register", "Account")', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Switch to login tab and show success message
+                        const loginTab = document.getElementById('login-tab');
+                        if (loginTab) {
+                            loginTab.click();
+                        }
+                        errorText.textContent = result.message || 'Registration successful! Please login.';
+                        errorDiv.className = 'alert alert-success';
+                        errorDiv.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    } else {
+                        // Show error in modal
+                        errorText.textContent = result.message || 'Registration failed. Please try again.';
+                        errorDiv.className = 'alert alert-danger';
+                        errorDiv.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    }
+                } catch (error) {
+                    errorText.textContent = 'An error occurred. Please try again.';
+                    errorDiv.className = 'alert alert-danger';
+                    errorDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                }
+            });
+        }
+
+        // Reset error display when modal is closed or tab is switched
+        const authModal = document.getElementById('authModal');
+        if (authModal) {
+            authModal.addEventListener('hidden.bs.modal', function() {
+                const errorDiv = document.getElementById('authError');
+                if (errorDiv) {
+                    errorDiv.style.display = 'none';
+                    errorDiv.className = 'alert alert-danger';
+                }
+            });
+        }
+
+        // Reset error when switching tabs
+        const authTabs = document.querySelectorAll('#authTabs button[data-bs-toggle="tab"]');
+        authTabs.forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function() {
+                const errorDiv = document.getElementById('authError');
+                if (errorDiv) {
+                    errorDiv.style.display = 'none';
+                }
+            });
+        });
     </script>
 
     <!-- Authentication Modal (Login/Register) -->
@@ -401,12 +551,18 @@
                         </li>
                     </ul>
 
+                    <!-- Error message display -->
+                    <div id="authError" class="alert alert-danger" style="display: none;" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span id="authErrorText"></span>
+                    </div>
+
                     <!-- Tab content -->
                     <div class="tab-content" id="authTabsContent">
                         <!-- Login Tab -->
                         <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-                            <form asp-controller="Account" asp-action="Login" method="post">
-                                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                            <form id="loginForm" asp-controller="Account" asp-action="Login" method="post">
+                                @Html.AntiForgeryToken()
                                 
                                 <div class="mb-3">
                                     <label for="modalEmail" class="form-label text-uppercase fw-bold">Email</label>
@@ -419,15 +575,15 @@
                                 </div>
                                 
                                 <div class="d-grid mb-3">
-                                    <button type="submit" class="btn btn-dark text-uppercase">Login</button>
+                                    <button type="submit" class="btn btn-dark text-uppercase" id="loginSubmitBtn">Login</button>
                                 </div>
                             </form>
                         </div>
 
                         <!-- Register Tab -->
                         <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                            <form asp-controller="Account" asp-action="Register" method="post">
-                                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                            <form id="registerForm" asp-controller="Account" asp-action="Register" method="post">
+                                @Html.AntiForgeryToken()
                                 
                                 <div class="row">
                                     <div class="col-md-6">
@@ -465,7 +621,7 @@
                                 </div>
                                 
                                 <div class="d-grid mb-3">
-                                    <button type="submit" class="btn btn-dark text-uppercase">Register</button>
+                                    <button type="submit" class="btn btn-dark text-uppercase" id="registerSubmitBtn">Register</button>
                                 </div>
                             </form>
                         </div>
