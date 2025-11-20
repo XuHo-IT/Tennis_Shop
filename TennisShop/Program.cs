@@ -12,7 +12,8 @@ builder.Services.AddControllersWithViews();
 
 // Add Entity Framework
 builder.Services.AddDbContext<SportContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString"), 
+        b => b.MigrationsAssembly("DataAccessLayer")));
 
 // --- Authentication: Cookie + Google ---
 builder.Services.AddAuthentication(options =>
