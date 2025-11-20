@@ -1,8 +1,9 @@
-using BussinessObject;
+﻿using BussinessObject;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Services;
+using System.Security.Claims;
 
 namespace TennisShop.Controllers
 {
@@ -10,6 +11,7 @@ namespace TennisShop.Controllers
     {
         private readonly IProductService _productService;
         private readonly IImageKitService _imageKitService;
+        private readonly IProductReviewService _reviewService;
 
         public ProductController(IProductService productService, IImageKitService imageKitService)
         {
@@ -289,6 +291,87 @@ namespace TennisShop.Controllers
             // Should return: products/ProductName_20231201120000.jpg
             var uri = new Uri(imageUrl);
             return uri.AbsolutePath.TrimStart('/');
+        }
+
+
+        [HttpPost]
+        [Authorize] // Chỉ cho phép user đã đăng nhập
+        public async Task<IActionResult> AddReview(int productId, int rating, string comment)
+        {
+            try
+            {
+                // Lấy thông tin user hiện tại
+                var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userName = User.Identity.Name; // Hoặc User.FindFirstValue(ClaimTypes.Name)
+
+                // Convert userId từ string sang int
+                if (!int.TryParse(userIdString, out int userId))
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Invalid user ID"
+                    });
+                }
+
+                // Tạo review mới
+                var review = new ProductReview
+                {
+                    product_id = productId,
+                    user_id = userId,
+                    Rating = rating,
+                    Comment = comment,
+                    full_name = userName,
+                    CreatedAt = DateTime.Now
+                };
+
+                // Lưu vào database
+                // CÁCH 1: Nếu bạn dùng DbContext trực tiếp
+                _reviewService.AddReviewAsync(review);
+
+
+                // CÁCH 2: Nếu bạn dùng Repository/Service pattern
+                // await _reviewService.AddReviewAsync(review);
+                // hoặc
+                // await _reviewRepository.AddAsync(review);
+
+                // Trả về JSON với review mới
+                return Json(new
+                {
+                    success = true,
+                    review = new
+                    {
+                        full_name = review.full_name,
+                        rating = review.Rating,
+                        comment = review.Comment,
+                        createdAt = review.CreatedAt.ToString("MMM dd, yyyy")
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Error adding review: " + ex.Message
+                });
+            }
+        }
+
+        // Trong method Detail, đảm bảo load reviews
+        public async Task<IActionResult> Detail(int id)
+        {
+            var product = await _productService.GetProductByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            // Load reviews
+            var reviews = await _reviewService.GetReviewsByProductIdAsync(id);
+            ViewBag.Reviews = reviews;
+
+            return View(product);
         }
 
     }

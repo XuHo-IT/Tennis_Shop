@@ -1,0 +1,26 @@
+﻿@model BussinessObject.ProductReview
+
+<div class="review-item mb-3 p-4 border rounded bg-white">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h6 class="mb-1 fw-bold">@(!string.IsNullOrEmpty(Model.full_name) ? Model.full_name : "Anonymous")</h6>
+            <div class="rating">
+                <span class="text-warning">
+                    @{
+                        for (int i = 0; i < Model.Rating; i++)
+                        {
+                            @:★
+                        }
+                        for (int i = Model.Rating; i < 5; i++)
+                        {
+                            @:☆
+                        }
+                    }
+                </span>
+            </div>
+        </div>
+        <small class="text-muted">@Model.CreatedAt.ToString("MMM dd, yyyy")</small>
+    </div>
+    <p class="text-muted mb-0">@Model.Comment</p>
+</div>
+}
