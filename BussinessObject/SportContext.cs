@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace BussinessObject;
 
@@ -46,8 +47,16 @@ public partial class SportContext : DbContext
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=LEGION5;Database=Sport;User Id=sa;Password=123;TrustServerCertificate=true;Trusted_Connection=SSPI;Encrypt=false;");
+    {
+        optionsBuilder.UseSqlServer(GetConnectionString());
+    }
+    private string GetConnectionString()
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true).Build();
+        return configuration["ConnectionStrings:DefaultConnectionString"];
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -309,21 +318,23 @@ public partial class SportContext : DbContext
                 .HasForeignKey(d => d.ParentId)
                 .HasConstraintName("FK__product_c__paren__4222D4EF");
         });
-
         modelBuilder.Entity<ProductImage>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__product___3213E83F2CBD0BC3");
 
             entity.ToTable("product_images");
 
-            entity.HasIndex(e => e.ProductId, "IX_product_images_product_id");
-
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ImageId).HasColumnName("image_id");
+
             entity.Property(e => e.ImageUrl).HasColumnName("image_url");
             entity.Property(e => e.IsMain)
                 .HasDefaultValue(false)
                 .HasColumnName("is_main");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.IsPrimary)
+                .HasDefaultValue(false)
+                .HasColumnName("is_primary");
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductImages)
                 .HasForeignKey(d => d.ProductId)

@@ -25,11 +25,11 @@
                                         <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
                                             @if (product.ProductImages.Any())
                                             {
-                                                <img src="@product.ProductImages.First().ImageUrl" alt="@product.Name" class="img-fluid">
+                                                <img src="@product.ProductImages.First().ImageUrl" alt="@product.Name" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                             }
                                             else
                                             {
-                                                <img src="~/images/img@((product.Id % 7) + 1).jpg" alt="@product.Name" class="img-fluid">
+                                                <img src="~/images/img@((product.Id % 7) + 1).jpg" alt="@product.Name" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                             }
                                         </a>
                                     </div>
@@ -53,7 +53,7 @@
                             <div class="banner-item">
                                 <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
                                     <a href="#">
-                                        <img src="~/images/img1.jpg" alt="Tennis Racket" class="img-fluid">
+                                        <img src="~/images/img1.jpg" alt="Tennis Racket" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
                                 <div class="banner-content py-4">
@@ -91,7 +91,7 @@
                             <div class="banner-item">
                                 <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
                                     <a href="#">
-                                        <img src="~/images/img3.jpg" alt="Tennis Accessories" class="img-fluid" style="max-height: 400px; object-fit: cover; width: 100%;">
+                                        <img src="~/images/img3.jpg" alt="Tennis Accessories" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
                                 <div class="banner-content py-4">
@@ -110,7 +110,7 @@
                             <div class="banner-item">
                                 <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
                                     <a href="#">
-                                        <img src="~/images/img4.jpg" alt="Tennis Bags" class="img-fluid">
+                                        <img src="~/images/img4.jpg" alt="Tennis Bags" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
                                 <div class="banner-content py-4">
@@ -129,7 +129,7 @@
                             <div class="banner-item">
                                 <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
                                     <a href="#">
-                                        <img src="~/images/img5.jpg" alt="Tennis Apparel" class="img-fluid">
+                                        <img src="~/images/img5.jpg" alt="Tennis Apparel" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
                                 <div class="banner-content py-4">
@@ -148,7 +148,7 @@
                             <div class="banner-item">
                                 <div class="image-holder image-zoom-effect overflow-hidden hero-image-container">
                                     <a href="#">
-                                        <img src="~/images/img6.jpg" alt="Tennis Balls" class="img-fluid">
+                                        <img src="~/images/img6.jpg" alt="Tennis Balls" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
                                 <div class="banner-content py-4">
@@ -176,28 +176,28 @@
             <div class="col-md-3 text-center" data-aos="fade-in" data-aos-delay="0">
                 <div class="py-5">
                     <svg width="38" height="38" viewBox="0 0 24 24">
-                        <use xlink:href="#calendar"></use>
+                        <use xlink:href="#cart"></use>
                     </svg>
-                    <h4 class="element-title text-capitalize my-3">Book An Appointment</h4>
-                    <p>Schedule a consultation with our tennis experts for personalized equipment recommendations.</p>
+                    <h4 class="element-title text-capitalize my-3">Free Shipping</h4>
+                    <p>Free shipping on all orders over $50. Fast and secure delivery to your door.</p>
                 </div>
             </div>
             <div class="col-md-3 text-center" data-aos="fade-in" data-aos-delay="300">
                 <div class="py-5">
                     <svg width="38" height="38" viewBox="0 0 24 24">
-                        <use xlink:href="#cart"></use>
+                        <use xlink:href="#gift"></use>
                     </svg>
-                    <h4 class="element-title text-capitalize my-3">Pick up in store</h4>
-                    <p>Visit our physical store to try equipment before you buy.</p>
+                    <h4 class="element-title text-capitalize my-3">Premium Quality</h4>
+                    <p>Only the best tennis equipment from trusted brands and manufacturers.</p>
                 </div>
             </div>
             <div class="col-md-3 text-center" data-aos="fade-in" data-aos-delay="600">
                 <div class="py-5">
                     <svg width="38" height="38" viewBox="0 0 24 24">
-                        <use xlink:href="#gift"></use>
+                        <use xlink:href="#heart"></use>
                     </svg>
-                    <h4 class="element-title text-capitalize my-3">Special packaging</h4>
-                    <p>Professional packaging for all your tennis equipment needs.</p>
+                    <h4 class="element-title text-capitalize my-3">Expert Support</h4>
+                    <p>Get expert advice from our tennis professionals to find the perfect equipment.</p>
                 </div>
             </div>
             <div class="col-md-3 text-center" data-aos="fade-in" data-aos-delay="900">
@@ -205,8 +205,8 @@
                     <svg width="38" height="38" viewBox="0 0 24 24">
                         <use xlink:href="#arrow-cycle"></use>
                     </svg>
-                    <h4 class="element-title text-capitalize my-3">Free global returns</h4>
-                    <p>Easy returns and exchanges on all tennis equipment.</p>
+                    <h4 class="element-title text-capitalize my-3">Easy Returns</h4>
+                    <p>30-day return policy. Easy returns and exchanges on all tennis equipment.</p>
                 </div>
             </div>
         </div>
@@ -217,48 +217,83 @@
     <div class="container">
         <div class="open-up" data-aos="zoom-out">
             <div class="row">
-                <div class="col-md-4">
-                    <div class="cat-item image-zoom-effect">
-                        <div class="image-holder">
-                            <a asp-controller="Product" asp-action="Index">
-                                <img src="~/images/cat-item1.jpg" alt="Tennis Rackets" class="product-image img-fluid">
-                            </a>
+                @if (ViewBag.Categories != null)
+                {
+                    var categories = ViewBag.Categories as IEnumerable<BussinessObject.ProductCategory>;
+                    var categoryList = new List<BussinessObject.ProductCategory>();
+                    if (categories != null)
+                    {
+                        categoryList = categories.ToList();
+                    }
+                    var imageIndex = 1;
+                    var maxCategories = Math.Min(3, categoryList.Count);
+                    
+                    @for (int i = 0; i < maxCategories; i++)
+                    {
+                        var category = categoryList[i];
+                        <div class="col-md-4">
+                            <div class="cat-item image-zoom-effect">
+                                <div class="image-holder">
+                                    <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@category.Id">
+                                        <img src="~/images/cat-item@(imageIndex).jpg" alt="@category.Name" class="product-image img-fluid">
+                                    </a>
+                                </div>
+                                <div class="category-content">
+                                    <div class="product-button">
+                                        <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@category.Id" class="btn btn-common text-uppercase">Shop @category.Name</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="category-content">
-                            <div class="product-button">
-                                <a asp-controller="Product" asp-action="Index" class="btn btn-common text-uppercase">Shop Tennis Rackets</a>
+                        imageIndex++;
+                    }
+                }
+                else
+                {
+                    <!-- Fallback categories if no categories exist -->
+                    <div class="col-md-4">
+                        <div class="cat-item image-zoom-effect">
+                            <div class="image-holder">
+                                <a asp-controller="Product" asp-action="Index">
+                                    <img src="~/images/cat-item1.jpg" alt="Tennis Rackets" class="product-image img-fluid">
+                                </a>
+                            </div>
+                            <div class="category-content">
+                                <div class="product-button">
+                                    <a asp-controller="Product" asp-action="Index" class="btn btn-common text-uppercase">Shop Tennis Rackets</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="cat-item image-zoom-effect">
-                        <div class="image-holder">
-                            <a asp-controller="Product" asp-action="Index">
-                                <img src="~/images/cat-item2.jpg" alt="Tennis Shoes" class="product-image img-fluid">
-                            </a>
-                        </div>
-                        <div class="category-content">
-                            <div class="product-button">
-                                <a asp-controller="Product" asp-action="Index" class="btn btn-common text-uppercase">Shop Tennis Shoes</a>
+                    <div class="col-md-4">
+                        <div class="cat-item image-zoom-effect">
+                            <div class="image-holder">
+                                <a asp-controller="Product" asp-action="Index">
+                                    <img src="~/images/cat-item2.jpg" alt="Tennis Shoes" class="product-image img-fluid">
+                                </a>
+                            </div>
+                            <div class="category-content">
+                                <div class="product-button">
+                                    <a asp-controller="Product" asp-action="Index" class="btn btn-common text-uppercase">Shop Tennis Shoes</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="cat-item image-zoom-effect">
-                        <div class="image-holder">
-                            <a asp-controller="Product" asp-action="Index">
-                                <img src="~/images/cat-item3.jpg" alt="Tennis Accessories" class="product-image img-fluid">
-                            </a>
-                        </div>
-                        <div class="category-content">
-                            <div class="product-button">
-                                <a asp-controller="Product" asp-action="Index" class="btn btn-common text-uppercase">Shop Accessories</a>
+                    <div class="col-md-4">
+                        <div class="cat-item image-zoom-effect">
+                            <div class="image-holder">
+                                <a asp-controller="Product" asp-action="Index">
+                                    <img src="~/images/cat-item3.jpg" alt="Tennis Accessories" class="product-image img-fluid">
+                                </a>
+                            </div>
+                            <div class="category-content">
+                                <div class="product-button">
+                                    <a asp-controller="Product" asp-action="Index" class="btn btn-common text-uppercase">Shop Sport Shirts</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     </div>
@@ -282,11 +317,11 @@
                                     <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">
                                         @if (product.ProductImages.Any())
                                         {
-                                            <img src="@product.ProductImages.First().ImageUrl" alt="@product.Name" class="product-image img-fluid">
+                                            <img src="@product.ProductImages.First().ImageUrl" alt="@product.Name" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                         }
                                         else
                                         {
-                                            <img src="~/images/img@((product.Id % 7) + 1).jpg" alt="@product.Name" class="product-image img-fluid">
+                                            <img src="~/images/img@((product.Id % 7) + 1).jpg" alt="@product.Name" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                         }
                                     </a>
                                 </div>
@@ -307,7 +342,7 @@
                         <div class="product-item link-effect">
                             <div class="image-holder position-relative image-zoom-effect overflow-hidden">
                                 <a href="#">
-                                    <img src="~/images/img1.jpg" alt="Tennis Racket" class="product-image img-fluid">
+                                    <img src="~/images/img1.jpg" alt="Tennis Racket" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
                             <div class="product-content mt-3">
@@ -323,7 +358,7 @@
                         <div class="product-item link-effect">
                             <div class="image-holder position-relative image-zoom-effect overflow-hidden">
                                 <a href="#">
-                                    <img src="~/images/img2.jpg" alt="Tennis Shoes" class="product-image img-fluid">
+                                    <img src="~/images/img2.jpg" alt="Tennis Shoes" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
                             <div class="product-content mt-3">
@@ -339,7 +374,7 @@
                         <div class="product-item link-effect">
                             <div class="image-holder position-relative image-zoom-effect overflow-hidden">
                                 <a href="#">
-                                    <img src="~/images/img3.jpg" alt="Tennis Bag" class="product-image img-fluid">
+                                    <img src="~/images/img3.jpg" alt="Tennis Bag" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
                             <div class="product-content mt-3">
@@ -355,7 +390,7 @@
                         <div class="product-item link-effect">
                             <div class="image-holder position-relative image-zoom-effect overflow-hidden">
                                 <a href="#">
-                                    <img src="~/images/img4.jpg" alt="Tennis Balls" class="product-image img-fluid">
+                                    <img src="~/images/img4.jpg" alt="Tennis Balls" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
                             <div class="product-content mt-3">
@@ -371,7 +406,7 @@
                         <div class="product-item link-effect">
                             <div class="image-holder position-relative image-zoom-effect overflow-hidden">
                                 <a href="#">
-                                    <img src="~/images/img5.jpg" alt="Tennis Apparel" class="product-image img-fluid">
+                                    <img src="~/images/img5.jpg" alt="Tennis Apparel" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
                             <div class="product-content mt-3">
@@ -387,7 +422,7 @@
                         <div class="product-item link-effect">
                             <div class="image-holder position-relative image-zoom-effect overflow-hidden">
                                 <a href="#">
-                                    <img src="~/images/img6.jpg" alt="Tennis Grip" class="product-image img-fluid">
+                                    <img src="~/images/img6.jpg" alt="Tennis Grip" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
                             <div class="product-content mt-3">
@@ -403,7 +438,7 @@
                         <div class="product-item link-effect">
                             <div class="image-holder position-relative image-zoom-effect overflow-hidden">
                                 <a href="#">
-                                    <img src="~/images/img7.jpg" alt="Tennis Strings" class="product-image img-fluid">
+                                    <img src="~/images/img7.jpg" alt="Tennis Strings" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
                             <div class="product-content mt-3">
@@ -439,70 +474,67 @@
 
 
 
-<section class="blog py-5">
-    <div class="container">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
-            <h4 class="text-uppercase">Tennis Blog</h4>
-            <a href="#" class="btn-link">View All Posts</a>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <article class="post-item">
-                    <div class="post-image">
-                        <a href="#">
-                            <img src="~/images/img4.jpg" alt="Tennis Tips" class="post-grid-image img-fluid">
-                        </a>
-                    </div>
-                    <div class="post-content d-flex flex-wrap gap-2 my-3">
-                        <div class="post-meta text-uppercase fs-6 text-secondary">
-                            <span class="post-category">Tennis Tips /</span>
-                            <span class="meta-day"> Jan 15, 2025</span>
-                        </div>
-                        <h5 class="post-title text-uppercase">
-                            <a href="#">How to Choose the Perfect Tennis Racket</a>
-                        </h5>
-                        <p>Learn the essential factors to consider when selecting your ideal tennis racket for maximum performance on the court.</p>
-                    </div>
-                </article>
+@if (ViewBag.BlogPosts != null)
+{
+    <section class="blog py-5">
+        <div class="container">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-4">
+                <h4 class="text-uppercase">Tennis Blog & News</h4>
+                <a asp-controller="Blog" asp-action="Index" class="btn-link">View All Posts</a>
             </div>
-            <div class="col-md-4">
-                <article class="post-item">
-                    <div class="post-image">
-                        <a href="#">
-                            <img src="~/images/img5.jpg" alt="Tennis Training" class="post-grid-image img-fluid">
-                        </a>
-                    </div>
-                    <div class="post-content d-flex flex-wrap gap-2 my-3">
-                        <div class="post-meta text-uppercase fs-6 text-secondary">
-                            <span class="post-category">Training /</span>
-                            <span class="meta-day"> Jan 10, 2025</span>
+            <div class="row g-4">
+                @{
+                    var blogPosts = ViewBag.BlogPosts as IEnumerable<BussinessObject.BlogPost>;
+                    var postList = new List<BussinessObject.BlogPost>();
+                    if (blogPosts != null)
+                    {
+                        postList = blogPosts.Take(3).ToList();
+                    }
+                }
+                @if (postList.Any())
+                {
+                    @foreach (var post in postList)
+                    {
+                        <div class="col-md-4">
+                            <article class="post-item">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="post-image position-relative">
+                                        <a asp-controller="Blog" asp-action="Details" asp-route-id="@post.Id">
+                                            <img src="@Url.Content(post.ImageUrl)" alt="@post.Title" class="card-img-top" style="height: 250px; object-fit: cover;">
+                                        </a>
+                                        <div class="position-absolute top-0 start-0 m-3">
+                                            <span class="badge bg-primary">@post.Category</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="post-meta text-uppercase fs-6 text-secondary mb-2">
+                                            <span class="post-category">@post.Category</span>
+                                            <span class="meta-day"> • @post.CreatedAt?.ToString("MMM dd, yyyy")</span>
+                                        </div>
+                                        <h5 class="post-title text-uppercase mb-3">
+                                            <a asp-controller="Blog" asp-action="Details" asp-route-id="@post.Id" class="text-decoration-none text-dark">
+                                                @post.Title
+                                            </a>
+                                        </h5>
+                                        <p class="text-muted mb-3 flex-grow-1">@post.Excerpt</p>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <small class="text-muted">
+                                                <i class="fas fa-user me-1"></i>@post.Author
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="fas fa-eye me-1"></i>@(post.Views ?? 0) views
+                                            </small>
+                                        </div>
+                                        <a asp-controller="Blog" asp-action="Details" asp-route-id="@post.Id" class="btn btn-outline-dark text-uppercase">
+                                            Read More <i class="fas fa-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
                         </div>
-                        <h5 class="post-title text-uppercase">
-                            <a href="#">Top 10 Tennis Training Exercises</a>
-                        </h5>
-                        <p>Discover the most effective training exercises to improve your tennis game and build strength and endurance.</p>
-                    </div>
-                </article>
-            </div>
-            <div class="col-md-4">
-                <article class="post-item">
-                    <div class="post-image">
-                        <a href="#">
-                            <img src="~/images/img6.jpg" alt="Tennis Equipment" class="post-grid-image img-fluid">
-                        </a>
-                    </div>
-                    <div class="post-content d-flex flex-wrap gap-2 my-3">
-                        <div class="post-meta text-uppercase fs-6 text-secondary">
-                            <span class="post-category">Equipment /</span>
-                            <span class="meta-day"> Jan 5, 2025</span>
-                        </div>
-                        <h5 class="post-title text-uppercase">
-                            <a href="#">Essential Tennis Equipment for Beginners</a>
-                        </h5>
-                        <p>Everything you need to get started in tennis, from rackets to shoes and accessories for new players.</p>
-                    </div>
-                </article>
+                    }
+                }
             </div>
         </div>
-    </div>
-</section>
+    </section>
+}

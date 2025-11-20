@@ -8,16 +8,16 @@ using DataAccessLayer;
 
 namespace TennisShop.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IUserService _userService;
         private readonly IProductService _productService;
         private readonly IOrderService _orderService;
-        private readonly SportManagementContext _context;
+        private readonly SportContext _context;
         private readonly IImageKitService _imageKitService;
 
-        public AdminController(IUserService userService, IProductService productService, IOrderService orderService, SportManagementContext context, IImageKitService imageKitService)
+        public AdminController(IUserService userService, IProductService productService, IOrderService orderService, SportContext context, IImageKitService imageKitService)
         {
             _userService = userService;
             _productService = productService;
@@ -666,7 +666,7 @@ namespace TennisShop.Controllers
                 ViewBag.Users = users;
                 ViewBag.Roles = roles;
                 ViewBag.CurrentUser = User.Identity.Name;
-                ViewBag.IsAdmin = User.IsInRole("admin");
+                ViewBag.IsAdmin = User.IsInRole("Admin");
                 ViewBag.UserClaims = User.Claims.ToList();
                 
                 return View();

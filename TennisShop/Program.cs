@@ -1,6 +1,7 @@
-using BussinessObject;
+using DataAccessLayer;
 using Repositories;
 using Services;
+using BussinessObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using DataAccessLayer;
@@ -11,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Add Entity Framework
-builder.Services.AddDbContext<SportManagementContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<SportContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 
 // Add Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -21,6 +22,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
         options.AccessDeniedPath = "/Shared/AccessDenied";
+        options.Events.OnRedirectToLogin = context =>
+        {
+            // For AJAX requests, return 401 with JSON instead of redirecting
+            if (context.Request.Headers["X-Requested-With"] == "XMLHttpRequest" || 
+                context.Request.Headers["Accept"].ToString().Contains("application/json"))
+            {
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                var json = System.Text.Json.JsonSerializer.Serialize(new { success = false, requiresAuth = true, message = "Please login to add items to cart" });
+                return context.Response.WriteAsync(json);
+            }
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
     });
 
 // Register DAOs
@@ -43,6 +58,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IImageKitService, ImageKitService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPayOSService, PayOSService>();
+builder.Services.AddSingleton<IBlogService, BlogService>();
 builder.Services.AddHttpClient<IImageKitService, ImageKitService>();
 builder.Services.AddHttpClient<IPaymentService, PaymentService>();
 

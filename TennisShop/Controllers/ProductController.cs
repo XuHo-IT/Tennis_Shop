@@ -18,10 +18,43 @@ namespace TennisShop.Controllers
         }
 
         // GET: Product
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? categoryId, string sortBy = "newest")
         {
-            var products = await _productService.GetAllProductsAsync();
+            IEnumerable<Product> products;
+            
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                products = await _productService.GetProductsByCategoryAsync(categoryId.Value);
+                ViewBag.SelectedCategoryId = categoryId.Value;
+            }
+            else
+            {
+                products = await _productService.GetAllProductsAsync();
+            }
+            
+            // Apply sorting
+            products = SortProducts(products, sortBy);
+            
+            // Load categories for navigation
+            var categories = await _productService.GetAllCategorysAsync();
+            ViewBag.Categories = categories;
+            ViewBag.SortBy = sortBy;
+            
             return View(products);
+        }
+        
+        private IEnumerable<Product> SortProducts(IEnumerable<Product> products, string sortBy)
+        {
+            return sortBy?.ToLower() switch
+            {
+                "newest" => products.OrderByDescending(p => p.CreatedAt ?? DateTime.MinValue),
+                "oldest" => products.OrderBy(p => p.CreatedAt ?? DateTime.MinValue),
+                "pricelow" => products.OrderBy(p => p.BasePrice),
+                "pricehigh" => products.OrderByDescending(p => p.BasePrice),
+                "nameaz" => products.OrderBy(p => p.Name),
+                "nameza" => products.OrderByDescending(p => p.Name),
+                _ => products.OrderByDescending(p => p.CreatedAt ?? DateTime.MinValue)
+            };
         }
 
         // GET: Product/Details/5
@@ -36,16 +69,26 @@ namespace TennisShop.Controllers
         }
 
         // GET: Product/Create
-        [Authorize(Roles = "admin")]
-        public IActionResult Create()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create()
         {
+            await LoadBrandsAndCategories();
             return View();
+        }
+        
+        private async Task LoadBrandsAndCategories()
+        {
+            var brands = await _productService.GetAllBrandsAsync();
+            var categories = await _productService.GetAllCategorysAsync();
+            
+            ViewBag.Brands = new SelectList(brands, "Id", "Name");
+            ViewBag.Categories = new SelectList(categories, "Id", "Name");
         }
 
         // POST: Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(Product product, IFormFile imageFile)
         {
             if (ModelState.IsValid)
@@ -87,11 +130,12 @@ namespace TennisShop.Controllers
                     ModelState.AddModelError("", $"Error uploading image: {ex.Message}");
                 }
             }
+            await LoadBrandsAndCategories();
             return View(product);
         }
 
         // GET: Product/Edit/5
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
@@ -112,7 +156,7 @@ namespace TennisShop.Controllers
         // POST: Product/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, Product product, IFormFile? imageFile)
         {
             if (id != product.Id)
@@ -184,7 +228,7 @@ namespace TennisShop.Controllers
 
 
         // GET: Product/Delete/5
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
@@ -198,7 +242,7 @@ namespace TennisShop.Controllers
         // POST: Product/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var result = await _productService.DeleteProductAsync(id);
@@ -210,16 +254,28 @@ namespace TennisShop.Controllers
         }
 
         // GET: Product/Search
-        public async Task<IActionResult> Search(string searchTerm)
+        public async Task<IActionResult> Search(string searchTerm, string sortBy = "newest")
         {
+            IEnumerable<Product> products;
+            
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                var allProducts = await _productService.GetAllProductsAsync();
-                return View("Index", allProducts);
+                products = await _productService.GetAllProductsAsync();
             }
-
-            var products = await _productService.SearchProductsAsync(searchTerm);
+            else
+            {
+                products = await _productService.SearchProductsAsync(searchTerm);
+            }
+            
+            // Apply sorting
+            products = SortProducts(products, sortBy);
+            
+            // Load categories for navigation
+            var categories = await _productService.GetAllCategorysAsync();
+            ViewBag.Categories = categories;
             ViewBag.SearchTerm = searchTerm;
+            ViewBag.SortBy = sortBy;
+            
             return View("Index", products);
         }
 

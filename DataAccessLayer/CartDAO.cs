@@ -5,9 +5,9 @@ namespace DataAccessLayer
 {
     public class CartDAO
     {
-        private readonly SportManagementContext _context;
+        private readonly SportContext _context;
 
-        public CartDAO(SportManagementContext context)
+        public CartDAO(SportContext context)
         {
             _context = context;
         }
