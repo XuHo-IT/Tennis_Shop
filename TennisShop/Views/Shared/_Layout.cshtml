@@ -98,6 +98,14 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Blog" asp-action="Index">Blog</a>
                                 </li>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Chatbot" asp-action="Index">
+                                            <i class="fas fa-robot me-1"></i>Chatbot
+                                        </a>
+                                    </li>
+                                }
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Home" asp-action="Privacy">About</a>
                                 </li>
