@@ -1,4 +1,4 @@
-using BussinessObject;
+﻿using BussinessObject;
 using Repositories;
 
 namespace Services
@@ -35,16 +35,30 @@ namespace Services
 
         public async Task<User> CreateUserAsync(User user)
         {
-            if (!ValidateUserAsync(user).Result)
+            return await CreateUserAsync(user, isOAuthUser: false);
+        }
+
+        // Tạo user, có phân biệt OAuth
+        public async Task<User> CreateUserAsync(User user, bool isOAuthUser)
+        {
+            if (!isOAuthUser && !await ValidateUserAsync(user))
                 throw new ArgumentException("Invalid user data");
 
-            // Check if user already exists
+            // Kiểm tra email đã tồn tại
             var existingUser = await GetUserByEmailAsync(user.Email);
             if (existingUser != null)
                 throw new InvalidOperationException("User with this email already exists");
 
             return await _userRepository.CreateUserAsync(user);
         }
+
+        public async Task<User?> AuthenticateUserAsync(string email, string password)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                return null;
+            return await _userRepository.AuthenticateUserAsync(email, password);
+        }
+
 
         public async Task<User?> UpdateUserAsync(User user)
         {
@@ -65,33 +79,26 @@ namespace Services
             return await _userRepository.DeleteUserAsync(id);
         }
 
-        public async Task<User?> AuthenticateUserAsync(string email, string password)
-        {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-                return null;
 
-            return await _userRepository.AuthenticateUserAsync(email, password);
-        }
 
         public async Task<bool> ValidateUserAsync(User user)
         {
-            if (user == null)
-                return false;
+            if (user == null) return false;
+            if (string.IsNullOrWhiteSpace(user.FullName)) return false;
+            if (string.IsNullOrWhiteSpace(user.Email)) return false;
+            if (string.IsNullOrWhiteSpace(user.PasswordHash)) return false;
 
-            if (string.IsNullOrWhiteSpace(user.FullName))
-                return false;
+            return IsValidEmail(user.Email);
+        }
 
-            if (string.IsNullOrWhiteSpace(user.Email))
-                return false;
+        // Validate user Google (không cần password)
+        public async Task<bool> ValidateGoogleUserAsync(User user)
+        {
+            if (user == null) return false;
+            if (string.IsNullOrWhiteSpace(user.FullName)) return false;
+            if (string.IsNullOrWhiteSpace(user.Email)) return false;
 
-            if (string.IsNullOrWhiteSpace(user.PasswordHash))
-                return false;
-
-            // Email format validation
-            if (!IsValidEmail(user.Email))
-                return false;
-
-            return true;
+            return IsValidEmail(user.Email);
         }
 
         private bool IsValidEmail(string email)

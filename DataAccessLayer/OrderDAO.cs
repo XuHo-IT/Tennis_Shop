@@ -29,9 +29,10 @@ namespace DataAccessLayer
             return await _context.Orders
                 .Include(o => o.User)
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Product)
+                    .ThenInclude(oi => oi.Product)
+                        .ThenInclude(p => p.ProductImages)
                 .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.Variant)
+                    .ThenInclude(oi => oi.Variant)
                 .Include(o => o.Payments)
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
@@ -41,6 +42,10 @@ namespace DataAccessLayer
             return await _context.Orders
                 .Where(o => o.UserId == userId)
                 .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                        .ThenInclude(p => p.ProductImages)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Variant)
                 .Include(o => o.Payments)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();

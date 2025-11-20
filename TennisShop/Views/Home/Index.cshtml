@@ -33,13 +33,15 @@
                                             }
                                         </a>
                                     </div>
-                                    <div class="banner-content py-4">
-                                        <h5 class="element-title text-uppercase">
-                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="item-anchor">@product.Name</a>
+                                    <div class="banner-content py-4 text-center">
+                                        <h5 class="element-title text-uppercase mb-3">
+                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="item-anchor text-dark">@product.Name</a>
                                         </h5>
-                                        <p>@(product.Description?.Length > 100 ? product.Description.Substring(0, 100) + "..." : product.Description)</p>
-                                        <div class="btn-left">
-                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                        <p class="text-muted mb-4 px-3">@(product.Description?.Length > 100 ? product.Description.Substring(0, 100) + "..." : product.Description)</p>
+                                        <div class="d-flex justify-content-center">
+                                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn btn-dark btn-lg px-5 text-uppercase text-decoration-none">
+                                                <i class="fas fa-arrow-right me-2"></i>Discover Now
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -56,13 +58,15 @@
                                         <img src="~/images/img1.jpg" alt="Tennis Racket" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
-                                <div class="banner-content py-4">
-                                    <h5 class="element-title text-uppercase">
-                                        <a href="#" class="item-anchor">Premium Tennis Rackets</a>
+                                <div class="banner-content py-4 text-center">
+                                    <h5 class="element-title text-uppercase mb-3">
+                                        <a href="#" class="item-anchor text-dark">Premium Tennis Rackets</a>
                                     </h5>
-                                    <p>Professional quality tennis rackets for all skill levels.</p>
-                                    <div class="btn-left">
-                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    <p class="text-muted mb-4 px-3">Professional quality tennis rackets for all skill levels.</p>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="#" class="btn btn-dark btn-lg px-5 text-uppercase text-decoration-none">
+                                            <i class="fas fa-arrow-right me-2"></i>Discover Now
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -75,13 +79,15 @@
                                         <img src="~/images/img2.jpg" alt="Tennis Shoes" class="img-fluid">
                                     </a>
                                 </div>
-                                <div class="banner-content py-4">
-                                    <h5 class="element-title text-uppercase">
-                                        <a href="#" class="item-anchor">Tennis Shoes Collection</a>
+                                <div class="banner-content py-4 text-center">
+                                    <h5 class="element-title text-uppercase mb-3">
+                                        <a href="#" class="item-anchor text-dark">Tennis Shoes Collection</a>
                                     </h5>
-                                    <p>Comfortable and durable tennis shoes for maximum performance.</p>
-                                    <div class="btn-left">
-                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    <p class="text-muted mb-4 px-3">Comfortable and durable tennis shoes for maximum performance.</p>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="#" class="btn btn-dark btn-lg px-5 text-uppercase text-decoration-none">
+                                            <i class="fas fa-arrow-right me-2"></i>Discover Now
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -94,13 +100,15 @@
                                         <img src="~/images/img3.jpg" alt="Tennis Accessories" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
-                                <div class="banner-content py-4">
-                                    <h5 class="element-title text-uppercase">
-                                        <a href="#" class="item-anchor">Tennis Accessories</a>
+                                <div class="banner-content py-4 text-center">
+                                    <h5 class="element-title text-uppercase mb-3">
+                                        <a href="#" class="item-anchor text-dark">Tennis Accessories</a>
                                     </h5>
-                                    <p>Complete your tennis kit with our premium accessories.</p>
-                                    <div class="btn-left">
-                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    <p class="text-muted mb-4 px-3">Complete your tennis kit with our premium accessories.</p>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="#" class="btn btn-dark btn-lg px-5 text-uppercase text-decoration-none">
+                                            <i class="fas fa-arrow-right me-2"></i>Discover Now
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -113,13 +121,15 @@
                                         <img src="~/images/img4.jpg" alt="Tennis Bags" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
-                                <div class="banner-content py-4">
-                                    <h5 class="element-title text-uppercase">
-                                        <a href="#" class="item-anchor">Tennis Bags</a>
+                                <div class="banner-content py-4 text-center">
+                                    <h5 class="element-title text-uppercase mb-3">
+                                        <a href="#" class="item-anchor text-dark">Tennis Bags</a>
                                     </h5>
-                                    <p>Spacious and stylish bags to carry all your tennis gear.</p>
-                                    <div class="btn-left">
-                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    <p class="text-muted mb-4 px-3">Spacious and stylish bags to carry all your tennis gear.</p>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="#" class="btn btn-dark btn-lg px-5 text-uppercase text-decoration-none">
+                                            <i class="fas fa-arrow-right me-2"></i>Discover Now
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -132,13 +142,15 @@
                                         <img src="~/images/img5.jpg" alt="Tennis Apparel" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
-                                <div class="banner-content py-4">
-                                    <h5 class="element-title text-uppercase">
-                                        <a href="#" class="item-anchor">Tennis Apparel</a>
+                                <div class="banner-content py-4 text-center">
+                                    <h5 class="element-title text-uppercase mb-3">
+                                        <a href="#" class="item-anchor text-dark">Tennis Apparel</a>
                                     </h5>
-                                    <p>High-quality tennis clothing for comfort and style on court.</p>
-                                    <div class="btn-left">
-                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    <p class="text-muted mb-4 px-3">High-quality tennis clothing for comfort and style on court.</p>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="#" class="btn btn-dark btn-lg px-5 text-uppercase text-decoration-none">
+                                            <i class="fas fa-arrow-right me-2"></i>Discover Now
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -151,13 +163,15 @@
                                         <img src="~/images/img6.jpg" alt="Tennis Balls" class="img-fluid" style="width: 100%; height: 400px; object-fit: cover;">
                                     </a>
                                 </div>
-                                <div class="banner-content py-4">
-                                    <h5 class="element-title text-uppercase">
-                                        <a href="#" class="item-anchor">Premium Tennis Balls</a>
+                                <div class="banner-content py-4 text-center">
+                                    <h5 class="element-title text-uppercase mb-3">
+                                        <a href="#" class="item-anchor text-dark">Premium Tennis Balls</a>
                                     </h5>
-                                    <p>Professional grade tennis balls for consistent play.</p>
-                                    <div class="btn-left">
-                                        <a href="#" class="btn-link fs-6 text-uppercase item-anchor text-decoration-none">Discover Now</a>
+                                    <p class="text-muted mb-4 px-3">Professional grade tennis balls for consistent play.</p>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="#" class="btn btn-dark btn-lg px-5 text-uppercase text-decoration-none">
+                                            <i class="fas fa-arrow-right me-2"></i>Discover Now
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -325,11 +339,32 @@
                                         }
                                     </a>
                                 </div>
-                                <div class="product-content mt-3">
-                                    <h5 class="element-title text-uppercase fs-5">
-                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id">@product.Name</a>
+                                <div class="product-content mt-3 text-center">
+                                    <h5 class="element-title text-uppercase fs-5 mb-3">
+                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="text-dark text-decoration-none">@product.Name</a>
                                     </h5>
-                                    <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$@product.BasePrice.ToString("F2")</span></a>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <div class="mb-3">
+                                            @{
+                                                decimal basePrice = product.BasePrice;
+                                                decimal? discountPercent = product.DiscountPercent;
+                                                decimal finalPrice = discountPercent > 0 ? basePrice * (1 - discountPercent.Value / 100m) : basePrice;
+                                            }
+                                            @if (discountPercent > 0)
+                                            {
+                                                <span class="h4 text-primary fw-bold me-2">$@finalPrice.ToString("F2")</span>
+                                                <small class="text-muted text-decoration-line-through">$@basePrice.ToString("F2")</small>
+                                                <span class="badge bg-danger ms-2">-@discountPercent%</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="h4 text-primary fw-bold">$@basePrice.ToString("F2")</span>
+                                            }
+                                        </div>
+                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn btn-dark btn-sm text-uppercase px-4">
+                                            <i class="fas fa-shopping-bag me-2"></i>View Details
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -345,11 +380,18 @@
                                     <img src="~/images/img1.jpg" alt="Tennis Racket" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
-                            <div class="product-content mt-3">
-                                <h5 class="element-title text-uppercase fs-5">
-                                    <a href="#">Professional Tennis Racket</a>
+                            <div class="product-content mt-3 text-center">
+                                <h5 class="element-title text-uppercase fs-5 mb-3">
+                                    <a href="#" class="text-dark text-decoration-none">Professional Tennis Racket</a>
                                 </h5>
-                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$199.00</span></a>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="mb-3">
+                                        <span class="h4 text-primary fw-bold">$199.00</span>
+                                    </div>
+                                    <a href="#" class="btn btn-dark btn-sm text-uppercase px-4">
+                                        <i class="fas fa-shopping-bag me-2"></i>View Details
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -361,11 +403,18 @@
                                     <img src="~/images/img2.jpg" alt="Tennis Shoes" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
-                            <div class="product-content mt-3">
-                                <h5 class="element-title text-uppercase fs-5">
-                                    <a href="#">Tennis Court Shoes</a>
+                            <div class="product-content mt-3 text-center">
+                                <h5 class="element-title text-uppercase fs-5 mb-3">
+                                    <a href="#" class="text-dark text-decoration-none">Tennis Court Shoes</a>
                                 </h5>
-                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$149.00</span></a>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="mb-3">
+                                        <span class="h4 text-primary fw-bold">$149.00</span>
+                                    </div>
+                                    <a href="#" class="btn btn-dark btn-sm text-uppercase px-4">
+                                        <i class="fas fa-shopping-bag me-2"></i>View Details
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -377,11 +426,18 @@
                                     <img src="~/images/img3.jpg" alt="Tennis Bag" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
-                            <div class="product-content mt-3">
-                                <h5 class="element-title text-uppercase fs-5">
-                                    <a href="#">Tennis Bag Pro</a>
+                            <div class="product-content mt-3 text-center">
+                                <h5 class="element-title text-uppercase fs-5 mb-3">
+                                    <a href="#" class="text-dark text-decoration-none">Tennis Bag Pro</a>
                                 </h5>
-                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$89.00</span></a>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="mb-3">
+                                        <span class="h4 text-primary fw-bold">$89.00</span>
+                                    </div>
+                                    <a href="#" class="btn btn-dark btn-sm text-uppercase px-4">
+                                        <i class="fas fa-shopping-bag me-2"></i>View Details
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -393,11 +449,18 @@
                                     <img src="~/images/img4.jpg" alt="Tennis Balls" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
-                            <div class="product-content mt-3">
-                                <h5 class="element-title text-uppercase fs-5">
-                                    <a href="#">Premium Tennis Balls</a>
+                            <div class="product-content mt-3 text-center">
+                                <h5 class="element-title text-uppercase fs-5 mb-3">
+                                    <a href="#" class="text-dark text-decoration-none">Premium Tennis Balls</a>
                                 </h5>
-                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$24.99</span></a>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="mb-3">
+                                        <span class="h4 text-primary fw-bold">$24.99</span>
+                                    </div>
+                                    <a href="#" class="btn btn-dark btn-sm text-uppercase px-4">
+                                        <i class="fas fa-shopping-bag me-2"></i>View Details
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -409,11 +472,18 @@
                                     <img src="~/images/img5.jpg" alt="Tennis Apparel" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
-                            <div class="product-content mt-3">
-                                <h5 class="element-title text-uppercase fs-5">
-                                    <a href="#">Tennis Polo Shirt</a>
+                            <div class="product-content mt-3 text-center">
+                                <h5 class="element-title text-uppercase fs-5 mb-3">
+                                    <a href="#" class="text-dark text-decoration-none">Tennis Polo Shirt</a>
                                 </h5>
-                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$59.00</span></a>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="mb-3">
+                                        <span class="h4 text-primary fw-bold">$59.00</span>
+                                    </div>
+                                    <a href="#" class="btn btn-dark btn-sm text-uppercase px-4">
+                                        <i class="fas fa-shopping-bag me-2"></i>View Details
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -425,11 +495,18 @@
                                     <img src="~/images/img6.jpg" alt="Tennis Grip" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
-                            <div class="product-content mt-3">
-                                <h5 class="element-title text-uppercase fs-5">
-                                    <a href="#">Pro Grip Overgrip</a>
+                            <div class="product-content mt-3 text-center">
+                                <h5 class="element-title text-uppercase fs-5 mb-3">
+                                    <a href="#" class="text-dark text-decoration-none">Pro Grip Overgrip</a>
                                 </h5>
-                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$12.99</span></a>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="mb-3">
+                                        <span class="h4 text-primary fw-bold">$12.99</span>
+                                    </div>
+                                    <a href="#" class="btn btn-dark btn-sm text-uppercase px-4">
+                                        <i class="fas fa-shopping-bag me-2"></i>View Details
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -441,11 +518,18 @@
                                     <img src="~/images/img7.jpg" alt="Tennis Strings" class="product-image img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
                                 </a>
                             </div>
-                            <div class="product-content mt-3">
-                                <h5 class="element-title text-uppercase fs-5">
-                                    <a href="#">Professional Strings</a>
+                            <div class="product-content mt-3 text-center">
+                                <h5 class="element-title text-uppercase fs-5 mb-3">
+                                    <a href="#" class="text-dark text-decoration-none">Professional Strings</a>
                                 </h5>
-                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$34.99</span></a>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="mb-3">
+                                        <span class="h4 text-primary fw-bold">$34.99</span>
+                                    </div>
+                                    <a href="#" class="btn btn-dark btn-sm text-uppercase px-4">
+                                        <i class="fas fa-shopping-bag me-2"></i>View Details
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -457,11 +541,18 @@
                                     <img src="~/images/img1.jpg" alt="Tennis Cap" class="product-image img-fluid">
                                 </a>
                             </div>
-                            <div class="product-content mt-3">
-                                <h5 class="element-title text-uppercase fs-5">
-                                    <a href="#">Tennis Sport Cap</a>
+                            <div class="product-content mt-3 text-center">
+                                <h5 class="element-title text-uppercase fs-5 mb-3">
+                                    <a href="#" class="text-dark text-decoration-none">Tennis Sport Cap</a>
                                 </h5>
-                                <a href="#" class="text-decoration-none" data-after="Add to cart"><span>$29.99</span></a>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="mb-3">
+                                        <span class="h4 text-primary fw-bold">$29.99</span>
+                                    </div>
+                                    <a href="#" class="btn btn-dark btn-sm text-uppercase px-4">
+                                        <i class="fas fa-shopping-bag me-2"></i>View Details
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

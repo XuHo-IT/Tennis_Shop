@@ -63,6 +63,19 @@ namespace Services
             return await _orderRepository.DeleteOrderAsync(id);
         }
 
+        public async Task<bool> HasUserPurchasedProductAsync(int userId, int productId)
+        {
+            if (userId <= 0 || productId <= 0)
+                return false;
+
+            var orders = await _orderRepository.GetOrdersByUserAsync(userId);
+            
+            // Check if user has any completed orders containing this product
+            return orders.Any(order => 
+                (order.Status?.ToLower() == "completed" || order.Status?.ToLower() == "shipped") &&
+                order.OrderItems.Any(item => item.ProductId == productId));
+        }
+
         private void ValidateOrderForCreation(Order order)
         {
             if (order == null)

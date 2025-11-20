@@ -16,6 +16,7 @@ public partial class SportContext : DbContext
     {
     }
 
+    public DbSet<ProductReview> ProductReviews { get; set; }
     public virtual DbSet<Brand> Brands { get; set; }
 
     public virtual DbSet<Cart> Carts { get; set; }
@@ -431,6 +432,44 @@ public partial class SportContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Reviews)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__reviews__user_id__628FA481");
+        });
+
+        modelBuilder.Entity<ProductReview>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ProductReview__3213E83F");
+
+            // Use separate table for ProductReview
+            entity.ToTable("product_reviews");
+
+            entity.HasIndex(e => e.product_id, "IX_product_reviews_product_id");
+            entity.HasIndex(e => e.user_id, "IX_product_reviews_user_id");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.product_id).HasColumnName("product_id");
+            entity.Property(e => e.user_id).HasColumnName("user_id");
+            entity.Property(e => e.full_name)
+                .HasMaxLength(100)
+                .HasColumnName("full_name");
+            entity.Property(e => e.Rating).HasColumnName("rating");
+            entity.Property(e => e.Comment)
+                .HasMaxLength(1000)
+                .HasColumnName("comment");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+
+            entity.HasOne(d => d.Product)
+                .WithMany()
+                .HasForeignKey(d => d.product_id)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK__product_reviews__product_id");
+
+            entity.HasOne(d => d.User)
+                .WithMany()
+                .HasForeignKey(d => d.user_id)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK__product_reviews__user_id");
         });
 
         modelBuilder.Entity<User>(entity =>
