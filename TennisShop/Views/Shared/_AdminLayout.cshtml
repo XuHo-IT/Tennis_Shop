@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <!-- Logo -->
+        <div class="sidebar-header">
+            <div class="admin-logo">
+                <img src="~/images/main-logo.png" alt="TennisShop" />
+            </div>
+        </div>
+
+        <!-- Admin Info -->
+        <div class="admin-profile">
+            <div class="admin-avatar">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="admin-details">
+                <div class="admin-name">@User.Identity?.Name</div>
+                <div class="admin-role">Administrator</div>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a asp-controller="Admin" asp-action="Dashboard" class="menu-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Admin Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a asp-controller="Admin" asp-action="Users" class="menu-link">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Manage Account</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a asp-controller="Admin" asp-action="Products" class="menu-link">
+                    <i class="fas fa-box"></i>
+                    <span>Manage Product</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a asp-controller="Admin" asp-action="Reports" class="menu-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Manage Revenue</span>
+                </a>
+            </li>
+            <li class="menu-divider"></li>
+            <li class="menu-item">
+                <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                    <button type="submit" class="menu-link logout-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Navbar -->
+        <nav class="top-navbar">
+            <div class="navbar-container">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="page-title">
+                    <h5 class="mb-0">@ViewData["Title"]</h5>
+                </div>
+
+                <div class="navbar-end">
+                    <div class="current-date">
+                        <i class="far fa-calendar-alt me-2"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
+            @RenderBody()
+        </div>
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+            <div class="footer-content">
+                <div class="footer-text">
+                    <p class="mb-0">&copy; 2024 TennisShop Admin Panel. All rights reserved.</p>
+                </div>
+                <div class="footer-links">
+                    <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    <span class="separator">|</span>
+                    <a asp-controller="Home" asp-action="Index">Back to Store</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+    <script>
+        // Display current date
+        const currentDate = new Date().toLocaleDateString('en-US', { 
+            weekday: 'short', 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+        document.getElementById('currentDate').textContent = currentDate;
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
