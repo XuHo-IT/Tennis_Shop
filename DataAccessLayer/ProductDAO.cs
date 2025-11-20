@@ -56,6 +56,7 @@ namespace DataAccessLayer
         {
             var existingProduct = await _context.Products
                 .Include(p => p.ProductImages)
+                .Include(p => p.ProductVariants)
                 .FirstOrDefaultAsync(p => p.Id == product.Id);
 
             if (existingProduct == null)
@@ -99,6 +100,61 @@ namespace DataAccessLayer
                         newImage.ProductId = existingProduct.Id;
                         _context.ProductImages.Add(newImage);
                     }
+                }
+            }
+
+            // --- Handle ProductVariants updates ---
+            if (product.ProductVariants != null)
+            {
+                // Get existing variant IDs from the form
+                var submittedVariantIds = product.ProductVariants
+                    .Where(v => v.Id > 0)
+                    .Select(v => v.Id)
+                    .ToList();
+
+                // Remove variants that are not in the submitted list
+                var variantsToRemove = existingProduct.ProductVariants
+                    .Where(v => !submittedVariantIds.Contains(v.Id))
+                    .ToList();
+
+                foreach (var variantToRemove in variantsToRemove)
+                {
+                    _context.ProductVariants.Remove(variantToRemove);
+                }
+
+                // Update or add variants
+                foreach (var variant in product.ProductVariants)
+                {
+                    if (variant.Id > 0)
+                    {
+                        // Update existing variant
+                        var existingVariant = existingProduct.ProductVariants
+                            .FirstOrDefault(v => v.Id == variant.Id);
+
+                        if (existingVariant != null)
+                        {
+                            existingVariant.Color = variant.Color;
+                            existingVariant.Size = variant.Size;
+                            existingVariant.Price = variant.Price;
+                            existingVariant.Stock = variant.Stock;
+                            existingVariant.Sku = variant.Sku;
+                        }
+                    }
+                    else
+                    {
+                        // Add new variant
+                        variant.ProductId = existingProduct.Id;
+                        existingProduct.ProductVariants.Add(variant);
+                    }
+                }
+            }
+            else
+            {
+                // If no variants submitted, remove all existing variants
+                var allVariants = existingProduct.ProductVariants.ToList();
+                foreach (var variant in allVariants)
+                {
+                    _context.ProductVariants.Remove(variant);
                 }
             }
 

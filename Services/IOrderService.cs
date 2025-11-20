@@ -10,6 +10,7 @@ namespace Services
         Task<Order> CreateOrderAsync(Order order);
         Task<Order?> UpdateOrderStatusAsync(int orderId, string status);
         Task<bool> DeleteOrderAsync(int id);
+        Task<bool> HasUserPurchasedProductAsync(int userId, int productId);
     }
 }
 

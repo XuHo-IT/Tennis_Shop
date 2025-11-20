@@ -22,7 +22,11 @@ namespace BussinessObject
         public Product Product { get; set; }
 
         [Required]
+        [Column("user_id")]
         public int user_id { get; set; }
+
+        [ForeignKey("user_id")]
+        public User User { get; set; }
 
         [MaxLength(100)]
         public string full_name { get; set; }

@@ -163,6 +163,16 @@ namespace TennisShop.Controllers
             }
             else // COD
             {
+                // Set order status to "completed" for COD so user can review products immediately
+                await _orderService.UpdateOrderStatusAsync(createdOrder.Id, "completed");
+                
+                // Update payment status to completed for COD
+                var codPayment = await _paymentService.GetPaymentByOrderIdAsync(createdOrder.Id);
+                if (codPayment != null)
+                {
+                    await _paymentService.UpdatePaymentStatusAsync(codPayment.Id, "completed");
+                }
+                
                 TempData["SuccessMessage"] = "Order placed successfully! You will pay when you receive the order.";
                 return RedirectToAction("Details", "Order", new { id = createdOrder.Id });
             }

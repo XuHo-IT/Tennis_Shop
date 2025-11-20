@@ -137,7 +137,12 @@
                                                                     }
                                                                 </div>
                                                                 <div>
-                                                                    <h6 class="mb-1">@productName</h6>
+                                                                    <h6 class="mb-1">
+                                                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId" 
+                                                                           class="text-dark text-decoration-none">
+                                                                            @productName
+                                                                        </a>
+                                                                    </h6>
                                                                     @if (item.Variant != null)
                                                                     {
                                                                         <small class="text-muted">
@@ -146,6 +151,12 @@
                                                                             <i class="fas fa-ruler me-1"></i>@item.Variant.Size
                                                                         </small>
                                                                     }
+                                                                    <div class="mt-1">
+                                                                        <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId" 
+                                                                           class="btn btn-sm btn-outline-primary">
+                                                                            <i class="fas fa-eye me-1"></i>View Product
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </td>
