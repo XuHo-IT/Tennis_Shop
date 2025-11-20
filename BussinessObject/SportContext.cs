@@ -16,6 +16,7 @@ public partial class SportContext : DbContext
     {
     }
 
+    public DbSet<ProductReview> ProductReviews { get; set; }
     public virtual DbSet<Brand> Brands { get; set; }
 
     public virtual DbSet<Cart> Carts { get; set; }
