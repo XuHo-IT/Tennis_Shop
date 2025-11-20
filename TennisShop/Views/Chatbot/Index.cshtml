@@ -1,0 +1,312 @@
+@{
+    ViewData["Title"] = "Chatbot Tư Vấn";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white py-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-robot fa-2x me-3"></i>
+                        <div>
+                            <h4 class="mb-0 text-uppercase">Chatbot Tư Vấn Sản Phẩm</h4>
+                            <small class="text-light">Hỏi tôi về sản phẩm tennis phù hợp với sở thích của bạn!</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Chat Messages Container -->
+                    <div id="chatMessages" class="chat-messages p-4" style="height: 500px; overflow-y: auto; background-color: #f8f9fa;">
+                        <!-- Welcome Message -->
+                        <div class="message bot-message mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="avatar me-3">
+                                    <i class="fas fa-robot fa-2x text-primary"></i>
+                                </div>
+                                <div class="message-content flex-grow-1">
+                                    <div class="message-bubble bg-white p-3 rounded shadow-sm">
+                                        <p class="mb-0">Xin chào! Tôi là chatbot tư vấn sản phẩm tennis. Tôi có thể giúp bạn tìm sản phẩm phù hợp dựa trên sở thích của bạn.</p>
+                                        <p class="mb-0 mt-2">Ví dụ bạn có thể hỏi:</p>
+                                        <ul class="mb-0 mt-2">
+                                            <li>"Tôi thích chơi tennis, tôi nên mua gì?"</li>
+                                            <li>"Tôi là người mới bắt đầu, cần gì để chơi tennis?"</li>
+                                            <li>"Tôi cần vợt tennis cho người chơi chuyên nghiệp"</li>
+                                        </ul>
+                                    </div>
+                                    <small class="text-muted mt-1 d-block">Bây giờ</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="card-footer bg-white border-top p-3">
+                        <form id="chatForm" class="d-flex gap-2">
+                            @Html.AntiForgeryToken()
+                            <input type="text" 
+                                   id="messageInput" 
+                                   class="form-control" 
+                                   placeholder="Nhập câu hỏi của bạn..." 
+                                   autocomplete="off"
+                                   required>
+                            <button type="submit" class="btn btn-dark px-4" id="sendButton">
+                                <i class="fas fa-paper-plane me-2"></i>Gửi
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .chat-messages {
+        scroll-behavior: smooth;
+    }
+
+    .message {
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .user-message {
+        text-align: right;
+    }
+
+    .user-message .message-bubble {
+        background-color: #007bff !important;
+        color: white;
+        margin-left: auto;
+        max-width: 80%;
+    }
+
+    .bot-message .message-bubble {
+        max-width: 80%;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e9ecef;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .user-message .avatar {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .message-content a {
+        color: #007bff;
+        text-decoration: underline;
+    }
+
+    .user-message .message-content a {
+        color: #fff;
+        text-decoration: underline;
+    }
+
+    #chatMessages::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #chatMessages::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    #chatMessages::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    #chatMessages::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .typing-indicator {
+        display: inline-block;
+    }
+
+    .typing-indicator span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #999;
+        margin: 0 2px;
+        animation: typing 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @@keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+        }
+        30% {
+            transform: translateY(-10px);
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            const chatMessages = $('#chatMessages');
+            const chatForm = $('#chatForm');
+            const messageInput = $('#messageInput');
+            const sendButton = $('#sendButton');
+
+            // Auto scroll to bottom
+            function scrollToBottom() {
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            }
+
+            // Add message to chat
+            function addMessage(message, isUser = false) {
+                const messageClass = isUser ? 'user-message' : 'bot-message';
+                const icon = isUser ? 'fa-user' : 'fa-robot';
+                const iconColor = isUser ? 'text-white' : 'text-primary';
+                const bubbleBg = isUser ? 'bg-primary text-white' : 'bg-white';
+                
+                const messageHtml = `
+                    <div class="message ${messageClass} mb-3">
+                        <div class="d-flex align-items-start ${isUser ? 'flex-row-reverse' : ''}">
+                            <div class="avatar ${isUser ? 'ms-3' : 'me-3'}">
+                                <i class="fas ${icon} fa-lg ${iconColor}"></i>
+                            </div>
+                            <div class="message-content flex-grow-1">
+                                <div class="message-bubble ${bubbleBg} p-3 rounded shadow-sm">
+                                    ${message}
+                                </div>
+                                <small class="text-muted mt-1 d-block">${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                chatMessages.append(messageHtml);
+                scrollToBottom();
+            }
+
+            // Show typing indicator
+            function showTypingIndicator() {
+                const typingHtml = `
+                    <div class="message bot-message mb-3" id="typingIndicator">
+                        <div class="d-flex align-items-start">
+                            <div class="avatar me-3">
+                                <i class="fas fa-robot fa-lg text-primary"></i>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-bubble bg-white p-3 rounded shadow-sm">
+                                    <div class="typing-indicator">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.append(typingHtml);
+                scrollToBottom();
+            }
+
+            // Remove typing indicator
+            function removeTypingIndicator() {
+                $('#typingIndicator').remove();
+            }
+
+            // Handle form submission
+            chatForm.on('submit', async function(e) {
+                e.preventDefault();
+                
+                const message = messageInput.val().trim();
+                if (!message) return;
+
+                // Add user message
+                addMessage(message, true);
+                messageInput.val('');
+                sendButton.prop('disabled', true);
+                sendButton.html('<span class="spinner-border spinner-border-sm me-2"></span>Đang gửi...');
+
+                // Show typing indicator
+                showTypingIndicator();
+
+                try {
+                    const token = $('input[name="__RequestVerificationToken"]').val();
+                    const response = await fetch('@Url.Action("SendMessage", "Chatbot")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token || '',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+
+                    const data = await response.json();
+                    
+                    // Remove typing indicator
+                    removeTypingIndicator();
+
+                    if (data.success) {
+                        // Convert markdown links to HTML links
+                        let responseText = data.response;
+                        // Convert [text](/path) to <a href="/path">text</a>
+                        responseText = responseText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+                        // Convert line breaks
+                        responseText = responseText.replace(/\n/g, '<br>');
+                        
+                        addMessage(responseText, false);
+                    } else {
+                        addMessage('Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại sau.', false);
+                    }
+                } catch (error) {
+                    removeTypingIndicator();
+                    addMessage('Xin lỗi, không thể kết nối đến server. Vui lòng thử lại sau.', false);
+                    console.error('Error:', error);
+                } finally {
+                    sendButton.prop('disabled', false);
+                    sendButton.html('<i class="fas fa-paper-plane me-2"></i>Gửi');
+                    messageInput.focus();
+                }
+            });
+
+            // Focus on input when page loads
+            messageInput.focus();
+
+            // Allow Enter key to send (but Shift+Enter for new line)
+            messageInput.on('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    chatForm.submit();
+                }
+            });
+        });
+    </script>
+}
+
