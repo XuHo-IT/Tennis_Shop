@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 using BussinessObject;
 using Services;
@@ -481,46 +482,106 @@ namespace TennisShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateProduct(Product product, IFormFile? imageFile)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // Initialize ProductImages collection if null
-                if (product.ProductImages == null)
+                try
                 {
-                    product.ProductImages = new List<ProductImage>();
-                }
-
-                // Handle image upload if provided
-                if (imageFile != null && imageFile.Length > 0)
-                {
-                    var fileName = $"{product.Name}_{DateTime.Now:yyyyMMddHHmmss}.jpg";
-                    using var imageStream = imageFile.OpenReadStream();
-                    var imageUrl = await _imageKitService.UploadImageAsync(imageStream, fileName, "products");
-                    
-                    // Add the image to the product
-                    product.ProductImages.Add(new ProductImage
+                    // Initialize ProductImages collection if null
+                    if (product.ProductImages == null)
                     {
-                        ImageUrl = imageUrl,
-                        ImageId = ExtractImageIdFromUrl(imageUrl),
-                        IsPrimary = true,
-                        IsMain = true
-                    });
-                }
+                        product.ProductImages = new List<ProductImage>();
+                    }
 
-                product.CreatedAt = DateTime.Now;
-                
-                await _productService.CreateProductAsync(product);
-                TempData["SuccessMessage"] = $"Product '{product.Name}' created successfully!";
-                return RedirectToAction("Products");
+                    // Initialize ProductVariants collection if null
+                    if (product.ProductVariants == null)
+                    {
+                        product.ProductVariants = new List<ProductVariant>();
+                    }
+
+                    // Handle variants from form
+                    var variants = Request.Form["ProductVariants"];
+                    if (variants.Count > 0)
+                    {
+                        product.ProductVariants = new List<ProductVariant>();
+                        var variantIndices = new HashSet<int>();
+                        
+                        // Collect all variant indices
+                        foreach (var key in Request.Form.Keys)
+                        {
+                            if (key.StartsWith("ProductVariants[") && key.Contains("].Color"))
+                            {
+                                var match = System.Text.RegularExpressions.Regex.Match(key, @"ProductVariants\[(\d+)\]");
+                                if (match.Success && int.TryParse(match.Groups[1].Value, out int index))
+                                {
+                                    variantIndices.Add(index);
+                                }
+                            }
+                        }
+
+                        // Process each variant
+                        foreach (var index in variantIndices)
+                        {
+                            var color = Request.Form[$"ProductVariants[{index}].Color"].ToString();
+                            var size = Request.Form[$"ProductVariants[{index}].Size"].ToString();
+                            var priceStr = Request.Form[$"ProductVariants[{index}].Price"].ToString();
+                            var stockStr = Request.Form[$"ProductVariants[{index}].Stock"].ToString();
+                            var sku = Request.Form[$"ProductVariants[{index}].Sku"].ToString();
+
+                            // Only add variant if at least color or size is provided
+                            if (!string.IsNullOrWhiteSpace(color) || !string.IsNullOrWhiteSpace(size))
+                            {
+                                var variant = new ProductVariant
+                                {
+                                    Color = string.IsNullOrWhiteSpace(color) ? null : color,
+                                    Size = string.IsNullOrWhiteSpace(size) ? null : size,
+                                    Price = decimal.TryParse(priceStr, out decimal price) ? price : null,
+                                    Stock = int.TryParse(stockStr, out int stock) ? stock : 0,
+                                    Sku = string.IsNullOrWhiteSpace(sku) ? null : sku
+                                };
+                                product.ProductVariants.Add(variant);
+                            }
+                        }
+                    }
+
+                    // Handle image upload if provided
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        var fileName = $"{product.Name}_{DateTime.Now:yyyyMMddHHmmss}.jpg";
+                        using var imageStream = imageFile.OpenReadStream();
+                        var imageUrl = await _imageKitService.UploadImageAsync(imageStream, fileName, "products");
+                        
+                        // Add the image to the product
+                        product.ProductImages.Add(new ProductImage
+                        {
+                            ImageUrl = imageUrl,
+                            ImageId = ExtractImageIdFromUrl(imageUrl),
+                            IsPrimary = true,
+                            IsMain = true
+                        });
+                    }
+
+                    product.CreatedAt = DateTime.Now;
+                    
+                    await _productService.CreateProductAsync(product);
+                    TempData["SuccessMessage"] = $"Product '{product.Name}' created successfully!";
+                    return RedirectToAction("Products");
+                }
+                catch (ArgumentException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Error uploading image: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = "Error creating product: " + ex.Message;
-                var categories = await _productService.GetAllCategorysAsync();
-                var brands = await _productService.GetAllBrandsAsync();
-                ViewBag.Categories = categories;
-                ViewBag.Brands = brands;
-                return View(product);
-            }
+            
+            // Repopulate dropdowns if validation fails
+            var categories = await _productService.GetAllCategorysAsync();
+            var brands = await _productService.GetAllBrandsAsync();
+            ViewBag.Categories = categories;
+            ViewBag.Brands = brands;
+            return View(product);
         }
 
         // GET: Admin/EditProduct/5
@@ -561,6 +622,14 @@ namespace TennisShop.Controllers
                 return RedirectToAction("Products");
             }
 
+            if (!ModelState.IsValid)
+            {
+                // Repopulate dropdowns
+                ViewBag.Categories = new SelectList(await _productService.GetAllCategorysAsync(), "Id", "Name", product.CategoryId);
+                ViewBag.Brands = new SelectList(await _productService.GetAllBrandsAsync(), "Id", "Name", product.BrandId);
+                return View(product);
+            }
+
             try
             {
                 // Get existing product from DB
@@ -569,6 +638,52 @@ namespace TennisShop.Controllers
                 {
                     TempData["ErrorMessage"] = "Product not found.";
                     return RedirectToAction("Products");
+                }
+
+                // Initialize ProductVariants collection
+                product.ProductVariants = new List<ProductVariant>();
+
+                // Handle variants from form
+                var variantIndices = new HashSet<int>();
+                
+                // Collect all variant indices
+                foreach (var key in Request.Form.Keys)
+                {
+                    if (key.StartsWith("ProductVariants[") && key.Contains("].Color"))
+                    {
+                        var match = System.Text.RegularExpressions.Regex.Match(key, @"ProductVariants\[(\d+)\]");
+                        if (match.Success && int.TryParse(match.Groups[1].Value, out int index))
+                        {
+                            variantIndices.Add(index);
+                        }
+                    }
+                }
+
+                // Process each variant
+                foreach (var index in variantIndices)
+                {
+                    var variantIdStr = Request.Form[$"ProductVariants[{index}].Id"].ToString();
+                    var color = Request.Form[$"ProductVariants[{index}].Color"].ToString();
+                    var size = Request.Form[$"ProductVariants[{index}].Size"].ToString();
+                    var priceStr = Request.Form[$"ProductVariants[{index}].Price"].ToString();
+                    var stockStr = Request.Form[$"ProductVariants[{index}].Stock"].ToString();
+                    var sku = Request.Form[$"ProductVariants[{index}].Sku"].ToString();
+
+                    // Only add variant if at least color or size is provided
+                    if (!string.IsNullOrWhiteSpace(color) || !string.IsNullOrWhiteSpace(size))
+                    {
+                        var variant = new ProductVariant
+                        {
+                            Id = int.TryParse(variantIdStr, out int variantId) && variantId > 0 ? variantId : 0,
+                            ProductId = id,
+                            Color = string.IsNullOrWhiteSpace(color) ? null : color,
+                            Size = string.IsNullOrWhiteSpace(size) ? null : size,
+                            Price = decimal.TryParse(priceStr, out decimal price) ? price : null,
+                            Stock = int.TryParse(stockStr, out int stock) ? stock : 0,
+                            Sku = string.IsNullOrWhiteSpace(sku) ? null : sku
+                        };
+                        product.ProductVariants.Add(variant);
+                    }
                 }
 
                 // Handle image upload if provided
@@ -608,15 +723,19 @@ namespace TennisShop.Controllers
 
                 return RedirectToAction("Products");
             }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Error updating product: " + ex.Message;
-                var categories = await _productService.GetAllCategorysAsync();
-                var brands = await _productService.GetAllBrandsAsync();
-                ViewBag.Categories = categories;
-                ViewBag.Brands = brands;
-                return View(product);
+                ModelState.AddModelError("", $"An unexpected error occurred: {ex.Message}");
             }
+
+            // Repopulate dropdowns if update failed
+            ViewBag.Categories = new SelectList(await _productService.GetAllCategorysAsync(), "Id", "Name", product.CategoryId);
+            ViewBag.Brands = new SelectList(await _productService.GetAllBrandsAsync(), "Id", "Name", product.BrandId);
+            return View(product);
         }
 
         // POST: Admin/DeleteProduct/5
