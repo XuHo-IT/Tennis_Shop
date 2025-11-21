@@ -1,202 +1,464 @@
 @model TennisShop.Controllers.AdminDashboardViewModel
 @{
     ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var completionRate = Model.TotalOrders > 0 ? (double)Model.CompletedOrders / Model.TotalOrders * 100 : 0;
+    var pendingRate = Model.TotalOrders > 0 ? (double)Model.PendingOrders / Model.TotalOrders * 100 : 0;
+    var avgOrderValue = Model.TotalOrders > 0 ? Model.TotalRevenue / Model.TotalOrders : 0;
+
+    var revenueTarget = Math.Max((double)Model.TotalRevenue * 1.2, 25000d);
+    var revenueProgress = revenueTarget <= 0 ? 0 : Math.Min(100, (double)Model.TotalRevenue / revenueTarget * 100);
+
+    var ordersGoal = Math.Max(Model.TotalOrders * 1.2, 40d);
+    var ordersProgress = ordersGoal <= 0 ? 0 : Math.Min(100, (double)Model.TotalOrders / ordersGoal * 100);
+
+    var usersGoal = Math.Max(Model.TotalUsers * 1.2, 20d);
+    var usersProgress = usersGoal <= 0 ? 0 : Math.Min(100, (double)Model.TotalUsers / usersGoal * 100);
+
+    var completionPercent = $"{completionRate:F0}%";
+    var pendingPercent = $"{pendingRate:F0}%";
+    var revenueProgressPercent = $"{revenueProgress:F0}%";
+    var ordersProgressPercent = $"{ordersProgress:F0}%";
+    var usersProgressPercent = $"{usersProgress:F0}%";
+    var adminName = (User.Identity?.Name?.Split(' ').FirstOrDefault() ?? "Admin");
 }
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="h3 mb-4">Admin Dashboard</h1>
-        </div>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="small fw-bold text-primary text-uppercase mb-1">Total Users</div>
-                            <div class="h5 mb-0 fw-bold text-dark">@Model.TotalUsers</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-secondary opacity-50"></i>
-                        </div>
-                    </div>
+    <!-- Hero -->
+    <div class="dashboard-hero mb-5">
+        <div class="hero-text">
+            <span class="hero-badge"><i class="fas fa-sun me-2"></i>Command Center</span>
+            <h1>Good day, @adminName.</h1>
+            <p class="hero-description">
+                Keep an eye on revenue, fulfillment and customer growth without leaving this panel.
+            </p>
+            <div class="hero-meta">
+                <div class="meta-item">
+                    <span>Total Revenue</span>
+                    <strong>$@Model.TotalRevenue.ToString("N0")</strong>
+                </div>
+                <div class="meta-item">
+                    <span>Total Orders</span>
+                    <strong>@Model.TotalOrders</strong>
+                </div>
+                <div class="meta-item">
+                    <span>Pending Orders</span>
+                    <strong>@Model.PendingOrders</strong>
+                </div>
+                <div class="meta-item">
+                    <span>Customers</span>
+                    <strong>@Model.TotalUsers</strong>
                 </div>
             </div>
         </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="small fw-bold text-success text-uppercase mb-1">Total Products</div>
-                            <div class="h5 mb-0 fw-bold text-dark">@Model.TotalProducts</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-box fa-2x text-secondary opacity-50"></i>
-                        </div>
-                    </div>
+        <div class="hero-panels">
+            <div class="hero-panel glass">
+                <div class="panel-label">Completion rate</div>
+                <div class="panel-value">@completionPercent</div>
+                <p class="panel-note">@Model.CompletedOrders completed orders</p>
+                <div class="panel-progress">
+                    <span style="width:@completionPercent"></span>
                 </div>
             </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="small fw-bold text-info text-uppercase mb-1">Total Orders</div>
-                            <div class="h5 mb-0 fw-bold text-dark">@Model.TotalOrders</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-shopping-cart fa-2x text-secondary opacity-50"></i>
-                        </div>
-                    </div>
+            <div class="hero-panel dark">
+                <div class="panel-label">Pending workload</div>
+                <div class="panel-value">@pendingPercent</div>
+                <p class="panel-note">Need attention today</p>
+                <div class="panel-progress inverted">
+                    <span style="width:@pendingPercent"></span>
                 </div>
             </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="small fw-bold text-warning text-uppercase mb-1">Active Products</div>
-                            <div class="h5 mb-0 fw-bold text-dark">@Model.RecentProducts.Count(p => p.IsActive == true)</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-check-circle fa-2x text-secondary opacity-50"></i>
-                        </div>
-                    </div>
+            <div class="hero-panel light">
+                <div class="panel-label">Average order value</div>
+                <div class="panel-value">$@avgOrderValue.ToString("N0")</div>
+                <p class="panel-note">Across @Model.TotalOrders orders</p>
+                <div class="panel-progress">
+                    <span style="width:80%"></span>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Insight Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-4">
+            <div class="insight-card">
+                <div class="insight-card-header">
+                    <div>
+                        <p class="insight-label">Revenue health</p>
+                        <h3>$@Model.TotalRevenue.ToString("N0")</h3>
+                    </div>
+                    <span class="insight-pill success">steady ↑</span>
+                </div>
+                <p class="insight-description">All time earnings benchmarked to the current target.</p>
+                <div class="insight-progress">
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width:@revenueProgressPercent"></div>
+                    </div>
+                    <div class="progress-meta">
+                        <span>Goal: $@revenueTarget.ToString("N0")</span>
+                        <span>@revenueProgressPercent</span>
+                    </div>
+                </div>
+                <ul class="insight-list">
+                    <li>
+                        <span>Completed orders</span>
+                        <strong>@Model.CompletedOrders</strong>
+                    </li>
+                    <li>
+                        <span>Average order</span>
+                        <strong>$@avgOrderValue.ToString("N0")</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="insight-card">
+                <div class="insight-card-header">
+                    <div>
+                        <p class="insight-label">Order pipeline</p>
+                        <h3>@Model.TotalOrders orders</h3>
+                    </div>
+                    <span class="insight-pill warning">pending @Model.PendingOrders</span>
+                </div>
+                <p class="insight-description">Track fulfillment progress and react before bottlenecks happen.</p>
+                <div class="insight-progress">
+                    <div class="progress-track">
+                        <div class="progress-fill neutral" style="width:@ordersProgressPercent"></div>
+                    </div>
+                    <div class="progress-meta">
+                        <span>Goal: @ordersGoal.ToString("N0") orders</span>
+                        <span>@ordersProgressPercent</span>
+                    </div>
+                </div>
+                <ul class="insight-list">
+                    <li>
+                        <span>Completion rate</span>
+                        <strong>@completionPercent</strong>
+                    </li>
+                    <li>
+                        <span>Pending workload</span>
+                        <strong>@pendingPercent</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="insight-card">
+                <div class="insight-card-header">
+                    <div>
+                        <p class="insight-label">Customer base</p>
+                        <h3>@Model.TotalUsers people</h3>
+                    </div>
+                    <span class="insight-pill info">live</span>
+                </div>
+                <p class="insight-description">All registered members including staff accounts.</p>
+                <div class="insight-progress">
+                    <div class="progress-track">
+                        <div class="progress-fill info" style="width:@usersProgressPercent"></div>
+                    </div>
+                    <div class="progress-meta">
+                        <span>Goal: @usersGoal.ToString("N0") users</span>
+                        <span>@usersProgressPercent</span>
+                    </div>
+                </div>
+                <ul class="insight-list">
+                    <li>
+                        <span>New this week</span>
+                        <strong>@Model.RecentUsers.Count</strong>
+                    </li>
+                    <li>
+                        <span>Admins</span>
+                        <strong>@Model.RecentUsers.Count(u => u.Role?.Name == "Admin")</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metric Snapshot -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-4 col-md-6">
+            <div class="metric-card">
+                <div class="metric-icon warning">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="metric-content">
+                    <p class="metric-label">Pending Orders</p>
+                    <h4>@Model.PendingOrders</h4>
+                    <span class="metric-trend warning">Needs review</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="metric-card">
+                <div class="metric-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="metric-content">
+                    <p class="metric-label">Completed Orders</p>
+                    <h4>@Model.CompletedOrders</h4>
+                    <span class="metric-trend positive">@completionPercent complete</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-12">
+            <div class="metric-card">
+                <div class="metric-icon neutral">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="metric-content">
+                    <p class="metric-label">Avg Order Value</p>
+                    <h4>$@avgOrderValue.ToString("N2")</h4>
+                    <span class="metric-trend neutral">Across @Model.TotalOrders orders</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider"></div>
 
     <!-- Quick Actions -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 fw-bold text-primary">Quick Actions</h6>
+    <div class="section-header mb-4">
+        <h3 class="section-title">
+            <i class="fas fa-bolt me-2"></i>Quick Actions
+        </h3>
+        <p class="section-subtitle">Shortcuts to common tasks</p>
+    </div>
+    
+    <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+            <a asp-action="Orders" class="modern-action-card">
+                <div class="action-icon-bg orders-bg">
+                    <i class="fas fa-shopping-cart"></i>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <a href="@Url.Action("Users", "Admin")" class="btn btn-primary btn-block">
-                                <i class="fas fa-users"></i> Manage Users
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="@Url.Action("Products", "Admin")" class="btn btn-success btn-block">
-                                <i class="fas fa-box"></i> Manage Products
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="@Url.Action("Create", "Product")" class="btn btn-info btn-block">
-                                <i class="fas fa-plus"></i> Add Product
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="@Url.Action("Index", "Product")" class="btn btn-warning btn-block">
-                                <i class="fas fa-eye"></i> View Products
-                            </a>
-                        </div>
-                    </div>
+                <div class="action-info">
+                    <h5>Manage Orders</h5>
+                    <p>View and process</p>
                 </div>
-            </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <a asp-action="Products" class="modern-action-card">
+                <div class="action-icon-bg products-bg">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="action-info">
+                    <h5>Manage Products</h5>
+                    <p>Update inventory</p>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <a asp-action="CreateProduct" class="modern-action-card">
+                <div class="action-icon-bg add-bg">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div class="action-info">
+                    <h5>Add Product</h5>
+                    <p>Create new item</p>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-lg-3 col-md-6">
+            <a asp-action="Users" class="modern-action-card">
+                <div class="action-icon-bg users-bg">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="action-info">
+                    <h5>Manage Users</h5>
+                    <p>User management</p>
+                </div>
+                <div class="action-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
         </div>
     </div>
 
-    <!-- Recent Users and Products -->
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 fw-bold text-primary">Recent Users</h6>
+    <!-- Recent Activity -->
+    <div class="section-header mb-4">
+        <h3 class="section-title">
+            <i class="fas fa-clock me-2"></i>Recent Activity
+        </h3>
+        <p class="section-subtitle">Latest updates from your store</p>
+    </div>
+    
+    <div class="row g-4">
+        <!-- Recent Orders -->
+        <div class="col-lg-4">
+            <div class="modern-activity-card">
+                <div class="activity-card-header">
+                    <div class="header-icon orders-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="header-info">
+                        <h6>Recent Orders</h6>
+                        <p>Latest customer orders</p>
+                    </div>
+                    <a asp-action="Orders" class="header-link">
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
-                <div class="card-body">
-                    @if (Model.RecentUsers.Any())
+                <div class="activity-body">
+                    @if (Model.RecentOrders.Any())
                     {
-                        <div class="table-responsive">
-                            <table class="table table-bordered" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>Joined</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var user in Model.RecentUsers)
-                                    {
-                                        <tr>
-                                            <td>@user.FullName</td>
-                                            <td>@user.Email</td>
-                                            <td>
-                                                <span class="badge bg-@(user.Role?.Name == "Admin" ? "danger" : "primary")">
-                                                    @user.Role?.Name
-                                                </span>
-                                            </td>
-                                            <td>@user.CreatedAt?.ToString("MMM dd, yyyy")</td>
-                                        </tr>
+                        @foreach (var order in Model.RecentOrders)
+                        {
+                            <div class="activity-item">
+                                <div class="activity-avatar bg-primary">
+                                    <i class="fas fa-receipt"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">Order #@order.Id</div>
+                                    <div class="activity-subtitle">@order.User?.FullName</div>
+                                    <div class="activity-meta">
+                                        <span class="activity-price">$@order.TotalAmount?.ToString("F2")</span>
+                                        <span class="activity-time">@order.OrderDate?.ToString("MMM dd")</span>
+                                    </div>
+                                </div>
+                                <div class="activity-status">
+                                    @{
+                                        var statusClass = order.Status?.ToLower() switch
+                                        {
+                                            "pending" => "status-warning",
+                                            "processing" => "status-info",
+                                            "completed" => "status-success",
+                                            _ => "status-secondary"
+                                        };
                                     }
-                                </tbody>
-                            </table>
-                        </div>
+                                    <span class="status-badge @statusClass">@order.Status</span>
+                                </div>
+                            </div>
+                        }
                     }
                     else
                     {
-                        <p class="text-muted">No recent users found.</p>
+                        <div class="empty-state">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No recent orders</p>
+                        </div>
                     }
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 fw-bold text-primary">Recent Products</h6>
+        <!-- Recent Users -->
+        <div class="col-lg-4">
+            <div class="modern-activity-card">
+                <div class="activity-card-header">
+                    <div class="header-icon users-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="header-info">
+                        <h6>Recent Users</h6>
+                        <p>New registrations</p>
+                    </div>
+                    <a asp-action="Users" class="header-link">
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
                 </div>
-                <div class="card-body">
-                    @if (Model.RecentProducts.Any())
+                <div class="activity-body">
+                    @if (Model.RecentUsers.Any())
                     {
-                        <div class="table-responsive">
-                            <table class="table table-bordered" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Stock</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var product in Model.RecentProducts)
-                                    {
-                                        <tr>
-                                            <td>@product.Name</td>
-                                            <td>$@product.BasePrice.ToString("F2")</td>
-                                            <td>@product.Stock</td>
-                                            <td>
-                                                <span class="badge bg-@(product.IsActive == true ? "success" : "secondary")">
-                                                    @(product.IsActive == true ? "Active" : "Inactive")
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                        @foreach (var user in Model.RecentUsers)
+                        {
+                            <div class="activity-item">
+                                <div class="activity-avatar bg-success">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">@user.FullName</div>
+                                    <div class="activity-subtitle">@user.Email</div>
+                                    <div class="activity-meta">
+                                        <span class="activity-time">@user.CreatedAt?.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                </div>
+                                <div class="activity-status">
+                                    <span class="status-badge @(user.Role?.Name == "Admin" ? "status-danger" : "status-primary")">
+                                        @user.Role?.Name
+                                    </span>
+                                </div>
+                            </div>
+                        }
                     }
                     else
                     {
-                        <p class="text-muted">No recent products found.</p>
+                        <div class="empty-state">
+                            <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No recent users</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Products -->
+        <div class="col-lg-4">
+            <div class="modern-activity-card">
+                <div class="activity-card-header">
+                    <div class="header-icon products-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="header-info">
+                        <h6>Recent Products</h6>
+                        <p>Latest additions</p>
+                    </div>
+                    <a asp-action="Products" class="header-link">
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="activity-body">
+                    @if (Model.RecentProducts.Any())
+                    {
+                        @foreach (var product in Model.RecentProducts)
+                        {
+                            <div class="activity-item">
+                                <div class="activity-avatar bg-info">
+                                    @if (product.ProductImages != null && product.ProductImages.Any())
+                                    {
+                                        <img src="@product.ProductImages.First().ImageUrl" alt="@product.Name" />
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-box"></i>
+                                    }
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">@product.Name</div>
+                                    <div class="activity-subtitle">@product.Category?.Name</div>
+                                    <div class="activity-meta">
+                                        <span class="activity-price">$@product.BasePrice.ToString("F2")</span>
+                                        <span class="activity-time">Stock: @product.Stock</span>
+                                    </div>
+                                </div>
+                                <div class="activity-status">
+                                    <span class="status-badge @(product.IsActive == true ? "status-success" : "status-secondary")">
+                                        @(product.IsActive == true ? "Active" : "Inactive")
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No recent products</p>
+                        </div>
                     }
                 </div>
             </div>
@@ -204,20 +466,39 @@
     </div>
 </div>
 
-<style>
-    .border-left-primary {
-        border-left: 0.25rem solid #4e73df !important;
-    }
-    .border-left-success {
-        border-left: 0.25rem solid #1cc88a !important;
-    }
-    .border-left-info {
-        border-left: 0.25rem solid #36b9cc !important;
-    }
-    .border-left-warning {
-        border-left: 0.25rem solid #f6c23e !important;
-    }
-    .text-gray-800 {
-        color: #5a5c69 !important;
-    }
-</style>
+@@section Scripts {
+    <script>
+        // Display current date
+        const currentDate = new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        document.getElementById('currentDate').textContent = currentDate;
+
+        // Animate numbers
+        document.querySelectorAll('.stat-number').forEach((element, index) => {
+            const finalValue = parseFloat(element.textContent.replace(/[$,]/g, ''));
+            const isDecimal = element.textContent.includes('.');
+            const hasDollar = element.textContent.includes('$');
+            
+            let current = 0;
+            const increment = finalValue / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= finalValue) {
+                    current = finalValue;
+                    clearInterval(timer);
+                }
+                
+                let displayValue = isDecimal ? current.toFixed(2) : Math.floor(current);
+                if (hasDollar) {
+                    element.textContent = '$' + displayValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                } else {
+                    element.textContent = displayValue;
+                }
+            }, 30);
+        });
+    </script>
+}
