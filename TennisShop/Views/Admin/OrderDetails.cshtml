@@ -2,52 +2,103 @@
 @{
     ViewData["Title"] = $"Order #{Model.Id} Details";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    
+    var statusKey = Model.Status?.ToLower() ?? "unknown";
+    var statusBadge = statusKey switch {
+        "pending" => "warning",
+        "processing" => "info",
+        "shipped" => "primary",
+        "completed" => "success",
+        "cancelled" => "danger",
+        _ => "secondary"
+    };
+    
+    var statusIcon = statusKey switch {
+        "pending" => "fa-clock",
+        "processing" => "fa-cog fa-spin",
+        "shipped" => "fa-truck",
+        "completed" => "fa-check-circle",
+        "cancelled" => "fa-times-circle",
+        _ => "fa-question-circle"
+    };
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <a asp-action="Orders" class="btn btn-outline-secondary mb-2">
-                <i class="fas fa-arrow-left"></i> Back to Orders
-            </a>
-            <h2 class="h3 mb-0">Order #@Model.Id</h2>
-        </div>
-        <div>
-            @{
-                var badgeClass = Model.Status?.ToLower() switch
-                {
-                    "pending" => "bg-warning text-dark",
-                    "processing" => "bg-info",
-                    "shipped" => "bg-primary",
-                    "completed" => "bg-success",
-                    "cancelled" => "bg-danger",
-                    _ => "bg-secondary"
-                };
-            }
-            <span class="badge @badgeClass fs-6">
-                @Model.Status
-            </span>
+<div class="container-fluid px-4 py-4">
+    <!-- Page Header -->
+    <div class="mb-4">
+        <a asp-action="Orders" class="btn btn-outline-secondary mb-3">
+            <i class="fas fa-arrow-left me-2"></i>Back to Orders
+        </a>
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h2 class="page-heading mb-2">Order #@Model.Id</h2>
+                <p class="text-muted mb-0">
+                    <i class="far fa-calendar-alt me-2"></i>
+                    Placed on @Model.OrderDate?.ToString("MMMM dd, yyyy 'at' hh:mm tt")
+                </p>
+            </div>
+            <div>
+                <span class="status-badge status-@statusKey" style="font-size: 1.125rem; padding: 0.625rem 1.25rem;">
+                    <i class="fas @statusIcon me-2"></i>@Model.Status
+                </span>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Order Information -->
+    <!-- Order Timeline -->
+    <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card-body text-white">
+            <h6 class="fw-bold mb-3"><i class="fas fa-route me-2"></i>Order Timeline</h6>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-center flex-fill">
+                    <div class="mb-2">
+                        <i class="fas fa-shopping-cart fa-2x @(statusKey == "pending" || statusKey == "processing" || statusKey == "shipped" || statusKey == "completed" ? "text-white" : "opacity-50")"></i>
+                    </div>
+                    <small class="@(statusKey == "pending" ? "fw-bold" : "opacity-75")">Pending</small>
+                </div>
+                <div class="border-top border-white opacity-50" style="flex: 1; height: 2px;"></div>
+                <div class="text-center flex-fill">
+                    <div class="mb-2">
+                        <i class="fas fa-cog fa-2x @(statusKey == "processing" || statusKey == "shipped" || statusKey == "completed" ? "text-white" : "opacity-50")"></i>
+                    </div>
+                    <small class="@(statusKey == "processing" ? "fw-bold" : "opacity-75")">Processing</small>
+                </div>
+                <div class="border-top border-white opacity-50" style="flex: 1; height: 2px;"></div>
+                <div class="text-center flex-fill">
+                    <div class="mb-2">
+                        <i class="fas fa-truck fa-2x @(statusKey == "shipped" || statusKey == "completed" ? "text-white" : "opacity-50")"></i>
+                    </div>
+                    <small class="@(statusKey == "shipped" ? "fw-bold" : "opacity-75")">Shipped</small>
+                </div>
+                <div class="border-top border-white opacity-50" style="flex: 1; height: 2px;"></div>
+                <div class="text-center flex-fill">
+                    <div class="mb-2">
+                        <i class="fas fa-check-circle fa-2x @(statusKey == "completed" ? "text-white" : "opacity-50")"></i>
+                    </div>
+                    <small class="@(statusKey == "completed" ? "fw-bold" : "opacity-75")">Completed</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column: Order Items & Shipping -->
         <div class="col-lg-8">
             <!-- Order Items -->
-            <div class="card admin-card mb-4">
-                <div class="card-header admin-card-header">
-                    <h5 class="mb-0"><i class="fas fa-box me-2"></i>Order Items</h5>
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; overflow: hidden;">
+                <div class="card-header bg-white border-bottom" style="padding: 1.5rem;">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-box me-2 text-primary"></i>Order Items</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table modern-table align-middle mb-0">
                             <thead>
                                 <tr>
                                     <th>Product</th>
                                     <th>Variant</th>
                                     <th class="text-center">Quantity</th>
-                                    <th class="text-end">Price</th>
-                                    <th class="text-end">Total</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,126 +106,230 @@
                                 {
                                     <tr>
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                @if (item.Product?.ProductImages != null && item.Product.ProductImages.Any())
-                                                {
-                                                    <img src="@item.Product.ProductImages.First().ImageUrl" 
-                                                         alt="@item.Product.Name" 
-                                                         class="me-3" 
-                                                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.25rem;">
-                                                }
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="product-image" style="border-radius: 12px;">
+                                                    @if (item.Product?.ProductImages != null && item.Product.ProductImages.Any())
+                                                    {
+                                                        <img src="@item.Product.ProductImages.First().ImageUrl" alt="@item.Product.Name" style="border-radius: 12px;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="image-placeholder">
+                                                            <i class="fas fa-image"></i>
+                                                        </div>
+                                                    }
+                                                </div>
                                                 <div>
-                                                    <strong>@item.Product?.Name</strong>
+                                                    <div class="fw-semibold">@item.Product?.Name</div>
+                                                    <small class="text-muted">ID: #@item.Product?.Id</small>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             @if (item.Variant != null)
                                             {
-                                                <span class="badge bg-secondary">@item.Variant.Color / @item.Variant.Size</span>
+                                                <div>
+                                                    <span class="badge-tag badge-primary">
+                                                        <i class="fas fa-palette me-1"></i>@item.Variant.Color
+                                                    </span>
+                                                    <span class="badge-tag badge-secondary">
+                                                        <i class="fas fa-ruler me-1"></i>@item.Variant.Size
+                                                    </span>
+                                                </div>
                                             }
                                             else
                                             {
-                                                <span class="text-muted">-</span>
+                                                <span class="text-muted">Standard</span>
                                             }
                                         </td>
                                         <td class="text-center">
-                                            <span class="badge bg-primary">@item.Quantity</span>
+                                            <span class="badge-tag badge-primary" style="font-size: 0.875rem;">×@item.Quantity</span>
                                         </td>
-                                        <td class="text-end">$@item.Price.ToString("F2")</td>
-                                        <td class="text-end"><strong>$@((item.Price * item.Quantity).ToString("F2"))</strong></td>
+                                        <td class="text-end fw-semibold">$@item.Price.ToString("F2")</td>
+                                        <td class="text-end fw-bold text-success fs-6">$@((item.Price * item.Quantity).ToString("F2"))</td>
                                     </tr>
                                 }
                             </tbody>
-                            <tfoot>
-                                <tr class="table-light">
-                                    <td colspan="4" class="text-end"><strong>Total:</strong></td>
-                                    <td class="text-end"><h5 class="mb-0 text-success">$@Model.TotalAmount?.ToString("F2")</h5></td>
-                                </tr>
-                            </tfoot>
                         </table>
+                    </div>
+                    <div class="p-4 bg-light border-top">
+                        <div class="row">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Subtotal:</span>
+                                    <span class="fw-semibold">$@Model.TotalAmount?.ToString("F2")</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Shipping:</span>
+                                    <span class="fw-semibold text-success">FREE</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Tax:</span>
+                                    <span class="fw-semibold">$0.00</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <span class="fw-bold fs-5">Total:</span>
+                                    <span class="fw-bold fs-3 text-success">$@Model.TotalAmount?.ToString("F2")</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Shipping Information -->
-            <div class="card admin-card">
-                <div class="card-header admin-card-header">
-                    <h5 class="mb-0"><i class="fas fa-shipping-fast me-2"></i>Shipping Information</h5>
+            <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="card-header bg-white border-bottom" style="padding: 1.5rem;">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-shipping-fast me-2 text-info"></i>Shipping Information</h5>
                 </div>
-                <div class="card-body">
-                    <div class="row">
+                <div class="card-body" style="padding: 2rem;">
+                    <div class="row g-4">
                         <div class="col-md-6">
-                            <p><strong>Address:</strong></p>
-                            <p class="text-muted">@Model.ShippingAddress</p>
+                            <div class="info-group">
+                                <label class="text-muted small mb-2 text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
+                                    <i class="fas fa-map-marker-alt me-1"></i>Shipping Address
+                                </label>
+                                <div class="fw-semibold fs-6">@Model.ShippingAddress</div>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Phone:</strong></p>
-                            <p class="text-muted">@Model.Phone</p>
+                            <div class="info-group">
+                                <label class="text-muted small mb-2 text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
+                                    <i class="fas fa-phone me-1"></i>Contact Phone
+                                </label>
+                                <div class="fw-semibold fs-6">@Model.Phone</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-group">
+                                <label class="text-muted small mb-2 text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
+                                    <i class="fas fa-credit-card me-1"></i>Payment Method
+                                </label>
+                                <div class="fw-semibold">Cash on Delivery</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-group">
+                                <label class="text-muted small mb-2 text-uppercase fw-semibold" style="letter-spacing: 0.5px;">
+                                    <i class="fas fa-wallet me-1"></i>Payment Status
+                                </label>
+                                <div>
+                                    <span class="badge-tag badge-warning">
+                                        <i class="fas fa-clock me-1"></i>Pending
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Order Summary & Actions -->
+        <!-- Right Column: Customer & Actions -->
         <div class="col-lg-4">
             <!-- Customer Information -->
-            <div class="card admin-card mb-4">
-                <div class="card-header admin-card-header">
-                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Customer</h5>
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+                <div class="card-header bg-white border-bottom" style="padding: 1.5rem;">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-user me-2 text-primary"></i>Customer Details</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="padding: 2rem;">
                     @if (Model.User != null)
                     {
-                        <p><strong>Name:</strong><br />@Model.User.FullName</p>
-                        <p><strong>Email:</strong><br />@Model.User.Email</p>
-                        <p><strong>Phone:</strong><br />@Model.User.Phone</p>
+                        <div class="text-center mb-4">
+                            <div class="user-avatar mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);">
+                                @string.Join("", Model.User.FullName.Split(" ", StringSplitOptions.RemoveEmptyEntries).Take(2).Select(s => s[0])).ToUpper()
+                            </div>
+                            <h5 class="mb-1 fw-bold">@Model.User.FullName</h5>
+                            <p class="text-muted small mb-0">Customer ID: #@Model.User.Id</p>
+                        </div>
+                        <div class="info-group mb-3 p-3 bg-light rounded">
+                            <label class="text-muted small mb-2">
+                                <i class="far fa-envelope me-2"></i>Email Address
+                            </label>
+                            <div class="fw-semibold">@Model.User.Email</div>
+                        </div>
+                        <div class="info-group mb-3 p-3 bg-light rounded">
+                            <label class="text-muted small mb-2">
+                                <i class="fas fa-phone me-2"></i>Phone Number
+                            </label>
+                            <div class="fw-semibold">@(Model.User.Phone ?? "Not provided")</div>
+                        </div>
+                        <div class="info-group p-3 bg-light rounded">
+                            <label class="text-muted small mb-2">
+                                <i class="fas fa-map-marker-alt me-2"></i>Home Address
+                            </label>
+                            <div class="fw-semibold">@(Model.User.Address ?? "Not provided")</div>
+                        </div>
                     }
                     else
                     {
-                        <p class="text-muted">Guest Customer</p>
+                        <div class="text-center py-4">
+                            <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                            <p class="text-muted mb-0">Guest Customer</p>
+                        </div>
                     }
                 </div>
             </div>
 
             <!-- Order Summary -->
-            <div class="card admin-card mb-4">
-                <div class="card-header admin-card-header">
-                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Order Summary</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Order Date:</strong><br />@Model.OrderDate?.ToString("MMMM dd, yyyy hh:mm tt")</p>
-                    <p><strong>Total Items:</strong><br />@Model.OrderItems.Count</p>
-                    <p><strong>Total Amount:</strong><br /><span class="h4 text-success">$@Model.TotalAmount?.ToString("F2")</span></p>
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body text-white" style="padding: 2rem;">
+                    <h6 class="fw-bold mb-4"><i class="fas fa-info-circle me-2"></i>Order Summary</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="opacity-75">Order ID</span>
+                        <span class="fw-bold">#@Model.Id</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="opacity-75">Order Date</span>
+                        <span class="fw-semibold">@Model.OrderDate?.ToString("MMM dd, yyyy")</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="opacity-75">Total Items</span>
+                        <span class="fw-semibold">@Model.OrderItems.Count items</span>
+                    </div>
+                    <hr class="border-white opacity-25">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">Total Amount</span>
+                        <span class="fw-bold fs-3">$@Model.TotalAmount?.ToString("F2")</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Status Update -->
-            <div class="card admin-card">
-                <div class="card-header admin-card-header">
-                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Status</h5>
+            <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="card-header bg-white border-bottom" style="padding: 1.5rem;">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-edit me-2 text-success"></i>Update Status</h5>
                 </div>
-                <div class="card-body">
-                    <form asp-action="UpdateOrderStatus" method="post">
+                <div class="card-body" style="padding: 2rem;">
+                    <form asp-action="UpdateOrderStatus" method="post" id="statusForm">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="orderId" value="@Model.Id" />
                         
-                        <div class="mb-3">
-                            <label class="form-label">Change order status:</label>
-                            <select name="status" class="form-select" required>
-                                <option value="pending" selected="@(Model.Status == "pending")">Pending</option>
-                                <option value="processing" selected="@(Model.Status == "processing")">Processing</option>
-                                <option value="shipped" selected="@(Model.Status == "shipped")">Shipped</option>
-                                <option value="completed" selected="@(Model.Status == "completed")">Completed</option>
-                                <option value="cancelled" selected="@(Model.Status == "cancelled")">Cancelled</option>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-3">
+                                <i class="fas fa-sync-alt me-2"></i>Change Order Status
+                            </label>
+                            <select name="status" class="form-select form-select-lg" required style="border-radius: 10px; border: 2px solid var(--gray-300);">
+                                <option value="pending" selected="@(Model.Status?.ToLower() == "pending")">⏱️ Pending</option>
+                                <option value="processing" selected="@(Model.Status?.ToLower() == "processing")">⚙️ Processing</option>
+                                <option value="shipped" selected="@(Model.Status?.ToLower() == "shipped")">🚚 Shipped</option>
+                                <option value="completed" selected="@(Model.Status?.ToLower() == "completed")">✅ Completed</option>
+                                <option value="cancelled" selected="@(Model.Status?.ToLower() == "cancelled")">❌ Cancelled</option>
                             </select>
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Current status: <strong>@Model.Status</strong>
+                            </small>
                         </div>
                         
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-check"></i> Update Status
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark btn-lg">
+                                <i class="fas fa-check me-2"></i>Update Status
                             </button>
+                            <a asp-action="Orders" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Orders
+                            </a>
                         </div>
                     </form>
                 </div>
@@ -183,3 +338,40 @@
     </div>
 </div>
 
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('statusForm');
+    const selectStatus = form.querySelector('select[name="status"]');
+    const currentStatus = '@Model.Status?.ToLower()';
+    
+    form.addEventListener('submit', function(e) {
+        const newStatus = selectStatus.value;
+        
+        if (newStatus === currentStatus) {
+            e.preventDefault();
+            alert('This order is already in "' + newStatus + '" status.');
+            return false;
+        }
+        
+        const confirmMessage = `Are you sure you want to change order status from "${currentStatus}" to "${newStatus}"?`;
+        
+        if (!confirm(confirmMessage)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    // Animate cards on load
+    document.querySelectorAll('.card').forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 100 * index);
+    });
+});
+</script>
+}

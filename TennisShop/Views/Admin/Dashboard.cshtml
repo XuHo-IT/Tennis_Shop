@@ -1,6 +1,6 @@
 @model TennisShop.Controllers.AdminDashboardViewModel
 @{
-    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
     var completionRate = Model.TotalOrders > 0 ? (double)Model.CompletedOrders / Model.TotalOrders * 100 : 0;
@@ -25,64 +25,31 @@
 }
 
 <div class="container-fluid">
-    <!-- Hero -->
+    <!-- Hero Section -->
     <div class="dashboard-hero mb-5">
-        <div class="hero-text">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                    <span class="hero-badge"><i class="fas fa-sun me-2"></i>Command Center</span>
-                    <h1>Good day, @adminName.</h1>
-                    <p class="hero-description">
-                        Keep an eye on revenue, fulfillment and customer growth without leaving this panel.
-                    </p>
-                </div>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light">
-                    <i class="fas fa-home me-2"></i>Return Home
-                </a>
+        <span class="hero-badge">
+            <i class="fas fa-crown me-2"></i>Command Center
+        </span>
+        <h1>Chào mừng trở lại, @adminName! 👋</h1>
+        <p class="hero-description">
+            Giám sát toàn bộ hoạt động kinh doanh của bạn tại một nơi. Theo dõi doanh thu, đơn hàng và sự phát triển của khách hàng theo thời gian thực.
+        </p>
+        <div class="hero-meta">
+            <div class="meta-item">
+                <span>Tổng Doanh Thu</span>
+                <strong>$@Model.TotalRevenue.ToString("N0")</strong>
             </div>
-            <div class="hero-meta">
-                <div class="meta-item">
-                    <span>Total Revenue</span>
-                    <strong>$@Model.TotalRevenue.ToString("N0")</strong>
-                </div>
-                <div class="meta-item">
-                    <span>Total Orders</span>
-                    <strong>@Model.TotalOrders</strong>
-                </div>
-                <div class="meta-item">
-                    <span>Pending Orders</span>
-                    <strong>@Model.PendingOrders</strong>
-                </div>
-                <div class="meta-item">
-                    <span>Customers</span>
-                    <strong>@Model.TotalUsers</strong>
-                </div>
+            <div class="meta-item">
+                <span>Tổng Đơn Hàng</span>
+                <strong>@Model.TotalOrders</strong>
             </div>
-        </div>
-        <div class="hero-panels">
-            <div class="hero-panel glass">
-                <div class="panel-label">Completion rate</div>
-                <div class="panel-value">@completionPercent</div>
-                <p class="panel-note">@Model.CompletedOrders completed orders</p>
-                <div class="panel-progress">
-                    <span style="width:@completionPercent"></span>
-                </div>
+            <div class="meta-item">
+                <span>Đơn Đang Chờ</span>
+                <strong>@Model.PendingOrders</strong>
             </div>
-            <div class="hero-panel dark">
-                <div class="panel-label">Pending workload</div>
-                <div class="panel-value">@pendingPercent</div>
-                <p class="panel-note">Need attention today</p>
-                <div class="panel-progress inverted">
-                    <span style="width:@pendingPercent"></span>
-                </div>
-            </div>
-            <div class="hero-panel light">
-                <div class="panel-label">Average order value</div>
-                <div class="panel-value">$@avgOrderValue.ToString("N0")</div>
-                <p class="panel-note">Across @Model.TotalOrders orders</p>
-                <div class="panel-progress">
-                    <span style="width:80%"></span>
-                </div>
+            <div class="meta-item">
+                <span>Người Dùng</span>
+                <strong>@Model.TotalUsers</strong>
             </div>
         </div>
     </div>
@@ -93,90 +60,104 @@
             <div class="insight-card">
                 <div class="insight-card-header">
                     <div>
-                        <p class="insight-label">Revenue health</p>
-                        <h3>$@Model.TotalRevenue.ToString("N0")</h3>
+                        <p class="insight-label">Tình Trạng Doanh Thu</p>
+                        <h3 class="text-gradient-primary">$@Model.TotalRevenue.ToString("N0")</h3>
                     </div>
-                    <span class="insight-pill success">steady ↑</span>
+                    <span class="insight-pill success">
+                        <i class="fas fa-arrow-up me-1"></i>Ổn định
+                    </span>
                 </div>
-                <p class="insight-description">All time earnings benchmarked to the current target.</p>
+                <p class="insight-description">
+                    Tổng thu nhập so với mục tiêu doanh thu hiện tại của bạn.
+                </p>
                 <div class="insight-progress">
                     <div class="progress-track">
                         <div class="progress-fill" style="width:@revenueProgressPercent"></div>
                     </div>
                     <div class="progress-meta">
-                        <span>Goal: $@revenueTarget.ToString("N0")</span>
-                        <span>@revenueProgressPercent</span>
+                        <span>Mục tiêu: $@revenueTarget.ToString("N0")</span>
+                        <strong>@revenueProgressPercent</strong>
                     </div>
                 </div>
                 <ul class="insight-list">
                     <li>
-                        <span>Completed orders</span>
+                        <span>Đơn hoàn thành</span>
                         <strong>@Model.CompletedOrders</strong>
                     </li>
                     <li>
-                        <span>Average order</span>
+                        <span>Giá trị TB</span>
                         <strong>$@avgOrderValue.ToString("N0")</strong>
                     </li>
                 </ul>
             </div>
         </div>
+
         <div class="col-lg-4">
             <div class="insight-card">
                 <div class="insight-card-header">
                     <div>
-                        <p class="insight-label">Order pipeline</p>
-                        <h3>@Model.TotalOrders orders</h3>
+                        <p class="insight-label">Quy Trình Đơn Hàng</p>
+                        <h3 class="text-gradient-primary">@Model.TotalOrders</h3>
                     </div>
-                    <span class="insight-pill warning">pending @Model.PendingOrders</span>
+                    <span class="insight-pill warning">
+                        <i class="fas fa-hourglass-half me-1"></i>@Model.PendingOrders chờ
+                    </span>
                 </div>
-                <p class="insight-description">Track fulfillment progress and react before bottlenecks happen.</p>
+                <p class="insight-description">
+                    Theo dõi tiến độ hoàn thành và phản ứng trước các tắc nghẽn.
+                </p>
                 <div class="insight-progress">
                     <div class="progress-track">
                         <div class="progress-fill neutral" style="width:@ordersProgressPercent"></div>
                     </div>
                     <div class="progress-meta">
-                        <span>Goal: @ordersGoal.ToString("N0") orders</span>
-                        <span>@ordersProgressPercent</span>
+                        <span>Mục tiêu: @ordersGoal.ToString("N0") đơn</span>
+                        <strong>@ordersProgressPercent</strong>
                     </div>
                 </div>
                 <ul class="insight-list">
                     <li>
-                        <span>Completion rate</span>
+                        <span>Tỷ lệ hoàn thành</span>
                         <strong>@completionPercent</strong>
                     </li>
                     <li>
-                        <span>Pending workload</span>
-                        <strong>@pendingPercent</strong>
+                        <span>Đang chờ xử lý</span>
+                        <strong>@Model.PendingOrders</strong>
                     </li>
                 </ul>
             </div>
         </div>
+
         <div class="col-lg-4">
             <div class="insight-card">
                 <div class="insight-card-header">
                     <div>
-                        <p class="insight-label">Customer base</p>
-                        <h3>@Model.TotalUsers people</h3>
+                        <p class="insight-label">Cơ Sở Khách Hàng</p>
+                        <h3 class="text-gradient-primary">@Model.TotalUsers</h3>
                     </div>
-                    <span class="insight-pill info">live</span>
+                    <span class="insight-pill info">
+                        <i class="fas fa-users me-1"></i>Hoạt động
+                    </span>
                 </div>
-                <p class="insight-description">All registered members including staff accounts.</p>
+                <p class="insight-description">
+                    Tất cả các thành viên đã đăng ký bao gồm cả tài khoản quản trị.
+                </p>
                 <div class="insight-progress">
                     <div class="progress-track">
                         <div class="progress-fill info" style="width:@usersProgressPercent"></div>
                     </div>
                     <div class="progress-meta">
-                        <span>Goal: @usersGoal.ToString("N0") users</span>
-                        <span>@usersProgressPercent</span>
+                        <span>Mục tiêu: @usersGoal.ToString("N0") người</span>
+                        <strong>@usersProgressPercent</strong>
                     </div>
                 </div>
                 <ul class="insight-list">
                     <li>
-                        <span>New this week</span>
+                        <span>Mới gần đây</span>
                         <strong>@Model.RecentUsers.Count</strong>
                     </li>
                     <li>
-                        <span>Admins</span>
+                        <span>Quản trị viên</span>
                         <strong>@Model.RecentUsers.Count(u => u.Role?.Name == "Admin")</strong>
                     </li>
                 </ul>
@@ -192,21 +173,25 @@
                     <i class="fas fa-hourglass-half"></i>
                 </div>
                 <div class="metric-content">
-                    <p class="metric-label">Pending Orders</p>
-                    <h4>@Model.PendingOrders</h4>
-                    <span class="metric-trend warning">Needs review</span>
+                    <p class="metric-label">Đơn Hàng Đang Chờ</p>
+                    <h4 class="stat-value">@Model.PendingOrders</h4>
+                    <span class="metric-trend warning">
+                        <i class="fas fa-exclamation-triangle me-1"></i>Cần xem xét
+                    </span>
                 </div>
             </div>
         </div>
         <div class="col-lg-4 col-md-6">
             <div class="metric-card">
                 <div class="metric-icon success">
-                    <i class="fas fa-check-circle"></i>
+                    <i class="fas fa-check-double"></i>
                 </div>
                 <div class="metric-content">
-                    <p class="metric-label">Completed Orders</p>
-                    <h4>@Model.CompletedOrders</h4>
-                    <span class="metric-trend positive">@completionPercent complete</span>
+                    <p class="metric-label">Đơn Hàng Hoàn Thành</p>
+                    <h4 class="stat-value">@Model.CompletedOrders</h4>
+                    <span class="metric-trend positive">
+                        <i class="fas fa-check-circle me-1"></i>@completionPercent hoàn tất
+                    </span>
                 </div>
             </div>
         </div>
@@ -216,9 +201,11 @@
                     <i class="fas fa-dollar-sign"></i>
                 </div>
                 <div class="metric-content">
-                    <p class="metric-label">Avg Order Value</p>
-                    <h4>$@avgOrderValue.ToString("N2")</h4>
-                    <span class="metric-trend neutral">Across @Model.TotalOrders orders</span>
+                    <p class="metric-label">Giá Trị Đơn TB</p>
+                    <h4 class="stat-value">$@avgOrderValue.ToString("N2")</h4>
+                    <span class="metric-trend neutral">
+                        <i class="fas fa-chart-line me-1"></i>Trên @Model.TotalOrders đơn
+                    </span>
                 </div>
             </div>
         </div>
@@ -229,9 +216,9 @@
     <!-- Quick Actions -->
     <div class="section-header mb-4">
         <h3 class="section-title">
-            <i class="fas fa-bolt me-2"></i>Quick Actions
+            <i class="fas fa-bolt me-2"></i>Hành Động Nhanh
         </h3>
-        <p class="section-subtitle">Shortcuts to common tasks</p>
+        <p class="section-subtitle">Các lối tắt đến các tác vụ thường dùng nhất</p>
     </div>
     
     <div class="row g-4 mb-5">
@@ -241,8 +228,8 @@
                     <i class="fas fa-shopping-cart"></i>
                 </div>
                 <div class="action-info">
-                    <h5>Manage Orders</h5>
-                    <p>View and process</p>
+                    <h5>Quản Lý Đơn Hàng</h5>
+                    <p>Xem và xử lý đơn</p>
                 </div>
                 <div class="action-arrow">
                     <i class="fas fa-arrow-right"></i>
@@ -256,8 +243,8 @@
                     <i class="fas fa-box"></i>
                 </div>
                 <div class="action-info">
-                    <h5>Manage Products</h5>
-                    <p>Update inventory</p>
+                    <h5>Quản Lý Sản Phẩm</h5>
+                    <p>Cập nhật kho hàng</p>
                 </div>
                 <div class="action-arrow">
                     <i class="fas fa-arrow-right"></i>
@@ -271,8 +258,8 @@
                     <i class="fas fa-plus-circle"></i>
                 </div>
                 <div class="action-info">
-                    <h5>Add Product</h5>
-                    <p>Create new item</p>
+                    <h5>Thêm Sản Phẩm</h5>
+                    <p>Tạo sản phẩm mới</p>
                 </div>
                 <div class="action-arrow">
                     <i class="fas fa-arrow-right"></i>
@@ -283,11 +270,11 @@
         <div class="col-lg-3 col-md-6">
             <a asp-action="Users" class="modern-action-card">
                 <div class="action-icon-bg users-bg">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-users-cog"></i>
                 </div>
                 <div class="action-info">
-                    <h5>Manage Users</h5>
-                    <p>User management</p>
+                    <h5>Quản Lý Người Dùng</h5>
+                    <p>Quản lý tài khoản</p>
                 </div>
                 <div class="action-arrow">
                     <i class="fas fa-arrow-right"></i>
@@ -299,9 +286,9 @@
     <!-- Recent Activity -->
     <div class="section-header mb-4">
         <h3 class="section-title">
-            <i class="fas fa-clock me-2"></i>Recent Activity
+            <i class="fas fa-clock me-2"></i>Hoạt Động Gần Đây
         </h3>
-        <p class="section-subtitle">Latest updates from your store</p>
+        <p class="section-subtitle">Cập nhật mới nhất từ cửa hàng của bạn</p>
     </div>
     
     <div class="row g-4">
@@ -313,8 +300,8 @@
                         <i class="fas fa-shopping-cart"></i>
                     </div>
                     <div class="header-info">
-                        <h6>Recent Orders</h6>
-                        <p>Latest customer orders</p>
+                        <h6>Đơn Hàng Mới Nhất</h6>
+                        <p>@Model.RecentOrders.Count đơn gần đây</p>
                     </div>
                     <a asp-action="Orders" class="header-link">
                         <i class="fas fa-arrow-right"></i>
@@ -331,7 +318,7 @@
                                 </div>
                                 <div class="activity-details">
                                     <div class="activity-title">Order #@order.Id</div>
-                                    <div class="activity-subtitle">@order.User?.FullName</div>
+                                    <div class="activity-subtitle">@(order.User?.FullName ?? "Guest")</div>
                                     <div class="activity-meta">
                                         <span class="activity-price">$@order.TotalAmount?.ToString("F2")</span>
                                         <span class="activity-time">@order.OrderDate?.ToString("MMM dd")</span>
@@ -344,6 +331,7 @@
                                             "pending" => "status-warning",
                                             "processing" => "status-info",
                                             "completed" => "status-success",
+                                            "shipped" => "status-primary",
                                             _ => "status-secondary"
                                         };
                                     }
@@ -355,8 +343,8 @@
                     else
                     {
                         <div class="empty-state">
-                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No recent orders</p>
+                            <i class="fas fa-inbox fa-2x mb-3"></i>
+                            <p>Chưa có đơn hàng nào</p>
                         </div>
                     }
                 </div>
@@ -371,8 +359,8 @@
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="header-info">
-                        <h6>Recent Users</h6>
-                        <p>New registrations</p>
+                        <h6>Người Dùng Mới</h6>
+                        <p>@Model.RecentUsers.Count đăng ký mới</p>
                     </div>
                     <a asp-action="Users" class="header-link">
                         <i class="fas fa-arrow-right"></i>
@@ -385,18 +373,23 @@
                         {
                             <div class="activity-item">
                                 <div class="activity-avatar bg-success">
-                                    <i class="fas fa-user"></i>
+                                    @{
+                                        var initials = string.Join("", (user.FullName ?? "U").Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(s => s[0])).ToUpper();
+                                    }
+                                    @initials
                                 </div>
                                 <div class="activity-details">
                                     <div class="activity-title">@user.FullName</div>
                                     <div class="activity-subtitle">@user.Email</div>
                                     <div class="activity-meta">
-                                        <span class="activity-time">@user.CreatedAt?.ToString("MMM dd, yyyy")</span>
+                                        <span class="activity-time">
+                                            <i class="far fa-clock me-1"></i>@user.CreatedAt?.ToString("MMM dd, yyyy")
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="activity-status">
                                     <span class="status-badge @(user.Role?.Name == "Admin" ? "status-danger" : "status-primary")">
-                                        @user.Role?.Name
+                                        @(user.Role?.Name ?? "User")
                                     </span>
                                 </div>
                             </div>
@@ -405,8 +398,8 @@
                     else
                     {
                         <div class="empty-state">
-                            <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No recent users</p>
+                            <i class="fas fa-user-slash fa-2x mb-3"></i>
+                            <p>Chưa có người dùng mới</p>
                         </div>
                     }
                 </div>
@@ -421,8 +414,8 @@
                         <i class="fas fa-box"></i>
                     </div>
                     <div class="header-info">
-                        <h6>Recent Products</h6>
-                        <p>Latest additions</p>
+                        <h6>Sản Phẩm Mới</h6>
+                        <p>@Model.RecentProducts.Count sản phẩm mới</p>
                     </div>
                     <a asp-action="Products" class="header-link">
                         <i class="fas fa-arrow-right"></i>
@@ -446,10 +439,12 @@
                                 </div>
                                 <div class="activity-details">
                                     <div class="activity-title">@product.Name</div>
-                                    <div class="activity-subtitle">@product.Category?.Name</div>
+                                    <div class="activity-subtitle">@(product.Category?.Name ?? "Uncategorized")</div>
                                     <div class="activity-meta">
                                         <span class="activity-price">$@product.BasePrice.ToString("F2")</span>
-                                        <span class="activity-time">Stock: @product.Stock</span>
+                                        <span class="activity-time">
+                                            <i class="fas fa-box me-1"></i>@product.Stock
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="activity-status">
@@ -463,8 +458,8 @@
                     else
                     {
                         <div class="empty-state">
-                            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No recent products</p>
+                            <i class="fas fa-box-open fa-2x mb-3"></i>
+                            <p>Chưa có sản phẩm mới</p>
                         </div>
                     }
                 </div>
@@ -473,39 +468,27 @@
     </div>
 </div>
 
-@@section Scripts {
+@section Scripts {
     <script>
-        // Display current date
-        const currentDate = new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+        // Animate stat values on page load
+        document.querySelectorAll('.stat-value').forEach((element) => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                element.style.transition = 'all 0.5s ease';
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            }, 100);
         });
-        document.getElementById('currentDate').textContent = currentDate;
-
-        // Animate numbers
-        document.querySelectorAll('.stat-number').forEach((element, index) => {
-            const finalValue = parseFloat(element.textContent.replace(/[$,]/g, ''));
-            const isDecimal = element.textContent.includes('.');
-            const hasDollar = element.textContent.includes('$');
-            
-            let current = 0;
-            const increment = finalValue / 50;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= finalValue) {
-                    current = finalValue;
-                    clearInterval(timer);
-                }
-                
-                let displayValue = isDecimal ? current.toFixed(2) : Math.floor(current);
-                if (hasDollar) {
-                    element.textContent = '$' + displayValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                } else {
-                    element.textContent = displayValue;
-                }
-            }, 30);
+        
+        // Add hover effect to activity items
+        document.querySelectorAll('.activity-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(4px)';
+            });
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
         });
     </script>
 }
