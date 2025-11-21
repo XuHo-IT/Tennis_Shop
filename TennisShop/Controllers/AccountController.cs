@@ -64,12 +64,7 @@ namespace TennisShop.Controllers
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                    // Redirect based on role
-                    if (user.Role?.Name?.ToLower() == "admin")
-                    {
-                        return RedirectToAction("Dashboard", "Admin");
-                    }
-                    
+                    // Redirect to Home for all users including admin
                     return RedirectToAction("Index", "Home");
                 }
                 else

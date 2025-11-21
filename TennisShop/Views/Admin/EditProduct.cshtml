@@ -82,11 +82,66 @@
 
                         <div class="mb-3">
                             <div class="form-check">
-                                <input asp-for="IsActive" type="checkbox" class="form-check-input" />
-                                <label asp-for="IsActive" class="form-check-label">
+                                <input type="checkbox" name="IsActive" value="true" class="form-check-input" @(Model.IsActive == true ? "checked" : "") />
+                                <input type="hidden" name="IsActive" value="false" />
+                                <label class="form-check-label">
                                     Active (Product is visible to customers)
                                 </label>
                             </div>
+                        </div>
+
+                        <!-- Product Variants Section -->
+                        <div class="mb-4 pb-4 border-top border-bottom">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-uppercase mb-0">Product Variants</h5>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="addVariantBtn">
+                                    <i class="fas fa-plus me-1"></i>Add Variant
+                                </button>
+                            </div>
+                            <div id="variantsContainer">
+                                @{
+                                    var existingVariants = Model.ProductVariants?.ToList() ?? new List<BussinessObject.ProductVariant>();
+                                    int variantIndex = 0;
+                                }
+                                @foreach (var variant in existingVariants)
+                                {
+                                    <div class="variant-row mb-3 p-3 border rounded" data-variant-index="@variantIndex">
+                                        <input type="hidden" name="ProductVariants[@variantIndex].Id" value="@variant.Id" />
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <strong>Variant #@(variantIndex + 1)</strong>
+                                            <button type="button" class="btn btn-sm btn-danger remove-variant-btn">
+                                                <i class="fas fa-times"></i> Remove
+                                            </button>
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Color</label>
+                                                <input type="text" name="ProductVariants[@variantIndex].Color" class="form-control" value="@variant.Color" placeholder="e.g., Black/Red">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Size</label>
+                                                <input type="text" name="ProductVariants[@variantIndex].Size" class="form-control" value="@variant.Size" placeholder="e.g., 4 3/8">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Price</label>
+                                                <input type="number" step="0.01" name="ProductVariants[@variantIndex].Price" class="form-control" value="@variant.Price" placeholder="0.00">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Stock</label>
+                                                <input type="number" name="ProductVariants[@variantIndex].Stock" class="form-control" value="@variant.Stock" min="0">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">SKU</label>
+                                                <input type="text" name="ProductVariants[@variantIndex].Sku" class="form-control" value="@variant.Sku" placeholder="SKU">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    variantIndex++;
+                                }
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>Variants are optional. If no variants are added, the product will use base price and stock.
+                            </small>
                         </div>
                     </div>
 
@@ -130,7 +185,11 @@
 </div>
 
 @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        let variantIndex = @(Model.ProductVariants?.Count() ?? 0);
+
         // Image preview
         document.getElementById('imageFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -143,8 +202,50 @@
                 reader.readAsDataURL(file);
             }
         });
+
+        // Add variant row
+        $('#addVariantBtn').on('click', function() {
+            const variantHtml = `
+                <div class="variant-row mb-3 p-3 border rounded" data-variant-index="${variantIndex}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong>Variant #${variantIndex + 1}</strong>
+                        <button type="button" class="btn btn-sm btn-danger remove-variant-btn">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Color</label>
+                            <input type="text" name="ProductVariants[${variantIndex}].Color" class="form-control" placeholder="e.g., Black/Red">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Size</label>
+                            <input type="text" name="ProductVariants[${variantIndex}].Size" class="form-control" placeholder="e.g., 4 3/8">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Price</label>
+                            <input type="number" step="0.01" name="ProductVariants[${variantIndex}].Price" class="form-control" placeholder="0.00">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Stock</label>
+                            <input type="number" name="ProductVariants[${variantIndex}].Stock" class="form-control" value="0" min="0">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">SKU</label>
+                            <input type="text" name="ProductVariants[${variantIndex}].Sku" class="form-control" placeholder="SKU">
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('#variantsContainer').append(variantHtml);
+            variantIndex++;
+        });
+
+        // Remove variant row
+        $(document).on('click', '.remove-variant-btn', function() {
+            $(this).closest('.variant-row').remove();
+        });
     </script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
 <style>

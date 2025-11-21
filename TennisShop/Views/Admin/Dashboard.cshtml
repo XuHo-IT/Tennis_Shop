@@ -28,11 +28,18 @@
     <!-- Hero -->
     <div class="dashboard-hero mb-5">
         <div class="hero-text">
-            <span class="hero-badge"><i class="fas fa-sun me-2"></i>Command Center</span>
-            <h1>Good day, @adminName.</h1>
-            <p class="hero-description">
-                Keep an eye on revenue, fulfillment and customer growth without leaving this panel.
-            </p>
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <span class="hero-badge"><i class="fas fa-sun me-2"></i>Command Center</span>
+                    <h1>Good day, @adminName.</h1>
+                    <p class="hero-description">
+                        Keep an eye on revenue, fulfillment and customer growth without leaving this panel.
+                    </p>
+                </div>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light">
+                    <i class="fas fa-home me-2"></i>Return Home
+                </a>
+            </div>
             <div class="hero-meta">
                 <div class="meta-item">
                     <span>Total Revenue</span>
