@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using System;
 using DataAccessLayer;
 using Services;
 using BussinessObject;
@@ -43,8 +44,8 @@ namespace TennisShop.Controllers
                 var user = await _userService.AuthenticateUserAsync(email, password);
                 if (user != null)
                 {
-                    // Use role name exactly as stored in database (Admin, Customer)
-                    var roleName = user.Role?.Name ?? "Customer";
+                    var isAdmin = IsAdminUser(user);
+                    var roleName = isAdmin ? "Admin" : (user.Role?.Name ?? "Customer");
 
                     var claims = new List<Claim>
                     {
@@ -61,16 +62,12 @@ namespace TennisShop.Controllers
                         ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
                     };
 
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity), authProperties);
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
 
-                    // Redirect based on role
-                    if (user.Role?.Name?.ToLower() == "admin")
-                    {
-                        return RedirectToAction("Dashboard", "Admin");
-                    }
-                    
-                    return RedirectToAction("Index", "Home");
+                    return RedirectAfterLogin(isAdmin);
                 }
                 else
                 {
@@ -131,13 +128,15 @@ namespace TennisShop.Controllers
                 await _userService.CreateUserAsync(user, isOAuthUser: true);
             }
 
+            var isGoogleAdmin = IsAdminUser(user);
+
             // Tạo claims để lưu cookie login
             var appClaims = new List<Claim>
     {
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
         new Claim(ClaimTypes.Name, user.FullName),
         new Claim(ClaimTypes.Email, user.Email),
-        new Claim(ClaimTypes.Role, user.Role?.Name ?? "Customer")
+        new Claim(ClaimTypes.Role, isGoogleAdmin ? "Admin" : (user.Role?.Name ?? "Customer"))
     };
 
             var identity = new ClaimsIdentity(appClaims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -146,9 +145,20 @@ namespace TennisShop.Controllers
             // Sign in cookie
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectAfterLogin(isGoogleAdmin);
         }
 
+        // GET: Account/Register
+        [HttpGet]
+        public IActionResult Register()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View();
+        }
 
         // POST: Account/Register
         [HttpPost]
@@ -250,6 +260,30 @@ namespace TennisShop.Controllers
                 }
             }
             return View(user);
+        }
+
+        private bool IsAdminUser(User? user)
+        {
+            if (user == null)
+                return false;
+
+            if (!string.IsNullOrWhiteSpace(user.Role?.Name) &&
+                user.Role.Name.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return user.RoleId == 1;
+        }
+
+        private IActionResult RedirectAfterLogin(bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                return RedirectToAction("Dashboard", "Admin");
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
     }

@@ -4,219 +4,408 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container-fluid">
-    <h2 class="h3 mb-4"><i class="fas fa-chart-bar me-2"></i>Reports & Analytics</h2>
+<div class="container-fluid px-4 py-4">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="page-heading mb-1">
+                <i class="fas fa-chart-bar me-2"></i>Reports & Analytics
+            </h2>
+            <p class="text-muted mb-0">Track revenue, orders and performance metrics</p>
+        </div>
+        <button class="btn btn-dark" onclick="window.print()">
+            <i class="fas fa-print me-2"></i>Print Report
+        </button>
+    </div>
 
-    <!-- Summary Cards -->
-    <div class="row mb-4">
-        <div class="col-lg-4 mb-4">
-            <div class="card admin-card stat-card success h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="text-muted text-uppercase fw-bold small mb-1">Total Revenue</div>
-                            <div class="h3 mb-0 fw-bold text-success">$@Model.TotalRevenue.ToString("N2")</div>
-                        </div>
-                        <i class="fas fa-dollar-sign fa-3x stat-icon"></i>
-                    </div>
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-5">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon bg-success">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value">$@Model.TotalRevenue.ToString("N0")</div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mb-4">
-            <div class="card admin-card stat-card info h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="text-muted text-uppercase fw-bold small mb-1">Total Orders</div>
-                            <div class="h3 mb-0 fw-bold text-info">@Model.TotalOrders</div>
-                        </div>
-                        <i class="fas fa-shopping-cart fa-3x stat-icon"></i>
-                    </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon bg-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value">@Model.TotalOrders</div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mb-4">
-            <div class="card admin-card stat-card warning h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="text-muted text-uppercase fw-bold small mb-1">Average Order Value</div>
-                            <div class="h3 mb-0 fw-bold text-warning">$@Model.AverageOrderValue.ToString("F2")</div>
-                        </div>
-                        <i class="fas fa-chart-line fa-3x stat-icon"></i>
-                    </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon bg-info">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Avg Order Value</div>
+                    <div class="stat-value">$@Model.AverageOrderValue.ToString("F2")</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Charts Row -->
-    <div class="row mb-4">
-        <div class="col-lg-12 mb-4">
-            <div class="card admin-card">
-                <div class="card-header admin-card-header">
-                    <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Revenue by Month</h5>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="revenueChart"></canvas>
+    <!-- Revenue Chart -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
+                <div class="card-header bg-white border-bottom" style="padding: 1.5rem;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1 fw-bold">
+                                <i class="fas fa-chart-area me-2 text-primary"></i>Revenue Trend
+                            </h5>
+                            <small class="text-muted">Monthly revenue performance analysis</small>
+                        </div>
+                        <span class="badge-tag badge-primary">
+                            <i class="fas fa-database me-1"></i>@Model.RevenueByMonth.Count months
+                        </span>
                     </div>
+                </div>
+                <div class="card-body" style="padding: 2rem;">
+                    @if (Model.RevenueByMonth.Any())
+                    {
+                        <div class="chart-container" style="position: relative; height: 350px;">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state" style="height: 350px;">
+                            <i class="fas fa-chart-line fa-3x mb-3"></i>
+                            <h5>No revenue data yet</h5>
+                            <p class="text-muted">Revenue will appear here once orders are completed</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
+                <div class="card-header bg-white border-bottom" style="padding: 1.5rem;">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-calendar-alt me-2 text-success"></i>Monthly Revenue
+                    </h6>
+                </div>
+                <div class="card-body" style="padding: 1.5rem;">
+                    @if (Model.RevenueByMonth.Any())
+                    {
+                        <div class="revenue-list">
+                            @foreach (var month in Model.RevenueByMonth.OrderByDescending(m => m.Month).Take(6))
+                            {
+                                var percentage = Model.TotalRevenue > 0 ? (double)month.Revenue / (double)Model.TotalRevenue * 100 : 0;
+                                <div class="revenue-item" style="padding: 0.875rem 0; border-bottom: 1px solid var(--gray-100);">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="fw-semibold text-muted" style="font-size: 0.875rem;">@month.Month</span>
+                                        <span class="fw-bold" style="color: var(--primary); font-size: 1rem;">$@month.Revenue.ToString("N0")</span>
+                                    </div>
+                                    <div style="height: 6px; background: var(--gray-200); border-radius: 10px; overflow: hidden;">
+                                        <div style="height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); width: @percentage.ToString("F2")%; border-radius: 10px; transition: width 0.6s ease;"></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-inbox fa-2x text-muted mb-3"></i>
+                            <p class="text-muted mb-0" style="font-size: 0.875rem;">No monthly data available</p>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Top Selling Products -->
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card admin-card">
-                <div class="card-header admin-card-header">
-                    <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Top Selling Products</h5>
+    <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
+        <div class="card-header bg-white border-bottom" style="padding: 1.5rem;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1 fw-bold">
+                        <i class="fas fa-trophy me-2 text-warning"></i>Top Selling Products
+                    </h5>
+                    <small class="text-muted">Products with highest stock movement</small>
                 </div>
-                <div class="card-body">
-                    @if (Model.TopSellingProducts.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table admin-table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Rank</th>
-                                        <th>Product</th>
-                                        <th>Category</th>
-                                        <th>Brand</th>
-                                        <th>Price</th>
-                                        <th>Stock</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @{var rank = 1;}
-                                    @foreach (var product in Model.TopSellingProducts)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @if (rank <= 3)
+                <span class="badge-tag badge-warning">
+                    <i class="fas fa-star me-1"></i>Top @Model.TopSellingProducts.Count
+                </span>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            @if (Model.TopSellingProducts.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table modern-table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Rank</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Brand</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var rank = 1;
+                            }
+                            @foreach (var product in Model.TopSellingProducts)
+                            {
+                                var stockValue = product.Stock ?? 0;
+                                var stockBadge = stockValue == 0 ? "danger" : stockValue < 20 ? "warning" : "success";
+                                
+                                <tr>
+                                    <td>
+                                        @if (rank <= 3)
+                                        {
+                                            var rankClass = rank switch
+                                            {
+                                                1 => "rank-1",
+                                                2 => "rank-2",
+                                                3 => "rank-3",
+                                                _ => ""
+                                            };
+                                            var trophy = rank switch
+                                            {
+                                                1 => "fa-trophy",
+                                                2 => "fa-medal",
+                                                3 => "fa-award",
+                                                _ => "fa-star"
+                                            };
+                                            <span class="rank-badge @rankClass" style="display: inline-flex; align-items: center; padding: 0.375rem 0.75rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700;">
+                                                <i class="fas @trophy me-1"></i>#@rank
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="id-badge">#@rank</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="product-image">
+                                                @if (product.ProductImages != null && product.ProductImages.Any())
                                                 {
-                                                    <span class="badge bg-@(rank == 1 ? "warning" : rank == 2 ? "secondary" : "danger")">
-                                                        <i class="fas fa-trophy"></i> #@rank
-                                                    </span>
+                                                    <img src="@product.ProductImages.First().ImageUrl" alt="@product.Name">
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-muted">#@rank</span>
+                                                    <div class="image-placeholder">
+                                                        <i class="fas fa-box"></i>
+                                                    </div>
                                                 }
-                                            </td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    @if (product.ProductImages != null && product.ProductImages.Any())
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold">@product.Name</div>
+                                                <small class="text-muted">
+                                                    @if (!string.IsNullOrEmpty(product.Description) && product.Description.Length > 40)
                                                     {
-                                                        <img src="@product.ProductImages.First().ImageUrl" 
-                                                             alt="@product.Name" 
-                                                             class="me-3" 
-                                                             style="width: 40px; height: 40px; object-fit: cover; border-radius: 0.25rem;">
+                                                        @(product.Description.Substring(0, 40) + "...")
                                                     }
-                                                    <strong>@product.Name</strong>
-                                                </div>
-                                            </td>
-                                            <td>@product.Category?.Name</td>
-                                            <td>@product.Brand?.Name</td>
-                                            <td>$@product.BasePrice.ToString("F2")</td>
-                                            <td>
-                                                @{
-                                                    var stockClass = product.Stock > 50 ? "success" : product.Stock > 20 ? "warning" : "danger";
-                                                }
-                                                <span class="badge bg-@stockClass">@product.Stock</span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-@(product.IsActive == true ? "success" : "secondary")">
-                                                    @(product.IsActive == true ? "Active" : "Inactive")
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        rank++;
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-5">
-                            <i class="fas fa-chart-bar fa-4x text-muted mb-3"></i>
-                            <p class="text-muted">No sales data available yet.</p>
-                        </div>
-                    }
+                                                    else if (!string.IsNullOrEmpty(product.Description))
+                                                    {
+                                                        @product.Description
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>No description</text>
+                                                    }
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-tag badge-primary">
+                                            <i class="fas fa-tag me-1"></i>@(product.Category?.Name ?? "Uncategorized")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-semibold">@(product.Brand?.Name ?? "Unbranded")</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-success">$@product.BasePrice.ToString("F2")</div>
+                                        @if (product.DiscountPercent.HasValue && product.DiscountPercent > 0)
+                                        {
+                                            <small class="text-muted">
+                                                <i class="fas fa-percentage me-1"></i>@product.DiscountPercent% off
+                                            </small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge-tag badge-@stockBadge">
+                                            <i class="fas fa-box me-1"></i>@stockValue
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge @(product.IsActive == true ? "status-active" : "status-inactive")">
+                                            @(product.IsActive == true ? "Active" : "Inactive")
+                                        </span>
+                                    </td>
+                                </tr>
+                                rank++;
+                            }
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-chart-bar fa-3x mb-3"></i>
+                    <h5>No sales data available</h5>
+                    <p class="text-muted">Start selling products to see top performers here</p>
+                </div>
+            }
         </div>
     </div>
 </div>
 
-@@section Scripts {
-    <script>
-        // Revenue Chart
-        const ctx = document.getElementById('revenueChart').getContext('2d');
-        const revenueData = @Html.Raw(Json.Serialize(Model.RevenueByMonth));
-        
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: revenueData.map(d => d.month),
-                datasets: [{
-                    label: 'Revenue ($)',
-                    data: revenueData.map(d => d.revenue),
-                    borderColor: 'rgb(78, 115, 223)',
-                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    pointBackgroundColor: 'rgb(78, 115, 223)',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    @if (Model.RevenueByMonth.Any())
+    {
+        <text>
+        const ctx = document.getElementById('revenueChart');
+        if (ctx) {
+            const revenueData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueByMonth));
+            
+            // Create gradient
+            const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 350);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: revenueData.map(d => d.month),
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: revenueData.map(d => d.revenue),
+                        borderColor: '#6366f1',
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#6366f1',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverBackgroundColor: '#4f46e5',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBorderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     },
-                    tooltip: {
-                        backgroundColor: 'rgba(0,0,0,0.8)',
-                        padding: 12,
-                        titleFont: { size: 14 },
-                        bodyFont: { size: 13 },
-                        callbacks: {
-                            label: function(context) {
-                                return 'Revenue: $' + context.parsed.y.toFixed(2);
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                            padding: 16,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 },
+                            cornerRadius: 10,
+                            displayColors: false,
+                            callbacks: {
+                                title: function(context) {
+                                    return context[0].label;
+                                },
+                                label: function(context) {
+                                    return 'Revenue: $' + context.parsed.y.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                                }
                             }
                         }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value.toFixed(0);
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                },
+                                font: {
+                                    size: 12
+                                },
+                                color: '#6b7280'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)',
+                                drawBorder: false
+                            },
+                            border: {
+                                display: false
                             }
                         },
-                        grid: {
-                            color: 'rgba(0,0,0,0.05)'
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 12
+                                },
+                                color: '#6b7280'
+                            },
+                            grid: {
+                                display: false
+                            },
+                            border: {
+                                display: false
+                            }
                         }
                     },
-                    x: {
-                        grid: {
-                            display: false
-                        }
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
                     }
                 }
-            }
+            });
+        }
+        </text>
+    }
+    
+    // Animate stat values
+    document.querySelectorAll('.stat-value').forEach((element, index) => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+            element.style.transition = 'all 0.5s ease';
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, 100 * index);
+    });
+    
+    // Animate revenue progress bars
+    setTimeout(() => {
+        document.querySelectorAll('.revenue-item > div > div').forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
         });
-    </script>
+    }, 500);
+});
+</script>
 }
-
