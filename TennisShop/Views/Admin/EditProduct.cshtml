@@ -318,6 +318,53 @@ document.addEventListener('DOMContentLoaded', function() {
         const event = new Event('change', { bubbles: true });
         imageInput.dispatchEvent(event);
     }, false);
+
+    // Product Variants Management
+    // Initialize variantIndex with the count of existing variants
+    let variantIndex = @(Model.ProductVariants?.Count() ?? 0);
+
+    // Add variant row
+    $('#addVariantBtn').on('click', function() {
+        const variantHtml = `
+            <div class="variant-row mb-3 p-3 border rounded" data-variant-index="${variantIndex}">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <strong>Variant #${variantIndex + 1}</strong>
+                    <button type="button" class="btn btn-sm btn-danger remove-variant-btn">
+                        <i class="fas fa-times"></i> Remove
+                    </button>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Color</label>
+                        <input type="text" name="ProductVariants[${variantIndex}].Color" class="form-control" placeholder="e.g., Black/Red">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Size</label>
+                        <input type="text" name="ProductVariants[${variantIndex}].Size" class="form-control" placeholder="e.g., 4 3/8">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Price</label>
+                        <input type="number" step="0.01" name="ProductVariants[${variantIndex}].Price" class="form-control" placeholder="0.00">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Stock</label>
+                        <input type="number" name="ProductVariants[${variantIndex}].Stock" class="form-control" value="0" min="0">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">SKU</label>
+                        <input type="text" name="ProductVariants[${variantIndex}].Sku" class="form-control" placeholder="SKU">
+                    </div>
+                </div>
+            </div>
+        `;
+        $('#variantsContainer').append(variantHtml);
+        variantIndex++;
+    });
+
+    // Remove variant row
+    $(document).on('click', '.remove-variant-btn', function() {
+        $(this).closest('.variant-row').remove();
+    });
 });
 </script>
 @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
